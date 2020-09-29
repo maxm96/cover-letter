@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/maxm96/cover-letter/issues"
   },
-  "homepage": "https://github.com/maxm96/cover-letter#readme"
+  "homepage": "https://github.com/maxm96/cover-letter#readme",
+  "dependencies": {
+    "expres": "0.0.5",
+    "express": "^4.17.1"
+  }
 }
