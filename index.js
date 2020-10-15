@@ -29,6 +29,9 @@ app.use(function (req, res, next) {
     return next()
 })
 
+// Use pug templating
+app.set('view engine', 'pug')
+
 // Instantiate controllers
 const indexController = require('./src/controllers/index-controller')
 const loginController = require('./src/controllers/login-controller')

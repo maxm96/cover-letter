@@ -14,15 +14,15 @@ function post(req, res) {
     let username = req.body.username
 
     if (!username) // No username given
-        return res.sendFile('login.html', { root: 'src/views' })
+        return res.render('login', { error: 'Username is required' })
 
     username = username.trim()
 
     if (username.length < 1 || username.length > 16) // Username does not match length requirements
-        return res.sendFile('login.html', { root: 'src/views' })
+        return res.render('login', { error: 'Username must be between 1 and 16 characters', username: username })
 
     if (userStore.isActive(username)) // Username is already being used
-        return res.sendFile('login.html', { root: 'src/views' })
+        return res.render('login', { error: 'This username is already being used', username: username })
 
     // Add user to store and set username in session
     userStore.addUser(username)
