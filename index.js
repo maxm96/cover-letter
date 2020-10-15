@@ -1,10 +1,42 @@
+const path = require('path')
 const express = require('express')
+const bodyParser = require('body-parser')
+const redis = require('redis')
+const session = require('express-session')
+const app = express()
 const port = 3000
 
-const app = express()
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
-app.get('/', (req, res) => res.send('Hello World!'))
+// Initialize Redis session store
+const RedisStore = require('connect-redis')(session)
+const RedisClient = redis.createClient()
 
-const server = app.listen(port)
+// Create session parser
+const sessionParser = session({
+    store: new RedisStore({ client: RedisClient }),
+    secret: 'supersecret',
+    resave: false,
+    saveUninitialized: false,
+})
+app.use(sessionParser)
 
-console.log(`Listening at http://localhost:${port}`)
+// Throw an error if we get a request without a session
+app.use(function (req, res, next) {
+    if (!req.session)
+        return next(new Error('Request received without a session'))
+    return next()
+})
+
+// Instantiate controllers
+const loginController = require('./src/controllers/login-controller')
+
+app.use('/views', express.static(path.join(__dirname, '/src/views')))
+
+// Routes
+app.get('/', (req, res) => res.send(`Hello ${req.session.username}!`))
+app.get('/login', loginController.get)
+app.post('/login', loginController.post)
+
+app.listen(port, () => console.log(`Listening at http://localhost:${port}`))
