@@ -4,7 +4,7 @@ function get(req, res) {
     if (req.session.username) // User already has a username set
         res.redirect('/')
 
-    res.sendFile('login.html', { root: 'src/views' })
+    res.render('login')
 }
 
 function post(req, res) {
