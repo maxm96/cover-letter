@@ -30,12 +30,13 @@ app.use(function (req, res, next) {
 })
 
 // Instantiate controllers
+const indexController = require('./src/controllers/index-controller')
 const loginController = require('./src/controllers/login-controller')
 
 app.use('/views', express.static(path.join(__dirname, '/src/views')))
 
 // Routes
-app.get('/', (req, res) => res.send(`Hello ${req.session.username}!`))
+app.get('/', indexController.get)
 app.get('/login', loginController.get)
 app.post('/login', loginController.post)
 

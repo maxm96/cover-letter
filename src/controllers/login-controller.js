@@ -1,6 +1,9 @@
 const userStore = require('../stores/user-store')
 
 function get(req, res) {
+    if (req.session.username) // User already has a username set
+        res.redirect('/')
+
     res.sendFile('login.html', { root: 'src/views' })
 }
 
