@@ -2,11 +2,13 @@ doctype html
 html
     head
         meta(charset="UTF-8")
+        link(href="/public/main.css" rel="stylesheet")
+        link(href="/public/login.css" rel="stylesheet")
         title Login
     body
         form(method="post")
             label(for="username") Enter a username:
-            input(type="text", id="username", name="username" value=username)
+            input(type="text", id="username", name="username" placeholder="Username" value=username)
             if error
                 span(class="help-block error") #{error}
             input(type="submit", value="Submit")

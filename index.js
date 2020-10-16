@@ -29,14 +29,15 @@ app.use(function (req, res, next) {
     return next()
 })
 
+// Serve files from public directory
+app.use('/public', express.static(path.join(__dirname, 'public')))
+
 // Use pug templating
 app.set('view engine', 'pug')
 
 // Instantiate controllers
 const indexController = require('./src/controllers/index-controller')
 const loginController = require('./src/controllers/login-controller')
-
-app.use('/views', express.static(path.join(__dirname, '/src/views')))
 
 // Routes
 app.get('/', indexController.get)

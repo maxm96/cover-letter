@@ -1,0 +1,11 @@
+body {
+	font-family: Verdana, Arial, sans-serif;
+}
+
+.help-block {
+	font-size: .8em;
+}
+
+.error {
+	color: #bf222f;
+}
