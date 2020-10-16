@@ -44,4 +44,12 @@ app.get('/', indexController.get)
 app.get('/login', loginController.get)
 app.post('/login', loginController.post)
 
-app.listen(port, () => console.log(`Listening at http://localhost:${port}`))
+const server = app.listen(port, () => console.log(`Listening at http://localhost:${port}`))
+
+// Create websocket server
+const sio = require('socket.io')(server)
+
+// Parse the user session when they start a websocket connection
+sio.use((socket, next) => sessionParser(socket.request, socket.request.res || {}, next))
+
+sio.sockets.on('connection', (socket) => console.log(`New connection from ${socket.request.session.username}`))
