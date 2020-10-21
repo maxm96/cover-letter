@@ -1,4 +1,4 @@
-class Player
+module.exports = class Player
 {
     constructor(username) {
         this.username = username

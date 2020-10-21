@@ -1,10 +1,11 @@
 GameStates = require('./GameStates')
+Player = require('./Player')
 
-class Game
+module.exports = class Game
 {
-    constructor(deck, players = []) {
-        this.deck = deck
-        this.players = players
+    constructor() {
+        this.deck = []
+        this.players = []
         this.state = GameStates.WAITING
         this.log = []
     }
@@ -13,13 +14,54 @@ class Game
         return this.players.findIndex(p => p.username === username)
     }
 
+    createPlayersArray(attrs) {
+        return this.players.reduce((acc, cur) => {
+            let newObj = {}
+
+            attrs.forEach(a => newObj[a] = cur[a])
+            acc.push(newObj)
+            return acc
+        }, [])
+    }
+
+    /**
+     * Creates an object to emit to clients. If in waiting state, only send usernames and ready status.
+     * If in Gameplay state, send a bit more player information as well as the game log.
+     * @param addendum
+     * @return {any}
+     */
+    clientState(addendum) {
+        let stateObj = {}
+
+        switch (this.state) {
+            // Client state in waiting state is just a list of users and ready statuses
+            case GameStates.WAITING:
+                stateObj = {
+                    players: this.createPlayersArray(['username', 'ready']),
+                    gameState: this.state
+                }
+                break
+            case GameStates.GAMEPLAY:
+                stateObj = {
+                    players: this.createPlayersArray(['username', 'isOut', 'isProtected', 'playedCards', 'disconnected']),
+                    gameState: this.state,
+                    log: this.log
+                }
+                break
+            default:
+                break
+        }
+
+        return Object.assign(addendum, stateObj)
+    }
+
     /**
      * If the players are not full and we are in the waiting state,
      * create a new player from username and add to list.
      * @param {string} username
-     * @return {{success: boolean, message: string}|{success: boolean}}
+     * @return {Object}
      */
-    acceptUser(username) {
+    onConnection(username) {
         // Deny any users if not in the waiting state
         if (this.state !== GameStates.WAITING)
             return { success: false, message: 'Not in waiting state.' }
@@ -28,15 +70,15 @@ class Game
             return { success: false, message: 'Maximum number of players has been reached.' }
 
         this.players.push(new Player(username))
-        return { success: true }
+        return this.clientState({ success: true })
     }
 
     /**
      * If a user disconnects during a game, set disconnected to true, otherwise remove the user.
      * @param {string} username
-     * @return {{success: boolean, message: string}|{success: boolean}}
+     * @return {Object}
      */
-    removeUser(username) {
+    onDisconnect(username) {
         if (this.state === GameStates.GAMEPLAY) {
             let playerIndex = this.getPlayerIndex(username)
             if (playerIndex < 0)
@@ -47,13 +89,13 @@ class Game
             this.players = this.players.filter(p => p.username !== username)
         }
 
-        return { success: true }
+        return this.clientState({ success: true })
     }
 
     /**
      * Set a player's ready status to true and check if all players are ready.
      * @param {string} username
-     * @return {{success: boolean, message: string}|{success: boolean}}
+     * @return {Object}
      */
     onReady(username) {
         if (this.state !== GameStates.WAITING)
@@ -68,15 +110,15 @@ class Game
         if (this.players.every(p => p.ready))
             this.state = GameStates.GAMEPLAY
 
-        return { success: true }
+        return this.clientState({ success: true })
     }
 
     /**
      * Set a player's ready status to false.
      * @param {string} username
-     * @return {{success: boolean, message: string}|{success: boolean}}
+     * @return {Object}
      */
-    onUnReady(username) {
+    onUnready(username) {
         if (this.state !== GameStates.WAITING || this.state !== GameStates.COUNTDOWN)
             return { success: false, message: 'Game is not in a valid state to unready.' }
 
@@ -86,7 +128,7 @@ class Game
 
         this.players[playerIndex].ready = false
 
-        return { success: true }
+        return this.clientState({ success: true })
     }
 
     createLog() {
