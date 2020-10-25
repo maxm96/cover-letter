@@ -90,6 +90,12 @@ socket.on('playerready', function ({ username, ready, gameState }) {
     }
 })
 
+socket.on('statechange', function ({ state }) {
+    console.log('state change:', state)
+    clientState.gameState = state
+    // do something on state change
+})
+
 socket.on('connectionfailed', function ({ message }) {
     showErrorMessage(message)
 })

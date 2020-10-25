@@ -3,7 +3,11 @@ Player = require('./Player')
 
 module.exports = class Game
 {
-    constructor() {
+    constructor(socketHandle = null) {
+        // I would like to leave the handling of socket events outside of this class, however,
+        // I need to be able to emit game state change from here so... it is what it is.
+        this.socketHandle = socketHandle
+
         this.deck = []
         this.players = []
         this.state = GameStates.WAITING
@@ -43,6 +47,7 @@ module.exports = class Game
 
         if (state === GameStates.GAMEPLAY) {
             // Need some way to broadcast game start from here
+            this.socketHandle.emit('statechange', { state: this.state })
         }
     }
 

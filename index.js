@@ -6,8 +6,6 @@ const session = require('express-session')
 const app = express()
 const port = 3000
 
-// Game object
-const Game = new (require('./src/models/Game'))()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -54,6 +52,9 @@ const sio = require('socket.io')(server)
 
 // Parse the user session when they start a websocket connection
 sio.use((socket, next) => sessionParser(socket.request, socket.request.res || {}, next))
+
+// Game object
+const Game = new (require('./src/models/Game'))(sio)
 
 // Initialize socket events
 require('./sockets')(sio, Game)
