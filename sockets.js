@@ -12,8 +12,6 @@ module.exports = function (sio, Game) {
         // One time connection
         let res = Game.onConnection(username)
         if (res.success) {
-            console.log(`Accepted connection from ${username}`)
-
             // Broadcast to other clients that a new person has joined
             socket.broadcast.emit('playerconnection', res)
 
@@ -21,7 +19,6 @@ module.exports = function (sio, Game) {
             socket.emit('curstate', Game.clientState())
         } else {
             console.log(`Rejected connection from ${username}`)
-
             socket.emit('connectionfailed', res)
         }
 
@@ -31,8 +28,10 @@ module.exports = function (sio, Game) {
             let res = Game.onDisconnect(username)
             if (res.success)
                 sio.emit('playerdisconnect', res)
-            else
+            else {
+                console.log(`Disconnect failed for ${username}`)
                 socket.emit('disconnectfailed', res)
+            }
         })
 
         socket.on('ready', ({ ready }) => {
@@ -41,8 +40,10 @@ module.exports = function (sio, Game) {
             let res = Game.onReady(username, ready)
             if (res.success)
                 sio.emit('playerready', res)
-            else
+            else {
+                console.log(`Ready failed for ${username}`)
                 socket.emit('readyfailed', res)
+            }
         })
     })
 }
