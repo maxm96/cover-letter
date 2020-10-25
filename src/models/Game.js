@@ -8,6 +8,7 @@ module.exports = class Game
         this.players = []
         this.state = GameStates.WAITING
         this.log = []
+        this.timeoutHandle = null
     }
 
     getPlayerIndex(username) {
@@ -22,6 +23,27 @@ module.exports = class Game
             acc.push(newObj)
             return acc
         }, [])
+    }
+
+    changeState(state) {
+        this.state = state
+
+        // Clear any timeouts
+        if (this.timeoutHandle !== null) {
+            clearTimeout(this.timeoutHandle)
+            this.timeoutHandle = null
+        }
+
+        if (state === GameStates.COUNTDOWN) {
+            // In 5 seconds start the game
+            this.timeoutHandle = setTimeout(() => {
+                this.changeState(GameStates.GAMEPLAY)
+            }, 5000)
+        }
+
+        if (state === GameStates.GAMEPLAY) {
+            // Need some way to broadcast game start from here
+        }
     }
 
     /**
@@ -98,7 +120,7 @@ module.exports = class Game
 
             // Cancel the countdown if someone gets disconnected
             if (this.state === GameStates.COUNTDOWN)
-                this.state = GameStates.WAITING
+                this.changeState(GameStates.WAITING)
         }
 
         return { success: true, username: username, state: this.state }
@@ -124,9 +146,9 @@ module.exports = class Game
         this.players[playerIndex].ready = ready
 
         if (this.players.every(p => p.ready))
-            this.state = GameStates.COUNTDOWN
+            this.changeState(GameStates.COUNTDOWN)
         else
-            this.state = GameStates.WAITING
+            this.changeState(GameStates.WAITING)
 
         return { success: true, username: username, ready: ready, gameState: this.state }
     }
