@@ -31,10 +31,10 @@ module.exports = function (sio, Game) {
                 socket.emit('disconnectfailed', res)
         })
 
-        socket.on('ready', () => {
-            console.log(`Received ready from ${username}`)
+        socket.on('ready', ({ ready }) => {
+            console.log(`Received 'ready: ${ready}' from ${username}`)
 
-            let res = Game.onReady(username)
+            let res = Game.onReady(username, ready)
             if (res.success)
                 sio.emit('playerready', res)
             else

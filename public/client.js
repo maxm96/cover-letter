@@ -45,24 +45,24 @@ socket.on('playerdisconnect', function ({ username }) {
     removePlayerFromReadyBoard(username)
 })
 
-socket.on('playerready', function ({ username, gameState }) {
+socket.on('playerready', function ({ username, ready, gameState }) {
     let playerIndex = clientState.players.findIndex(p => p.username === username)
     if (playerIndex < 0)
         return
 
-    clientState.players[playerIndex]['isReady'] = true
+    clientState.players[playerIndex]['isReady'] = ready
+
+    // Update ready text
+    document.getElementById(`ready-table-ready-${username}`).innerText = ready ? 'Yes' : 'No'
 
     if (gameState !== clientState.gameState) {
         clientState.gameState = gameState
         // TODO: handle state transitions
     }
-
-    // Update ready text
-    document.getElementById(`ready-table-ready-${username}`).innerText = 'Yes'
 })
 
 // ---- Listeners ---- //
 const readyBtn = document.getElementById('ready-btn')
-readyBtn.addEventListener('click', function () {
-    socket.emit('ready')
+readyBtn.addEventListener('click', function (e) {
+    socket.emit('ready', { ready: e.target.checked })
 })

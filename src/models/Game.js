@@ -98,22 +98,27 @@ module.exports = class Game
     /**
      * Set a player's ready status to true and check if all players are ready.
      * @param {string} username
+     * @param {Boolean} ready
      * @return {Object}
      */
-    onReady(username) {
-        if (this.state !== GameStates.WAITING)
+    onReady(username, ready) {
+        if (ready && this.state !== GameStates.WAITING)
             return { success: false, message: 'Not in waiting state.' }
+        else if (!ready && (this.state !== GameStates.WAITING || this.state !== GameStates.COUNTDOWN))
+            return { success: false, message: 'Game is not in a valid state.' }
 
         let playerIndex = this.getPlayerIndex(username)
         if (playerIndex < 0)
             return { success: false, message: `Unknown user ${username}.` }
 
-        this.players[playerIndex].ready = true
+        this.players[playerIndex].ready = ready
 
         if (this.players.every(p => p.ready))
-            this.state = GameStates.GAMEPLAY
+            this.state = GameStates.COUNTDOWN
+        else
+            this.state = GameStates.WAITING
 
-        return { success: true, username: username, gameState: this.state }
+        return { success: true, username: username, ready: ready, gameState: this.state }
     }
 
     /**
