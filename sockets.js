@@ -12,12 +12,16 @@ module.exports = function (sio, Game) {
         // One time connection
         let res = Game.onConnection(username)
         if (res.success) {
+            console.log(`Accepted connection from ${username}`)
+
             // Broadcast to other clients that a new person has joined
             socket.broadcast.emit('playerconnection', res)
 
             // Send the list of players and game state to the new client
             socket.emit('curstate', Game.clientState())
         } else {
+            console.log(`Rejected connection from ${username}`)
+
             socket.emit('connectionfailed', res)
         }
 

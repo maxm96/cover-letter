@@ -28,6 +28,35 @@ function removePlayerFromReadyBoard(playerName) {
     document.getElementById('ready-board').deleteRow(row.rowIndex)
 }
 
+// Used to show an error message and hide the rest of the page (i.e. for connection failure)
+function showErrorMessage(message) {
+    let errorMessage = document.getElementById('error-message')
+
+    errorMessage.innerText = message
+    errorMessage.style.display = 'block'
+
+    // Hide lobby and game board UI
+    let lobby = document.getElementById('lobby')
+    let gameBoard = document.getElementById('game-board')
+
+    lobby.style.display = 'none'
+    gameBoard.style.display = 'none'
+}
+
+// Flashes a message on the screen for a failed action (i.e. ready failed)
+function flashErrorMessage(message) {
+    let errorMessage = document.getElementById('error-message')
+
+    errorMessage.innerText = message
+    errorMessage.style.display = 'block'
+
+    // Hide message after 5 seconds
+    setTimeout(() => {
+        errorMessage.innerText = ''
+        errorMessage.style.display = 'none'
+    }, 5000)
+}
+
 // ---- Socket events ---- //
 // This is the initial message from the server
 socket.on('curstate', function (curState) {
@@ -59,6 +88,14 @@ socket.on('playerready', function ({ username, ready, gameState }) {
         clientState.gameState = gameState
         // TODO: handle state transitions
     }
+})
+
+socket.on('connectionfailed', function ({ message }) {
+    showErrorMessage(message)
+})
+
+socket.on('readyfailed', function ({ message }) {
+    flashErrorMessage(message)
 })
 
 // ---- Listeners ---- //
