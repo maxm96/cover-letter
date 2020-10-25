@@ -96,7 +96,7 @@ module.exports = class Game
     }
 
     /**
-     * Set a player's ready status to true and check if all players are ready.
+     * Set a player's ready status to ready and check if all players are ready.
      * @param {string} username
      * @param {Boolean} ready
      * @return {Object}
@@ -119,24 +119,6 @@ module.exports = class Game
             this.state = GameStates.WAITING
 
         return { success: true, username: username, ready: ready, gameState: this.state }
-    }
-
-    /**
-     * Set a player's ready status to false.
-     * @param {string} username
-     * @return {Object}
-     */
-    onUnready(username) {
-        if (this.state !== GameStates.WAITING || this.state !== GameStates.COUNTDOWN)
-            return { success: false, message: 'Game is not in a valid state to unready.' }
-
-        let playerIndex = this.getPlayerIndex(username)
-        if (playerIndex < 0)
-            return { success: false, message: `Unknown user ${username}.` }
-
-        this.players[playerIndex].ready = false
-
-        return this.clientState({ success: true })
     }
 
     createLog() {

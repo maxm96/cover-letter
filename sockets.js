@@ -40,15 +40,5 @@ module.exports = function (sio, Game) {
             else
                 socket.emit('readyfailed', res)
         })
-
-        socket.on('unready', () => {
-            console.log(`Received unready from ${username}`)
-
-            let res = Game.onUnready(username)
-            if (res.success)
-                sio.emit('playerunready', res)
-            else
-                socket.emit('unreadyfailed', res)
-        })
     })
 }
