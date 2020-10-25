@@ -26,6 +26,13 @@
 	margin-top: 15px;
 }
 
+#countdown {
+	display: none;
+	text-align: center;
+	margin-top: 15px;
+	font-size: 1.8em;
+}
+
 #game-board {
 	display: none;
 }

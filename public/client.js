@@ -5,9 +5,12 @@ let clientState = {
     players: [],
 }
 
+// Keep track of the countdown interval
+let countdownHandle = null
+
 // ---- UI functions ---- //
 function addPlayerToReadyBoard(playerName, ready = false) {
-    let table = document.getElementById('ready-board')
+    let table = document.getElementById('ready-board').getElementsByTagName('tbody')[0]
     let row = table.insertRow(-1)
     let usernameCell = row.insertCell(0)
     let readyCell = row.insertCell(1)
@@ -57,6 +60,85 @@ function flashErrorMessage(message) {
     }, 5000)
 }
 
+// Hide lobby UI, show game board UI
+function gameplayTransition() {
+    let lobby = document.getElementById('lobby')
+    lobby.style.display = 'none'
+
+    let gameBoard = document.getElementById('game-board')
+    gameBoard.style.display = 'block'
+}
+
+// Hide game board UI, show lobby UI
+function waitingTransition() {
+    let lobby = document.getElementById('lobby')
+
+    // Transitioning from a game state to waiting, show table and update ready statuses
+    if (lobby.style.display === 'none') {
+        lobby.style.display = 'block'
+
+        // Reset ready table tbody
+        let oldBody = document.querySelector('tbody')
+        let newBody = document.createElement('tbody')
+        oldBody.parentNode.replaceChild(newBody, oldBody)
+
+        // Reset ready statuses
+        clientState.players = clientState.players.map(p => ({ username: p.username, isReady: false }))
+
+        // Repopulate table
+        clientState.players.forEach(p => addPlayerToReadyBoard(p.username, p.isReady))
+    }
+
+    // Just hide the game board
+    document.getElementById('game-board').style.display = 'none'
+}
+
+function startCountdown() {
+    let countdown = document.getElementById('countdown')
+    let count = 5
+
+    countdown.style.display = 'block'
+    countdown.innerText = String(count)
+
+    // Update the countdown every second with an decremented count
+    return setInterval(() => {
+        if (--count < 0)
+            return
+
+        countdown.innerText = String(count)
+    }, 1000)
+}
+
+function hideCountdown() {
+    document.getElementById('countdown').style.display = 'none'
+}
+
+// ---- Utils ---- //
+function handleStateChange(state) {
+    // Just clear the countdown interval on each state change
+    if (countdownHandle !== null) {
+        clearInterval(countdownHandle)
+        countdownHandle = null
+
+        hideCountdown()
+    }
+
+    switch (state) {
+        case 'w':
+            // Transition to waiting UI
+            waitingTransition()
+            break
+        case 'c':
+            countdownHandle = startCountdown()
+            break
+        case 'g':
+            gameplayTransition()
+            break
+        default:
+            console.log(`Unknown state change: ${state}`)
+    }
+}
+
 // ---- Socket events ---- //
 // This is the initial message from the server
 socket.on('curstate', function (curState) {
@@ -86,14 +168,13 @@ socket.on('playerready', function ({ username, ready, gameState }) {
 
     if (gameState !== clientState.gameState) {
         clientState.gameState = gameState
-        // TODO: handle state transitions
+        handleStateChange(clientState.gameState)
     }
 })
 
 socket.on('statechange', function ({ state }) {
-    console.log('state change:', state)
     clientState.gameState = state
-    // do something on state change
+    gameplayTransition()
 })
 
 socket.on('connectionfailed', function ({ message }) {
