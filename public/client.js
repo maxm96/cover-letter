@@ -119,10 +119,10 @@ function handleStateChange(state) {
     if (countdownHandle !== null) {
         clearInterval(countdownHandle)
         countdownHandle = null
-
         hideCountdown()
     }
 
+    // TODO: figure out how to import the GameStates module
     switch (state) {
         case 'w':
             // Transition to waiting UI
