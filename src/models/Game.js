@@ -92,7 +92,7 @@ module.exports = class Game
             this.players = this.players.filter(p => p.username !== username)
         }
 
-        return this.clientState({ success: true })
+        return { success: true, username: username }
     }
 
     /**

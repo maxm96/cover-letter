@@ -18,8 +18,14 @@ function addPlayerToReadyBoard(playerName, ready = false) {
     readyCell.appendChild(readyText)
 
     // Give the new cells id's so I can easily change the text later
+    row.id = `ready-table-row-${playerName}`
     usernameCell.id = `ready-table-username-${playerName}`
     readyCell.id = `ready-table-ready-${playerName}`
+}
+
+function removePlayerFromReadyBoard(playerName) {
+    let row = document.getElementById(`ready-table-row-${playerName}`)
+    document.getElementById('ready-board').deleteRow(row.rowIndex)
 }
 
 // ---- Socket events ---- //
@@ -32,6 +38,11 @@ socket.on('curstate', function (curState) {
 socket.on('playerconnection', function (payload) {
     clientState.players.push(payload)
     addPlayerToReadyBoard(payload.username, payload.isReady)
+})
+
+socket.on('playerdisconnect', function ({ username }) {
+    clientState.players = clientState.players.filter(p => p.username !== username)
+    removePlayerFromReadyBoard(username)
 })
 
 socket.on('playerready', function ({ username, gameState }) {
