@@ -11,10 +11,15 @@ module.exports = function (sio, Game) {
 
         // One time connection
         let res = Game.onConnection(username)
-        if (res.success)
-            sio.emit('playerconnection', res)
-        else
+        if (res.success) {
+            // Broadcast to other clients that a new person has joined
+            socket.broadcast.emit('playerconnection', res)
+
+            // Send the list of players and game state to the new client
+            socket.emit('curstate', Game.clientState())
+        } else {
             socket.emit('connectionfailed', res)
+        }
 
         socket.on('disconnect', () => {
             console.log(`Received disconnect from ${username}`)

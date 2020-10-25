@@ -27,10 +27,10 @@ module.exports = class Game
     /**
      * Creates an object to emit to clients. If in waiting state, only send usernames and ready status.
      * If in Gameplay state, send a bit more player information as well as the game log.
-     * @param addendum
+     * @param {Object|null} addendum
      * @return {any}
      */
-    clientState(addendum) {
+    clientState(addendum = null) {
         let stateObj = {}
 
         switch (this.state) {
@@ -52,7 +52,7 @@ module.exports = class Game
                 break
         }
 
-        return Object.assign(addendum, stateObj)
+        return addendum ? Object.assign(addendum, stateObj) : stateObj
     }
 
     /**
@@ -69,8 +69,11 @@ module.exports = class Game
         if (this.players.length === 4)
             return { success: false, message: 'Maximum number of players has been reached.' }
 
-        this.players.push(new Player(username))
-        return this.clientState({ success: true })
+        let player = new Player(username)
+
+        this.players.push(player)
+
+        return { success: true, username: player.username, isReady: player.isReady }
     }
 
     /**
@@ -110,7 +113,7 @@ module.exports = class Game
         if (this.players.every(p => p.ready))
             this.state = GameStates.GAMEPLAY
 
-        return this.clientState({ success: true })
+        return { success: true, username: username, gameState: this.state }
     }
 
     /**

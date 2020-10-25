@@ -2,8 +2,35 @@ doctype html
 html
     head
         meta(charset="UTF-8")
+        link(href="/public/main.css" rel="stylesheet")
+        link(href="/public/game.css" rel="stylesheet")
         title Home
     body
-        h1 Hello #{username}!
+        div(id="lobby")
+            table(id="ready-board")
+                thead
+                    tr
+                        th(id="username") Username
+                        th(id="is-ready") Ready
+                tbody
+
+            button(id="ready-btn" type="button") Ready
+        div(id="game-board")
+            div(id="navbar")
+                span #{username}
+
+            div(id="top-bar")
+                div(id="scoreboard")
+                div(id="log")
+
+            div(id="notifications")
+                span(id="timer") 2:00
+                span(id="spinner") Spinner here
+
+            div(id="opponents")
+
+            div(id="user-area")
+                div(id="deck")
+                div(id="user-cards")
     script(src="/socket.io/socket.io.js")
     script(src="/public/client.js")

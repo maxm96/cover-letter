@@ -1,0 +1,65 @@
+#lobby {
+	text-align: center;
+}
+
+#ready-board {
+	text-align: left;
+	margin: 0 auto;
+	min-width: 220px; /* Just long enough for a 16 character username */
+}
+
+#ready-board tr > td {
+	padding: 5px;
+}
+
+#ready-board tr:nth-of-type(even) {
+	background-color: #33363a;
+	color: white;
+}
+
+#ready-btn {
+	margin-top: 15px;
+}
+
+#game-board {
+	display: none;
+}
+
+#navbar {
+	background-color: lightgray;
+	width: 100%;
+	height: 3em;
+}
+
+#navbar span {
+	float: right;
+	padding: 5px 15px 5px 5px;
+	font-size: 1.8em;
+}
+
+#top-bar {
+	display: flex;
+	width: 100%;
+	height: 100px;
+}
+
+#scoreboard {
+	flex: 1;
+	border: 1px red solid;
+}
+
+#log {
+	flex: 2;
+	border: 1px blue solid;
+}
+
+#notifications {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+#notifications span {
+	padding: 5px 10px;
+	font-size: 1.6em;
+}
