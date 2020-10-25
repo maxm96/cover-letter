@@ -69,6 +69,10 @@ module.exports = class Game
         if (this.players.length === 4)
             return { success: false, message: 'Maximum number of players has been reached.' }
 
+        let playerIndex = this.getPlayerIndex(username)
+        if (playerIndex > -1)
+            return { success: false, message: 'Username already exists.' }
+
         let player = new Player(username)
 
         this.players.push(player)
@@ -82,17 +86,22 @@ module.exports = class Game
      * @return {Object}
      */
     onDisconnect(username) {
-        if (this.state === GameStates.GAMEPLAY) {
-            let playerIndex = this.getPlayerIndex(username)
-            if (playerIndex < 0)
-                return { success: false, message: `Unknown user ${username}.` }
+        // Sanity check
+        let playerIndex = this.getPlayerIndex(username)
+        if (playerIndex < 0)
+            return { success: false, message: `Unknown user ${username}` }
 
+        if (this.state === GameStates.GAMEPLAY)
             this.players[playerIndex].disconnected = true
-        } else {
+        else {
             this.players = this.players.filter(p => p.username !== username)
+
+            // Cancel the countdown if someone gets disconnected
+            if (this.state === GameStates.COUNTDOWN)
+                this.state = GameStates.WAITING
         }
 
-        return { success: true, username: username }
+        return { success: true, username: username, state: this.state }
     }
 
     /**
@@ -104,7 +113,8 @@ module.exports = class Game
     onReady(username, ready) {
         if (ready && this.state !== GameStates.WAITING)
             return { success: false, message: 'Not in waiting state.' }
-        else if (!ready && (this.state !== GameStates.WAITING || this.state !== GameStates.COUNTDOWN))
+        // Can't toggle ready if game is in progress
+        else if (!ready && this.state === GameStates.GAMEPLAY)
             return { success: false, message: 'Game is not in a valid state.' }
 
         let playerIndex = this.getPlayerIndex(username)
