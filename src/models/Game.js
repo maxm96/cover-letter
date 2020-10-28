@@ -152,11 +152,15 @@ module.exports = class Game
         if (this.players.length === 4)
             return { success: false, message: 'Maximum number of players has been reached.' }
 
-        let player = new Player(username)
-
-        this.players.push(player)
-
-        return { success: true, username: player.username, isReady: player.isReady }
+        // Prevent duplicate usernames being created from someone making new tabs.
+        // Also don't want to broadcast a join if the user is already technically joined.
+        if (!this.players.map(p => p.username).includes(username)) {
+            let player = new Player(username)
+            this.players.push(player)
+            return { success: true, username: username, isReady: false }
+        }
+        
+        return { success: true }
     }
 
     /**
