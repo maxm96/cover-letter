@@ -1,4 +1,4 @@
-class SalariedWorker extends Card
+module.exports = class SalariedWorker extends Card
 {
     constructor() {
         super(

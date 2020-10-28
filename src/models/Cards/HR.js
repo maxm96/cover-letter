@@ -1,4 +1,4 @@
-class HR extends Card
+module.exports = class HR extends Card
 {
     constructor() {
         super(

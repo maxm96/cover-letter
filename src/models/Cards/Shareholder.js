@@ -1,4 +1,4 @@
-class Shareholder extends Card
+module.exports = class Shareholder extends Card
 {
     constructor() {
         super(

@@ -1,4 +1,4 @@
-class Wagie extends Card
+module.exports = class Wagie extends Card
 {
     constructor() {
         super(
@@ -11,7 +11,7 @@ class Wagie extends Card
 
     /**
      * If the guess matches the victim's card, the victim is out.
-     * @param {Player} victim
+     * @param victim
      * @param {string} guess
      * @return {Player} victim The modified victim
      */

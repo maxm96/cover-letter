@@ -1,4 +1,4 @@
-class CEO extends Card
+module.exports = class CEO extends Card
 {
     constructor() {
         super(

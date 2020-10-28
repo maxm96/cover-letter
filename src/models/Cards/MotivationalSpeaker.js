@@ -1,4 +1,4 @@
-class MotivationalSpeaker extends Card
+module.exports = class MotivationalSpeaker extends Card
 {
     constructor() {
         super(

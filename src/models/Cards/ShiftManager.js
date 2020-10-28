@@ -1,4 +1,4 @@
-class ShiftManager extends Card
+module.exports = class ShiftManager extends Card
 {
     constructor() {
         super(
