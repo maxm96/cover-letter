@@ -3,6 +3,7 @@ const socket = io()
 let clientState = {
     gameState: null,
     players: [],
+    hand: []
 }
 
 // Keep track of the countdown interval

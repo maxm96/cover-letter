@@ -11,6 +11,8 @@ const Cards = {
     'Shareholder': require('./Cards/Shareholder')
 }
 
+const shuffle = require('../utils/shuffle')
+
 module.exports = class Game
 {
     constructor(socketHandle = null) {
@@ -26,6 +28,8 @@ module.exports = class Game
         this.timeoutHandle = null
         this.playerTurn = null
         this.currentRound = 0
+        this.scores = {}
+        this.lastWinner = null // Set this when someone wins a round so they can go first on the next round
     }
 
     getPlayerIndex(username) {
@@ -40,6 +44,37 @@ module.exports = class Game
             acc.push(newObj)
             return acc
         }, [])
+    }
+
+    /**
+     * Reset to parts of game state done at the start of each round, also runs at the beginning of each game.
+     * Things to be reset each round:
+     *  - deck
+     *  - current round
+     *  - player is* properties
+     */
+    roundReset() {
+        this.initDeck()
+        this.currentRound = 0
+        this.players.forEach((p) => {
+            p.isOut = false
+            p.isProtected = false
+        })
+    }
+
+    /**
+     * Reset gameplay state.
+     * Things to be reset each game:
+     *  - things that need to be reset each round
+     *  - last winner
+     *  - scores
+     *  - log
+     */
+    gameReset() {
+        this.roundReset()
+        this.lastWinner = null
+        this.scores = this.players.map(p => ({ [p.username]: 0 }))
+        this.log = []
     }
 
     changeState(state) {
@@ -59,8 +94,27 @@ module.exports = class Game
         }
 
         if (state === GameStates.GAMEPLAY) {
-            // Need some way to broadcast game start from here
-            this.socketHandle.emit('statechange', { state: this.state })
+            // Init the gameplay state
+            this.gameReset()
+            this.playerTurn = this.players[0].username // Just let the first person go first. TODO: pick a random person
+
+            // Deal a card to everyone
+            this.players.forEach((p) => {
+                let nextCard = new Cards[this.deck.pop()]()
+                p.hand.push(nextCard)
+            })
+
+            // Deal a second one to the first person
+            let secondCard = new Cards[this.deck.pop()]()
+            this.players[0].hand.push(secondCard)
+
+            // For now just emit all player's hand on the state change. I actually don't think I can send each individual
+            // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
+            // socket event on the client side.
+            let playerHands = {}
+            this.players.forEach(p => playerHands[p.username] = p.hand.map(h => h.name))
+
+            this.socketHandle.emit('statechange', { state: this.state, playerHands: playerHands })
         }
     }
 
@@ -95,6 +149,10 @@ module.exports = class Game
         return addendum ? Object.assign(addendum, stateObj) : stateObj
     }
 
+    /**
+     * Create an array of shuffled card names. The number of each card
+     * added to the deck is determined by the count property.
+     */
     initDeck() {
         // Create an array of card names, with the name duplicated count times
         let deck = []
@@ -105,25 +163,7 @@ module.exports = class Game
         })
 
         // Give it a good shuffle
-        this.deck = this.shuffle(deck)
-    }
-
-    /**
-     * "Randomly" shuffle an array. https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
-     * @param {Array} arr
-     * @return {Array}
-     */
-    shuffle(arr) {
-        let j, temp
-
-        for (let i = arr.length; i > 0; i--) {
-            j = Math.floor(Math.random() * (i + 1))
-            temp = arr[i]
-            arr[i] = arr[j]
-            arr[j] = temp
-        }
-
-        return arr
+        this.deck = shuffle(deck)
     }
 
     /**
@@ -159,7 +199,7 @@ module.exports = class Game
             this.players.push(player)
             return { success: true, username: username, isReady: false }
         }
-        
+
         return { success: true }
     }
 
@@ -214,6 +254,11 @@ module.exports = class Game
         return { success: true, username: username, ready: ready, gameState: this.state }
     }
 
+    /**
+     * This method applies a card's effect on the game. It's a big boy.
+     * @param action
+     * @return {{success: boolean, update: {applyTo: string | T, properties: {isOut: boolean}}}|{success: boolean, update: null}|{success: boolean, hand: *}|{success: boolean, update: {applyTo: string | T, properties: {isProtected: boolean}}}|{success: boolean, message: string}|{success: boolean, message: string}|{victimIndex: number, success: boolean}}
+     */
     onPlayHand(action = null) {
         // Do some validation
         if (this.state !== GameStates.GAMEPLAY)
