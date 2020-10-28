@@ -1,3 +1,5 @@
+const Card = require('../Card')
+
 module.exports = class SalariedWorker extends Card
 {
     constructor() {

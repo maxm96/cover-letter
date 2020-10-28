@@ -1,4 +1,4 @@
-class Card
+module.exports = class Card
 {
     constructor(name, description, count, number, requiresVictim = true) {
         this.name = name

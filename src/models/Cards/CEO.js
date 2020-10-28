@@ -1,3 +1,5 @@
+const Card = require('../Card')
+
 module.exports = class CEO extends Card
 {
     constructor() {
