@@ -12,7 +12,6 @@ module.exports = function (sio, Game) {
         // One time connection
         let res = Game.onConnection(username)
         if (res.success) {
-            console.log(res)
             // The username will not be set if the user is technically already joined. This happens via new tab.
             if (res.username) {
                 // Broadcast to other clients that a new person has joined
