@@ -5,7 +5,8 @@ module.exports = class RecommendationLetter extends Card
             'Recommendation Letter',
             'Protection until your next turn.',
             2,
-            4
+            4,
+            false
         )
     }
 

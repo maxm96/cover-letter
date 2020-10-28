@@ -11,8 +11,8 @@ module.exports = class MotivationalSpeaker extends Card
 
     /**
      * Swap hands.
-     * @param {Player} player
-     * @param {Player} victim
+     * @param player
+     * @param victim
      * @return {Array} A tuple of (modified_player, modified_victim)
      */
     apply(player, victim) {

@@ -96,4 +96,69 @@ describe('Game', function () {
             assert(res.gameState === GameStates.WAITING)
         })
     })
+
+    describe('onPlayHand', function () {
+        const Game = new G()
+        Game.onConnection('someuser1')
+        Game.onConnection('someuser2')
+
+        it('should fail if not in gameplay state', function () {
+            let res = Game.onPlayHand({})
+            assert(!res.success)
+        })
+
+        it('should fail if not given a proper action', function () {
+            Game.changeState(GameStates.GAMEPLAY)
+
+            let res = Game.onPlayHand({})
+            assert(!res.success)
+        })
+
+        it('should fail if given an invalid target', function () {
+
+        })
+
+        it('should fail if not user\'s turn', function () {
+
+        })
+
+        it('should properly apply the Wagie card', function () {
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'Wagie',
+                victim: 'someuser2',
+                guess: 'CEO'
+            })
+
+            assert(res.success)
+        })
+
+        it('should properly apply the HR card', function () {
+
+        })
+
+        it('should properly apply the Shift Manager card', function () {
+
+        })
+
+        it('should properly apply the Recommendation Letter card', function () {
+
+        })
+
+        it('should properly apply the Salaried Worker card', function () {
+
+        })
+
+        it('should properly apply the Motivational Speaker card', function () {
+
+        })
+
+        it('should properly apply the CEO card', function () {
+
+        })
+
+        it('should properly apply the Shareholder card', function () {
+
+        })
+    })
 })

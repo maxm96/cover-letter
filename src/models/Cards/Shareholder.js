@@ -5,7 +5,8 @@ module.exports = class Shareholder extends Card
             'Shareholder',
             'Lose if discarded.',
             1,
-            8
+            8,
+            false
         )
     }
 
