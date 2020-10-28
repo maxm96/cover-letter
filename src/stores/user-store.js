@@ -20,9 +20,14 @@ function isActive(username) {
     return UserStore[username] ? UserStore[username]['active'] : false
 }
 
+function userExists(username) {
+    return Object.keys(UserStore).includes(username)
+}
+
 module.exports = {
     addUser,
     setActive,
     setInactive,
-    isActive
+    isActive,
+    userExists
 }
