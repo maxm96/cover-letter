@@ -3,10 +3,10 @@ Player = require('./Player')
 const Cards = {
     'Wagie': require('./Cards/Wagie'),
     'HR': require('./Cards/HR'),
-    'ShiftManager': require('./Cards/ShiftManager'),
-    'RecommendationLetter': require('./Cards/RecommendationLetter'),
-    'SalariedWorker': require('./Cards/SalariedWorker'),
-    'MotivationalSpeaker': require('./Cards/MotivationalSpeaker'),
+    'Shift Manager': require('./Cards/ShiftManager'),
+    'Recommendation Letter': require('./Cards/RecommendationLetter'),
+    'Salaried Worker': require('./Cards/SalariedWorker'),
+    'Motivational Speaker': require('./Cards/MotivationalSpeaker'),
     'CEO': require('./Cards/CEO'),
     'Shareholder': require('./Cards/Shareholder')
 }
@@ -106,7 +106,7 @@ module.exports = class Game
 
             // Deal a second one to the first person
             let cardKey = this.deck.pop()
-            this.players[0].hand.push(new Cards[cardKey]())
+            this.players[0].hand.push(new (Cards[cardKey])())
 
             // For now just emit all player's hand on the state change. I actually don't think I can send each individual
             // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
@@ -114,7 +114,11 @@ module.exports = class Game
             let playerHands = {}
             this.players.forEach(p => playerHands[p.username] = p.hand.map(h => h.name))
 
-            this.socketHandle.emit('statechange', { state: this.state, playerHands: playerHands })
+            this.socketHandle.emit('statechange', {
+                state: this.state,
+                playerHands: playerHands,
+                playerTurn: this.playerTurn
+            })
         }
     }
 
@@ -159,6 +163,7 @@ module.exports = class Game
         Object.keys(Cards).forEach((cardKey) => {
             let card = new Cards[cardKey]()
             for (let i = 0; i < card.count; i++)
+                // Remove card name spaces
                 deck.push(card.name)
         })
 
@@ -313,7 +318,7 @@ module.exports = class Game
                 // players, so I'll just return the victim's hand.
                 return { success: true, hand: victimHand }
 
-            case 'ShiftManager':
+            case 'Shift Manager':
                 let player = this.players[playerIndex]
                 let victim = this.players[victimIndex]
 
@@ -338,7 +343,7 @@ module.exports = class Game
                     }
                 }
 
-            case 'RecommendationLetter':
+            case 'Recommendation Letter':
                 // Protection will last until the player's next turn
                 this.players[playerIndex] = playedCard.apply(this.players[playerIndex], this.currentRound + 1)
 
@@ -352,7 +357,7 @@ module.exports = class Game
                     }
                 }
 
-            case 'SalariedWorker':
+            case 'Salaried Worker':
                 this.players[victimIndex] = playedCard.apply(this.players[victimIndex])
                 return {
                     success: true,
@@ -364,7 +369,7 @@ module.exports = class Game
                     }
                 }
 
-            case 'MotivationalSpeaker':
+            case 'Motivational Speaker':
                 let modifiedPlayers = playedCard.apply(this.players[playerIndex], this.players[victimIndex])
                 this.players[playerIndex] = modifiedPlayers[0]
                 this.players[victimIndex] = modifiedPlayers[1]

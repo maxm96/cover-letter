@@ -1,9 +1,14 @@
 const socket = io()
 
+// This is the user's username
+const clientUsername = document.querySelector('#client_username').value
+
 let clientState = {
     gameState: null,
     players: [],
-    hand: []
+    hand: [],
+    playerTurn: null,
+    scores: null
 }
 
 // Keep track of the countdown interval
@@ -115,7 +120,7 @@ function hideCountdown() {
 }
 
 // ---- Utils ---- //
-function handleStateChange(state) {
+function handleStateChange(state, options) {
     // Just clear the countdown interval on each state change
     if (countdownHandle !== null) {
         clearInterval(countdownHandle)
@@ -123,7 +128,6 @@ function handleStateChange(state) {
         hideCountdown()
     }
 
-    // TODO: figure out how to import the GameStates module
     switch (state) {
         case 'w':
             // Transition to waiting UI
@@ -133,6 +137,17 @@ function handleStateChange(state) {
             countdownHandle = startCountdown()
             break
         case 'g':
+            // Get our first dealt hand
+            if (options.playerHands)
+                clientState.hand = options.playerHands[clientUsername]
+            // Get the player whose turn it is
+            if (options.playerTurn)
+                clientState.playerTurn = options.playerTurn
+
+            // Reset the scores object
+            clientState.scores = clientState.players.map((p) => ({ [p.username]: 0 }))
+
+            // Transition the UI
             gameplayTransition()
             break
         default:
@@ -173,9 +188,11 @@ socket.on('playerready', function ({ username, ready, gameState }) {
     }
 })
 
-socket.on('statechange', function ({ state }) {
-    clientState.gameState = state
-    gameplayTransition()
+socket.on('statechange', function ({ state, playerHands, playerTurn }) {
+    handleStateChange(state, {
+        playerHands: playerHands,
+        playerTurn: playerTurn
+    })
 })
 
 socket.on('connectionfailed', function ({ message }) {

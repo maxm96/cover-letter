@@ -4,15 +4,6 @@ const GameStates = require('../src/models/GameStates')
 
 const Player = require('../src/models/Player')
 
-const Wagie = require('../src/models/Cards/Wagie')
-const HR = require('../src/models/Cards/HR')
-const ShiftManager = require('../src/models/Cards/ShiftManager')
-const RecommendationLetter = require('../src/models/Cards/RecommendationLetter')
-const SalariedWorker = require('../src/models/Cards/SalariedWorker')
-const MotivationalSpeaker = require('../src/models/Cards/MotivationalSpeaker')
-const CEO = require('../src/models/Cards/CEO')
-const Shareholder = require('../src/models/Cards/Shareholder')
-
 describe('Game', function () {
     describe('onConnection', function () {
         const Game = new G()
@@ -194,11 +185,11 @@ describe('Game', function () {
         it('should properly apply the Shift Manager card', function () {
             Game.playerTurn = 'someuser1'
             Game.dealCard('someuser1', 'HR')
-            Game.dealCard('someuser2', 'MotivationalSpeaker')
+            Game.dealCard('someuser2', 'Motivational Speaker')
 
             let res = Game.onPlayHand({
                 player: 'someuser1',
-                card: 'ShiftManager',
+                card: 'Shift Manager',
                 victim: 'someuser2'
             })
 
@@ -213,7 +204,7 @@ describe('Game', function () {
 
             res = Game.onPlayHand({
                 player: 'someuser1',
-                card: 'ShiftManager',
+                card: 'Shift Manager',
                 victim: 'someuser2'
             })
 
@@ -227,7 +218,7 @@ describe('Game', function () {
 
             let res = Game.onPlayHand({
                 player: 'someuser1',
-                card: 'RecommendationLetter'
+                card: 'Recommendation Letter'
             })
 
             assert(res.success)
@@ -241,7 +232,7 @@ describe('Game', function () {
 
             let res = Game.onPlayHand({
                 player: 'someuser1',
-                card: 'SalariedWorker',
+                card: 'Salaried Worker',
                 victim: 'someuser2'
             })
 
@@ -254,7 +245,7 @@ describe('Game', function () {
 
             res = Game.onPlayHand({
                 player: 'someuser1',
-                card: 'SalariedWorker',
+                card: 'Salaried Worker',
                 victim: 'someuser2'
             })
 
@@ -271,7 +262,7 @@ describe('Game', function () {
 
             let res = Game.onPlayHand({
                 player: 'someuser1',
-                card: 'MotivationalSpeaker',
+                card: 'Motivational Speaker',
                 victim: 'someuser2'
             })
 
