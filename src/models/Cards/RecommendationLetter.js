@@ -17,8 +17,8 @@ module.exports = class RecommendationLetter extends Card
      * @param player
      * @return {Player} The modified player
      */
-    apply(player) {
-        player.isProtected = true
+    apply(player, protectedToRound) {
+        player.isProtected = protectedToRound
         return player
     }
 }

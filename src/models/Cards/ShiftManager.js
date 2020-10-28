@@ -16,7 +16,7 @@ module.exports = class ShiftManager extends Card
      * Return null if there is a tie, else return the modified loser.
      * @param player
      * @param victim
-     * @return {Player} The losing player
+     * @return {Player|null} The losing player
      */
     apply(player, victim) {
         // Get the card that is not the Shift Manager, or the second Shift Manager if the player has two

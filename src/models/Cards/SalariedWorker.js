@@ -13,7 +13,7 @@ module.exports = class SalariedWorker extends Card
 
     /**
      * Remove the card from victim, see if they are out.
-     * @param {Player} victim
+     * @param victim
      * @return {Player} The modified victim
      */
     apply(victim) {

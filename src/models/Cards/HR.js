@@ -17,6 +17,6 @@ module.exports = class HR extends Card
      * @return {Card} The victim's card
      */
     apply(victim) {
-        return victim.hand[0]
+        return victim.hand[0].name
     }
 }

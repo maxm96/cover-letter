@@ -2,6 +2,17 @@ const assert = require('assert')
 const G = require('../src/models/Game')
 const GameStates = require('../src/models/GameStates')
 
+const Player = require('../src/models/Player')
+
+const Wagie = require('../src/models/Cards/Wagie')
+const HR = require('../src/models/Cards/HR')
+const ShiftManager = require('../src/models/Cards/ShiftManager')
+const RecommendationLetter = require('../src/models/Cards/RecommendationLetter')
+const SalariedWorker = require('../src/models/Cards/SalariedWorker')
+const MotivationalSpeaker = require('../src/models/Cards/MotivationalSpeaker')
+const CEO = require('../src/models/Cards/CEO')
+const Shareholder = require('../src/models/Cards/Shareholder')
+
 describe('Game', function () {
     describe('onConnection', function () {
         const Game = new G()
@@ -115,15 +126,45 @@ describe('Game', function () {
         })
 
         it('should fail if given an invalid target', function () {
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                victim: 'nonexistent',
+                card: 'Wagie',
+                guess: 'CEO'
+            })
 
+            assert(!res.success)
         })
 
         it('should fail if not user\'s turn', function () {
+            Game.playerTurn = 'someuser2'
 
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                victim: 'someuser2',
+                card: 'Wagie',
+                guess: 'CEO'
+            })
+
+            assert(!res.success)
         })
 
         it('should properly apply the Wagie card', function () {
+            Game.playerTurn = 'someuser1'
+            Game.dealCard('someuser2', 'CEO')
+
             let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'Wagie',
+                victim: 'someuser2',
+                guess: 'HR'
+            })
+
+            assert(res.success)
+            assert(res.update.applyTo === 'someuser2')
+            assert(!res.update.properties.isOut)
+
+            res = Game.onPlayHand({
                 player: 'someuser1',
                 card: 'Wagie',
                 victim: 'someuser2',
@@ -131,34 +172,136 @@ describe('Game', function () {
             })
 
             assert(res.success)
+            assert(res.update.applyTo === 'someuser2')
+            assert(res.update.properties.isOut)
         })
 
         it('should properly apply the HR card', function () {
+            Game.playerTurn = 'someuser1'
+            Game.setIsOut('someuser2', false)
+            Game.dealCard('someuser2', 'CEO')
 
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'HR',
+                victim: 'someuser2'
+            })
+
+            assert(res.success)
+            assert(res.hand === 'CEO')
         })
 
         it('should properly apply the Shift Manager card', function () {
+            Game.playerTurn = 'someuser1'
+            Game.dealCard('someuser1', 'HR')
+            Game.dealCard('someuser2', 'MotivationalSpeaker')
 
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'ShiftManager',
+                victim: 'someuser2'
+            })
+
+            assert(res.success)
+            assert(res.update.applyTo === 'someuser1')
+            assert(res.update.properties.isOut)
+
+            Game.setIsOut('someuser1', false)
+
+            Game.dealCard('someuser1', 'HR')
+            Game.dealCard('someuser2', 'HR')
+
+            res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'ShiftManager',
+                victim: 'someuser2'
+            })
+
+            assert(res.success)
+            assert(res.update === null)
         })
 
         it('should properly apply the Recommendation Letter card', function () {
+            Game.playerTurn = 'someuser1'
+            Game.currentRound = 3
 
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'RecommendationLetter'
+            })
+
+            assert(res.success)
+            assert(res.update.applyTo === 'someuser1')
+            assert(res.update.properties.isProtected === (Game.currentRound + 1))
         })
 
         it('should properly apply the Salaried Worker card', function () {
+            Game.playerTurn = 'someuser1'
+            Game.dealCard('someuser2', 'CEO')
 
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'SalariedWorker',
+                victim: 'someuser2'
+            })
+
+            assert(res.success)
+            assert(res.update.applyTo === 'someuser2')
+            assert(!res.update.properties.isOut)
+            assert(Game.players[Game.getPlayerIndex('someuser2')].hand.length === 0)
+
+            Game.dealCard('someuser2', 'Shareholder')
+
+            res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'SalariedWorker',
+                victim: 'someuser2'
+            })
+
+            assert(res.success)
+            assert(res.update.applyTo === 'someuser2')
+            assert(res.update.properties.isOut)
         })
 
         it('should properly apply the Motivational Speaker card', function () {
+            Game.playerTurn = 'someuser1'
+            Game.setIsOut('someuser2', false)
+            Game.dealCard('someuser1', 'Wagie')
+            Game.dealCard('someuser2', 'HR')
 
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'MotivationalSpeaker',
+                victim: 'someuser2'
+            })
+
+            assert(res.success)
+            assert(res.update === null)
+
+            let someUser1Hand = Game.players[Game.getPlayerIndex('someuser1')].hand
+            let someUser2Hand = Game.players[Game.getPlayerIndex('someuser2')].hand
+
+            assert(someUser1Hand.length === 1)
+            assert(someUser2Hand.length === 1)
+            assert(someUser1Hand[0].name === 'HR')
+            assert(someUser2Hand[0].name === 'Wagie')
         })
 
         it('should properly apply the CEO card', function () {
-
+            // Not much happens for this card
         })
 
         it('should properly apply the Shareholder card', function () {
+            Game.playerTurn = 'someuser1'
 
+            let res = Game.onPlayHand({
+                player: 'someuser1',
+                card: 'Shareholder'
+            })
+
+            assert(res.success)
+            assert(res.update.applyTo === 'someuser1')
+            assert(res.update.properties.isOut)
         })
     })
 })
