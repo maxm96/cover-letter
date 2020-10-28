@@ -14,12 +14,6 @@ describe('Game', function () {
             assert(!res.isReady)
         })
 
-        it('should reject duplicate usernames', function () {
-            let res = Game.onConnection('someusername')
-
-            assert(!res.success)
-        })
-
         it('should only accept 4 users', function () {
             for (let i = 0; i < 3; i++)
                 Game.onConnection(String(i))

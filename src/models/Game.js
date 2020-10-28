@@ -96,10 +96,6 @@ module.exports = class Game
         if (this.players.length === 4)
             return { success: false, message: 'Maximum number of players has been reached.' }
 
-        let playerIndex = this.getPlayerIndex(username)
-        if (playerIndex > -1)
-            return { success: false, message: 'Username already exists.' }
-
         let player = new Player(username)
 
         this.players.push(player)

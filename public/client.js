@@ -179,6 +179,7 @@ socket.on('statechange', function ({ state }) {
 
 socket.on('connectionfailed', function ({ message }) {
     showErrorMessage(message)
+    socket.disconnect()
 })
 
 socket.on('readyfailed', function ({ message }) {
