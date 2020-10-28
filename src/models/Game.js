@@ -100,13 +100,13 @@ module.exports = class Game
 
             // Deal a card to everyone
             this.players.forEach((p) => {
-                let nextCard = new Cards[this.deck.pop()]()
-                p.hand.push(nextCard)
+                let cardKey = this.deck.pop()
+                p.hand.push(new Cards[cardKey]())
             })
 
             // Deal a second one to the first person
-            let secondCard = new Cards[this.deck.pop()]()
-            this.players[0].hand.push(secondCard)
+            let cardKey = this.deck.pop()
+            this.players[0].hand.push(new Cards[cardKey]())
 
             // For now just emit all player's hand on the state change. I actually don't think I can send each individual
             // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
@@ -156,8 +156,8 @@ module.exports = class Game
     initDeck() {
         // Create an array of card names, with the name duplicated count times
         let deck = []
-        Object.keys(Cards).forEach((cardCon) => {
-            let card = new cardCon()
+        Object.keys(Cards).forEach((cardKey) => {
+            let card = new Cards[cardKey]()
             for (let i = 0; i < card.count; i++)
                 deck.push(card.name)
         })
