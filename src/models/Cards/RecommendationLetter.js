@@ -12,7 +12,7 @@ module.exports = class RecommendationLetter extends Card
 
     /**
      * Gives player protection until their next turn.
-     * @param {Player} player
+     * @param player
      * @return {Player} The modified player
      */
     apply(player) {

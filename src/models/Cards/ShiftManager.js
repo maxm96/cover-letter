@@ -12,8 +12,8 @@ module.exports = class ShiftManager extends Card
     /**
      * If one of the player's card's number is less than the other, that player is out.
      * Return null if there is a tie, else return the modified loser.
-     * @param {Player} player
-     * @param {Player} victim
+     * @param player
+     * @param victim
      * @return {Player} The losing player
      */
     apply(player, victim) {

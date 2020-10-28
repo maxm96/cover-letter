@@ -11,7 +11,7 @@ module.exports = class HR extends Card
 
     /**
      * Let the player see the victim's card.
-     * @param {Player} victim
+     * @param victim
      * @return {Card} The victim's card
      */
     apply(victim) {

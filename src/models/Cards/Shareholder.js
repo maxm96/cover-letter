@@ -12,7 +12,7 @@ module.exports = class Shareholder extends Card
 
     /**
      * If the user plays this card they are out.
-     * @param {Player} player
+     * @param player
      * @return {Player}
      */
     apply(player) {
