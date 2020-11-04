@@ -16,12 +16,10 @@ module.exports = class SalariedWorker extends Card
      * @param victim
      * @return {Player} The modified victim
      */
-    apply(victim) {
+    apply({ victim }) {
         let victimCard = victim.hand.pop()
 
         if (victimCard.number === 8)
             victim.isOut = true
-
-        return victim
     }
 }

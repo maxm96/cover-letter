@@ -15,10 +15,8 @@ module.exports = class Shareholder extends Card
     /**
      * If the user plays this card they are out.
      * @param player
-     * @return {Player}
      */
-    apply(player) {
+    apply({ player }) {
         player.isOut = true
-        return player
     }
 }

@@ -13,13 +13,13 @@ module.exports = class Wagie extends Card
 
     /**
      * If the guess matches the victim's card, the victim is out.
+     * @param player
      * @param victim
-     * @param {string} guess
-     * @return {Player} The modified victim
+     * @param guess
+     * @return {*}
      */
-    apply(victim, guess) {
+    apply({ player, victim, guess }) {
         if (victim.hand[0].name === guess)
             victim.isOut = true
-        return victim
     }
 }

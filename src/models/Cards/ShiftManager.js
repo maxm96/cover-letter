@@ -12,26 +12,17 @@ module.exports = class ShiftManager extends Card
     }
 
     /**
-     * If one of the player's card's number is less than the other, that player is out.
-     * Return null if there is a tie, else return the modified loser.
+     * If a player has a lower card number than the other, they are out.
      * @param player
      * @param victim
-     * @return {Player|null} The losing player
      */
-    apply(player, victim) {
-        // Get the card that is not the Shift Manager, or the second Shift Manager if the player has two
-        let playerCard = player.hand[0].number === 3 ? player.hand[1] : player.hand[0]
+    apply({ player, victim }) {
+        let playerCard =  player.hand[0]
         let victimCard = victim.hand[0]
 
-        if (playerCard.number === victimCard.number)
-            return null
-
-        if (playerCard.number > victimCard.number) {
+        if (playerCard.number > victimCard.number)
             victim.isOut = true
-            return victim
-        } else {
+        else if (victimCard.number > playerCard.number)
             player.isOut = true
-            return player
-        }
     }
 }

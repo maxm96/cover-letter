@@ -15,10 +15,9 @@ module.exports = class RecommendationLetter extends Card
     /**
      * Gives player protection until their next turn.
      * @param player
-     * @return {Player} The modified player
+     * @param protectedToRound
      */
-    apply(player, protectedToRound) {
+    apply({ player, protectedToRound }) {
         player.isProtected = protectedToRound
-        return player
     }
 }

@@ -16,6 +16,5 @@ module.exports = class CEO extends Card
      * Nothing happens.
      */
     apply() {
-        return true
     }
 }
