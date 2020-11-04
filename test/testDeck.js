@@ -27,8 +27,11 @@ describe('Deck', function () {
         const Deck = new D()
 
         it('should return the next card', function () {
+            let cardCount = getCardCount()
             let card = Deck.draw()
+
             assert(card instanceof Card)
+            assert(Deck.length === cardCount - 1)
         })
 
         it('should return undefined if the deck is empty', function () {
