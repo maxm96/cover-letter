@@ -224,6 +224,8 @@ describe('Game', function () {
             assert(res.success)
             assert(!Game.players[someUser2Index].isOut)
 
+            Game._dealCard('someuser1', 'Wagie')
+
             res = Game.onPlayHand({
                 cardName: 'Wagie',
                 playerName: 'someuser1',
@@ -247,6 +249,7 @@ describe('Game', function () {
             Game.state = GameStates.GAMEPLAY
             Game.playerTurn = 'someuser1'
             Game._dealCard('someuser1', 'Shift Manager')
+            Game._dealCard('someuser1', 'CEO', false)
             Game._dealCard('someuser2', 'Wagie')
 
             let res = Game.onPlayHand({
@@ -261,6 +264,7 @@ describe('Game', function () {
 
             Game._setIsProperty('someuser2', 'isOut', false)
             Game._dealCard('someuser1', 'Shift Manager')
+            Game._dealCard('someuser1', 'Wagie', false)
             Game._dealCard('someuser2', 'CEO')
 
             res = Game.onPlayHand({
@@ -275,7 +279,8 @@ describe('Game', function () {
 
             Game._setIsProperty('someuser1', 'isOut', false)
             Game._dealCard('someuser1', 'Shift Manager')
-            Game._dealCard('someuser2', 'Shift Manager')
+            Game._dealCard('someuser1', 'Wagie', false)
+            Game._dealCard('someuser2', 'Wagie')
 
             res = Game.onPlayHand({
                 cardName: 'Shift Manager',

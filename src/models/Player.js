@@ -25,7 +25,7 @@ module.exports = class Player
             throw new Error(`No card found for ${cardName}`)
 
         let card = this.hand[cardIndex]
-        this.hand = this.hand.splice(cardIndex - 1, 1)
+        this.hand.splice(cardIndex, 1)
 
         return card
     }
