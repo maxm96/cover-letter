@@ -36,6 +36,8 @@ module.exports = class Player
      * @param victim
      * @param guess
      * @param protectedToRound
+     * @return {*} The success status of applying the card or the results
+     * of applying the card i.e. the victim's card name with HR
      */
     playCard({ cardName, victim, guess, protectedToRound }) {
         victim = victim || this
@@ -43,6 +45,6 @@ module.exports = class Player
 
         this.playedCards.push(card)
 
-        card.apply({ player: this, victim: victim, guess: guess, protectedToRound: protectedToRound })
+        return card.apply({ player: this, victim: victim, guess: guess, protectedToRound: protectedToRound })
     }
 }

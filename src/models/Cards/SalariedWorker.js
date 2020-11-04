@@ -14,12 +14,15 @@ module.exports = class SalariedWorker extends Card
     /**
      * Remove the card from victim, see if they are out.
      * @param victim
-     * @return {Player} The modified victim
+     * @return {*}
      */
     apply({ victim }) {
         let victimCard = victim.hand.pop()
+        victim.playedCards.push(victimCard)
 
         if (victimCard.number === 8)
             victim.isOut = true
+
+        return { success: true }
     }
 }

@@ -18,5 +18,6 @@ module.exports = class Shareholder extends Card
      */
     apply({ player }) {
         player.isOut = true
+        return { success: true }
     }
 }

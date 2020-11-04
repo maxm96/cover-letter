@@ -13,10 +13,14 @@ module.exports = class HR extends Card
 
     /**
      * Let the player see the victim's card.
+     * @param player
      * @param victim
-     * @return {Card} The victim's card
+     * @return {*} The victim's card
      */
-    apply({ victim }) {
-        return victim.hand[0].name
+    apply({ player, victim }) {
+        if (player.username === victim.username)
+            return { success: false, message: 'Why would you look at your own card?' }
+
+        return { success: true, victimHand: victim.hand[0].name }
     }
 }

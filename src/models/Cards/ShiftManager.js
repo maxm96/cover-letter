@@ -17,6 +17,9 @@ module.exports = class ShiftManager extends Card
      * @param victim
      */
     apply({ player, victim }) {
+        if (player.username === victim.username)
+            return { success: false, message: "You can't compare hands with yourself." }
+
         let playerCard =  player.hand[0]
         let victimCard = victim.hand[0]
 
@@ -24,5 +27,7 @@ module.exports = class ShiftManager extends Card
             victim.isOut = true
         else if (victimCard.number > playerCard.number)
             player.isOut = true
+
+        return { success: true }
     }
 }
