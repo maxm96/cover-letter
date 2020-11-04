@@ -1,5 +1,6 @@
-GameStates = require('./GameStates')
-Player = require('./Player')
+const GameStates = require('./GameStates')
+const Player = require('./Player')
+const Deck = require('./Deck')
 const Cards = {
     'Wagie': require('./Cards/Wagie'),
     'HR': require('./Cards/HR'),
@@ -10,8 +11,6 @@ const Cards = {
     'CEO': require('./Cards/CEO'),
     'Shareholder': require('./Cards/Shareholder')
 }
-
-const shuffle = require('../utils/shuffle')
 
 module.exports = class Game
 {
@@ -54,7 +53,7 @@ module.exports = class Game
      *  - player is* properties
      */
     roundReset() {
-        this.initDeck()
+        this.deck = new Deck()
         this.currentRound = 0
         this.players.forEach((p) => {
             p.isOut = false
@@ -99,14 +98,10 @@ module.exports = class Game
             this.playerTurn = this.players[0].username // Just let the first person go first. TODO: pick a random person
 
             // Deal a card to everyone
-            this.players.forEach((p) => {
-                let cardKey = this.deck.pop()
-                p.hand.push(new Cards[cardKey]())
-            })
+            this.players.forEach(p => p.hand.push(this.deck.draw()))
 
             // Deal a second one to the first person
-            let cardKey = this.deck.pop()
-            this.players[0].hand.push(new (Cards[cardKey])())
+            this.players[0].hand.push(this.deck.draw())
 
             // For now just emit all player's hand on the state change. I actually don't think I can send each individual
             // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
@@ -151,36 +146,6 @@ module.exports = class Game
         }
 
         return addendum ? Object.assign(addendum, stateObj) : stateObj
-    }
-
-    /**
-     * Create an array of shuffled card names. The number of each card
-     * added to the deck is determined by the count property.
-     */
-    initDeck() {
-        // Create an array of card names, with the name duplicated count times
-        let deck = []
-        Object.keys(Cards).forEach((cardKey) => {
-            let card = new Cards[cardKey]()
-            for (let i = 0; i < card.count; i++)
-                // Remove card name spaces
-                deck.push(card.name)
-        })
-
-        // Give it a good shuffle
-        this.deck = shuffle(deck)
-    }
-
-    /**
-     * Instantiate a card object and add it to the given player's hand.
-     * @param {string} player
-     * @param {string} card
-     */
-    dealCard(player, card) {
-        let playerIndex = this.getPlayerIndex(player)
-
-        // For now just add it as the only card
-        this.players[playerIndex].hand = [new Cards[card]()]
     }
 
     /**
