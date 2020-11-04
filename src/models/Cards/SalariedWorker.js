@@ -23,6 +23,6 @@ module.exports = class SalariedWorker extends Card
         if (victimCard.number === 8)
             victim.isOut = true
 
-        return { success: true }
+        return { success: true, log: `${victim.username} discarded ${victimCard.name}.` }
     }
 }

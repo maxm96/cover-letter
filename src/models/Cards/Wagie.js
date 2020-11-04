@@ -24,9 +24,14 @@ module.exports = class Wagie extends Card
         if (player.username === victim.username)
             return { success: false, message: "Why would you guess yourself?" }
 
-        if (victim.hand[0].name === guess)
-            victim.isOut = true
+        let log = ''
 
-        return { success: true }
+        if (victim.hand[0].name === guess) {
+            victim.isOut = true
+            log = `${player.username} correctly guessed ${victim.username}'s as ${guess}.`
+        } else
+            log = `${player.username} incorrectly guessed ${victim.username}'s as ${guess}.`
+
+        return { success: true, log: log }
     }
 }

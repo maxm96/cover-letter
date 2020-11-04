@@ -19,6 +19,6 @@ module.exports = class RecommendationLetter extends Card
      */
     apply({ player, protectedToRound }) {
         player.isProtected = protectedToRound
-        return { success: true }
+        return { success: true, log: `${player.username} is protected until the next round.` }
     }
 }

@@ -15,7 +15,7 @@ module.exports = class CEO extends Card
     /**
      * Nothing happens.
      */
-    apply() {
-        return { success: true }
+    apply({ player }) {
+        return { success: true, log: `${player.username} played the ${this.name}.` }
     }
 }

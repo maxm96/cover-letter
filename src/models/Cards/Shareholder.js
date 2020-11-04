@@ -18,6 +18,6 @@ module.exports = class Shareholder extends Card
      */
     apply({ player }) {
         player.isOut = true
-        return { success: true }
+        return { success: true, log: `${player.username} is out.` }
     }
 }

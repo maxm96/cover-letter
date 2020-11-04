@@ -24,6 +24,6 @@ module.exports = class MotivationalSpeaker extends Card
         player.hand = victim.hand
         victim.hand = temp
 
-        return { success: true }
+        return { success: true, log: `${player.username} swapped hands with ${victim.username}.` }
     }
 }

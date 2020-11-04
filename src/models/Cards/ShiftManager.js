@@ -22,12 +22,17 @@ module.exports = class ShiftManager extends Card
 
         let playerCard =  player.hand[0]
         let victimCard = victim.hand[0]
+        let log = ''
 
-        if (playerCard.number > victimCard.number)
+        if (playerCard.number > victimCard.number) {
             victim.isOut = true
-        else if (victimCard.number > playerCard.number)
+            log = `${player.username} has a larger card than ${victim.username}.`
+        } else if (victimCard.number > playerCard.number) {
             player.isOut = true
+            log = `${player.username} had a smaller card than ${victim.username}.`
+        } else
+            log = `${player.username} and ${victim.username} has identical cards.`
 
-        return { success: true }
+        return { success: true, log: log }
     }
 }

@@ -21,6 +21,10 @@ module.exports = class HR extends Card
         if (player.username === victim.username)
             return { success: false, message: 'Why would you look at your own card?' }
 
-        return { success: true, victimHand: victim.hand[0].name }
+        return {
+            success: true,
+            victimHand: victim.hand[0].name,
+            log: `${player.username} looked at ${victim.username}'s hand.`
+        }
     }
 }
