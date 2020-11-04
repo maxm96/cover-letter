@@ -224,170 +224,66 @@ module.exports = class Game
         return { success: true, username: username, ready: ready, gameState: this.state }
     }
 
-    /**
-     * This method applies a card's effect on the game. It's a big boy.
-     * @param action
-     * @return {{success: boolean, update: {applyTo: string | T, properties: {isOut: boolean}}}|{success: boolean, update: null}|{success: boolean, hand: *}|{success: boolean, update: {applyTo: string | T, properties: {isProtected: boolean}}}|{success: boolean, message: string}|{success: boolean, message: string}|{victimIndex: number, success: boolean}}
-     */
-    onPlayHand(action = null) {
+    onPlayHand({ cardName, playerName, victimName, guess }) {
         // Do some validation
         if (this.state !== GameStates.GAMEPLAY)
             return { success: false, message: 'Invalid game state.' }
-        if (!action || Object.keys(action).length === 0)
-            return { success: false, message: 'Invalid action object.' }
-        if (!action.player || this.playerTurn !== action.player)
+        if (!playerName || this.playerTurn !== playerName)
             return { success: false, message: "It is not the player's turn." }
-        if (!action.card)
+        if (!cardName)
             return { success: false, message: 'No card given.' }
 
-        // Instantiate the card that is being played
-        let playedCard = new Cards[action.card]()
+        // Make sure that the player exists
+        let playerIndex = this.getPlayerIndex(playerName)
+        if (playerIndex < 0)
+            return { success: false, message: `Unknown player ${playerName}.` }
 
-        // If the card requires a victim, validate that the victim exists, is not out, has not disconnected, etc
-        let victimIndex = null
-        if (playedCard.requiresVictim) {
-            let validate = this.validateRequireVictimAction(action.victim)
+        let player = this.players[playerIndex]
 
-            if (!validate.success)
-                return validate
+        // If given a victim name, make sure the victim exists and is not protected, out, or disconnected
+        let victim = null
+        if (victimName) {
+            let victimIndex = this.getPlayerIndex(victimName)
+            if (victimIndex < 0)
+                return { success: false, message: `Unknown player ${victimName}.` }
 
-            victimIndex = validate.victimIndex
+            victim = this.players[victimIndex]
+
+            if (victim.isOut)
+                return { success: false, message: `${victimName} is already out.` }
+            if (victim.disconnected)
+                return { success: false, message: `${victimName} was disconnected.` }
+            if (victim.isProtected >= this.currentRound)
+                return { success: false, message: `Victim has protection until round ${victim.isProtected}.` }
         }
 
-        // Get the player index
-        let playerIndex = this.getPlayerIndex(action.player)
+        // Play the card
+        player.playCard({ cardName: cardName, victim: victim, guess: guess, protectedToRound: this.currentRound + 1 })
 
-        // If a player's status is modified we'll send that to the client in an update object
-        let update = null
+        // Only one or zero players should need a new card, so order shouldn't matter
+        if (player.needsCard && !player.isOut && this.deck.length)
+            player.hand.push(this.deck.draw())
+        if (victim && victim.needsCard && !victim.isOut && this.deck.length)
+            victim.hand.push(this.deck.draw())
 
-        // TODO: include a log in the response
-        switch (action.card) {
-            case 'Wagie':
-                if (!action.guess)
-                    return { success: false, message: 'Must guess a card.' }
+        // Update player turn
 
-                this.players[victimIndex] = playedCard.apply(this.players[victimIndex], action.guess)
-                update = {
-                    applyTo: this.players[victimIndex].username,
-                    properties: {
-                        isOut: this.players[victimIndex].isOut
-                    }
-                }
+        // Broadcast updates and log
 
-                return { success: true, update: update }
-
-            case 'HR':
-                let victimHand = playedCard.apply(this.players[victimIndex])
-
-                // This card cannot cause any change in the state of the
-                // players, so I'll just return the victim's hand.
-                return { success: true, hand: victimHand }
-
-            case 'Shift Manager':
-                let player = this.players[playerIndex]
-                let victim = this.players[victimIndex]
-
-                let loser = playedCard.apply(player, victim)
-
-                // No winner, no update
-                if (loser === null)
-                    return { success: true, update: null }
-
-                // Set the correct player out
-                let loserIndex = loser.username === player.username ? playerIndex : victimIndex
-                this.players[loserIndex] = loser
-
-                // Return an update for the losing player
-                return {
-                    success: true,
-                    update: {
-                        applyTo: this.players[loserIndex].username,
-                        properties: {
-                            isOut: true
-                        }
-                    }
-                }
-
-            case 'Recommendation Letter':
-                // Protection will last until the player's next turn
-                this.players[playerIndex] = playedCard.apply(this.players[playerIndex], this.currentRound + 1)
-
-                return {
-                    success: true,
-                    update: {
-                        applyTo: this.players[playerIndex].username,
-                        properties: {
-                            isProtected: this.players[playerIndex].isProtected
-                        }
-                    }
-                }
-
-            case 'Salaried Worker':
-                this.players[victimIndex] = playedCard.apply(this.players[victimIndex])
-                return {
-                    success: true,
-                    update: {
-                        applyTo: this.players[victimIndex].username,
-                        properties: {
-                            isOut: this.players[victimIndex].isOut
-                        }
-                    }
-                }
-
-            case 'Motivational Speaker':
-                let modifiedPlayers = playedCard.apply(this.players[playerIndex], this.players[victimIndex])
-                this.players[playerIndex] = modifiedPlayers[0]
-                this.players[victimIndex] = modifiedPlayers[1]
-
-                return { success: true, update: null }
-
-            case 'CEO':
-                // Not much to do here
-                return { success: true, update: null }
-
-            case 'Shareholder':
-                this.players[playerIndex] = playedCard.apply(this.players[playerIndex])
-                return {
-                    success: true,
-                    update: {
-                        applyTo: this.players[playerIndex].username,
-                        properties: {
-                            isOut: this.players[playerIndex].isOut
-                        }
-                    }
-                }
-
-            default:
-                return { success: false, message: 'Unknown card.' }
-        }
-    }
-
-    /**
-     * Make sure the given victim exists, isn't out, isn't disconnected, and doesn't have protection.
-     * @param victim
-     * @return {{success: boolean, message: string}|{victimIndex: number, success: boolean}}
-     */
-    validateRequireVictimAction(victim) {
-        if (!victim)
-            return { success: false, message: 'Played card requires a victim.' }
-
-        let victimIndex = this.getPlayerIndex(victim)
-        if (victimIndex < 0)
-            return { success: false, message: `Unknown victim ${victim}.` }
-
-        if (this.players[victimIndex].isOut)
-            return { success: false, message: 'Victim is already out.' }
-        if (this.players[victimIndex].disconnected)
-            return { success: false, message: 'Victim was disconnected.' }
-        if (this.players[victimIndex].isProtected)
-            return { success: false, message: 'Victim has protection.' }
-
-        return { success: true, victimIndex: victimIndex }
+        return { success: true }
     }
 
     // ---- Test functions ---- //
-    setIsOut(player, isOut) {
-        this.players[this.getPlayerIndex(player)].isOut = isOut
+    _setIsProperty(player, property, value) {
+        this.players[this.getPlayerIndex(player)][property] = value
+    }
+
+    // Create a card from the Cards object and give it to the given player. Only use for tests.
+    _dealCard(player, cardName, reset = true) {
+        if (reset)
+            this.players[this.getPlayerIndex(player)].hand = [new (Cards[cardName])()]
+        else
+            this.players[this.getPlayerIndex(player)].hand.push(new (Cards[cardName])())
     }
 
     createLog() {

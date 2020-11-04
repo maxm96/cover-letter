@@ -10,6 +10,10 @@ module.exports = class Player
         this.disconnected = false // True if the user disconnects during a game
     }
 
+    get needsCard() {
+        return this.hand.length === 0
+    }
+
     /**
      * Return the card from the player's hand that matches the given card name.
      * @param cardName
@@ -21,7 +25,7 @@ module.exports = class Player
             throw new Error(`No card found for ${cardName}`)
 
         let card = this.hand[cardIndex]
-        this.hand = this.hand.splice(cardIndex, 1)
+        this.hand = this.hand.splice(cardIndex - 1, 1)
 
         return card
     }
@@ -32,14 +36,13 @@ module.exports = class Player
      * @param victim
      * @param guess
      * @param protectedToRound
-     * @return {{victim: (*|Player), player: Player}} The modified players
      */
     playCard({ cardName, victim, guess, protectedToRound }) {
         victim = victim || this
         let card = this.getCard(cardName)
 
-        card.apply({ player: this, victim: victim, guess: guess, protectedToRound: protectedToRound })
+        this.playedCards.push(card)
 
-        return { player: this, victim: victim }
+        card.apply({ player: this, victim: victim, guess: guess, protectedToRound: protectedToRound })
     }
 }
