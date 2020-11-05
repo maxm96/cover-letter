@@ -46,6 +46,24 @@ module.exports = class Game
     }
 
     /**
+     * Advance the playerTurn to the next viable player.
+     */
+    advanceTurn() {
+        // Get an array of players that are not out or disconnected (it should still be in turn order)
+        // Also keep in the player whose turn it is currently
+        let players = this.players.filter(p => p.username === this.playerTurn || (!p.isOut && !p.disconnected))
+
+        // Get the index of the player who's turn it is right now
+        let playerTurnIndex = players.findIndex(p => p.username === this.playerTurn) + 1
+
+        // Wrap index to keep in bounds of array
+        if (players[playerTurnIndex] === undefined)
+            playerTurnIndex = 0
+
+        this.playerTurn = players[playerTurnIndex].username
+    }
+
+    /**
      * Reset to parts of game state done at the start of each round, also runs at the beginning of each game.
      * Things to be reset each round:
      *  - deck
@@ -276,10 +294,9 @@ module.exports = class Game
             victim.hand.push(this.deck.draw())
 
         // Update player turn
+        this.advanceTurn()
 
-        // Broadcast updates and log
-
-        return { success: true }
+        return res
     }
 
     // ---- Test functions ---- //
@@ -293,9 +310,5 @@ module.exports = class Game
             this.players[this.getPlayerIndex(player)].hand = [new (Cards[cardName])()]
         else
             this.players[this.getPlayerIndex(player)].hand.push(new (Cards[cardName])())
-    }
-
-    createLog() {
-
     }
 }

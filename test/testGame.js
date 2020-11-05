@@ -97,6 +97,42 @@ describe('Game', function () {
         })
     })
 
+    describe('advanceTurn', function () {
+        const Game = new G()
+        Game.onConnection('someuser1')
+        Game.onConnection('someuser2')
+
+        it('should advance to the next player', function () {
+            Game.playerTurn = 'someuser1'
+            Game.advanceTurn()
+
+            assert(Game.playerTurn === 'someuser2')
+        })
+
+        it('should skip eliminated and disconnected players', function () {
+            // Still on someuser2's turn
+            assert(Game.playerTurn === 'someuser2')
+
+            Game.onConnection('someuser3')
+            Game.onConnection('someuser4')
+            Game._setIsProperty('someuser3', 'isOut', true)
+            Game._setIsProperty('someuser4', 'disconnected', true)
+            Game.advanceTurn()
+
+            assert(Game.playerTurn === 'someuser1')
+        })
+
+        it('should still work if the current player is out', function () {
+            // Still on someuser1's turn
+            assert(Game.playerTurn === 'someuser1')
+
+            Game._setIsProperty('someuser1', 'isOut', true)
+            Game.advanceTurn()
+
+            assert(Game.playerTurn === 'someuser2')
+        })
+    })
+
     describe('onPlayHand', function () {
         const Game = new G()
         Game.onConnection('someuser1')
@@ -225,6 +261,7 @@ describe('Game', function () {
             assert(!Game.players[someUser2Index].isOut)
 
             Game._dealCard('someuser1', 'Wagie')
+            Game.playerTurn = 'someuser1'
 
             res = Game.onPlayHand({
                 cardName: 'Wagie',
@@ -266,6 +303,7 @@ describe('Game', function () {
             Game._dealCard('someuser1', 'Shift Manager')
             Game._dealCard('someuser1', 'Wagie', false)
             Game._dealCard('someuser2', 'CEO')
+            Game.playerTurn = 'someuser1'
 
             res = Game.onPlayHand({
                 cardName: 'Shift Manager',
@@ -281,6 +319,7 @@ describe('Game', function () {
             Game._dealCard('someuser1', 'Shift Manager')
             Game._dealCard('someuser1', 'Wagie', false)
             Game._dealCard('someuser2', 'Wagie')
+            Game.playerTurn = 'someuser1'
 
             res = Game.onPlayHand({
                 cardName: 'Shift Manager',
@@ -329,6 +368,7 @@ describe('Game', function () {
 
             Game._dealCard('someuser1', 'Salaried Worker')
             Game._dealCard('someuser2', 'Shareholder')
+            Game.playerTurn = 'someuser1'
 
             res = Game.onPlayHand({
                 cardName: 'Salaried Worker',
