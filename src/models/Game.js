@@ -258,7 +258,16 @@ module.exports = class Game
         }
 
         // Play the card
-        player.playCard({ cardName: cardName, victim: victim, guess: guess, protectedToRound: this.currentRound + 1 })
+        let res = player.playCard({
+            cardName: cardName,
+            victim: victim,
+            guess: guess,
+            protectedToRound: this.currentRound + 1
+        })
+
+        // Return response early if playCard fails
+        if (!res.success)
+            return res
 
         // Only one or zero players should need a new card, so order shouldn't matter
         if (player.needsCard && !player.isOut && this.deck.length)
