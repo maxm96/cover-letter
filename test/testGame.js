@@ -133,6 +133,68 @@ describe('Game', function () {
         })
     })
 
+    describe('checkForEliminationVictory', function () {
+        const Game = new G()
+        Game.onConnection('someuser1')
+        Game.onConnection('someuser2')
+        Game.onConnection('someuser3')
+
+        it('should return false if there is more than one non-eliminated player', function () {
+            Game._setIsProperty('someuser2', 'isOut', true)
+            assert(!Game.checkForEliminationVictory())
+        })
+
+        it('should return the last standing user', function () {
+            Game._setIsProperty('someuser3', 'isOut', true)
+            assert(Game.checkForEliminationVictory() === 'someuser1')
+        })
+    })
+
+    describe('checkForCardVictory', function () {
+        const Game = new G()
+        Game.onConnection('someuser1')
+        Game.onConnection('someuser2')
+        Game.onConnection('someuser3')
+
+        it('should return false if there are still cards left in the deck', function () {
+            Game.deck = ['one']
+            assert(!Game.checkForCardVictory())
+        })
+
+        it('should return the correct winner', function () {
+            Game.deck = []
+            Game._dealCard('someuser1', 'Wagie')
+            Game._dealCard('someuser2', 'HR')
+            Game._dealCard('someuser3', 'Shareholder')
+
+            assert(Game.checkForCardVictory() === 'someuser3')
+        })
+
+        it('should handle ties', function () {
+            Game.deck = []
+            Game._dealCard('someuser1', 'Wagie')
+            Game._dealCard('someuser2', 'Salaried Worker')
+            Game._dealCard('someuser3', 'Salaried Worker')
+
+            Game._dealPlayedCard('someuser2', 'Shareholder')
+            Game._dealPlayedCard('someuser2', 'Wagie')
+            Game._dealPlayedCard('someuser3', 'Shareholder')
+            Game._dealPlayedCard('someuser3', 'HR')
+
+            assert(Game.checkForCardVictory() === 'someuser3')
+        })
+
+        it('should not count out players', function () {
+            Game.deck = []
+            Game._dealCard('someuser1', 'Wagie')
+            Game._dealCard('someuser2', 'HR')
+            Game._dealCard('someuser3', 'Shareholder')
+            Game._setIsProperty('someuser3', 'isOut', true)
+
+            assert(Game.checkForCardVictory() === 'someuser2')
+        })
+    })
+
     describe('onPlayHand', function () {
         const Game = new G()
         Game.onConnection('someuser1')

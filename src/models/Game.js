@@ -64,6 +64,57 @@ module.exports = class Game
     }
 
     /**
+     * Returns the winning username if there is only one person left in. Returns false otherwise.
+     * @return {boolean|string}
+     */
+    checkForEliminationVictory() {
+        let inPlayers = this.players.filter(p => !p.isOut)
+        if (inPlayers.length === 1)
+            return inPlayers[0].username
+
+        return false
+    }
+
+    /**
+     * Checks for a victory by card number. Returns false if there can't be a card victory (i.e. still cards left in
+     * deck). Handles a tie by computing the highest score of played cards by the tying players.
+     * @return {null|string|boolean}
+     */
+    checkForCardVictory() {
+        // If there are still cards, keep playing
+        if (this.deck.length !== 0)
+            return false
+
+        // Filter out players who are out, keep track of the players with the highest score
+        let highestHand = this.players.filter(p => !p.isOut).reduce((acc, cur) => {
+            // This is a new high score, set new score and reset players array
+            if (cur.hand[0].number > acc.score) {
+                acc.score = cur.hand[0].number
+                acc.players = [cur]
+            }
+            // This is an existing score, push the current player onto the players array
+            else if (cur.hand[0].number === acc.score)
+                acc.players.push(cur)
+
+            return acc
+        }, { score: 0, players: [] })
+
+        // If there is no tie, return the winner
+        if (highestHand.players.length === 1)
+            return highestHand.players[0].username
+
+        // If there is a tie, get the max of the played cards from each player. Whoever has that is the winner.
+        let highestPlayed = highestHand.players
+            .map((p) => (
+                { username: p.username, score: p.playedCards.reduce((acc, cur) => acc += cur.number, 0) }
+            ))
+            .reduce((acc, cur) => acc = cur.score > acc.score ? cur : acc, { score: 0, username: null })
+
+        // And finally we have our winner
+        return highestPlayed.username
+    }
+
+    /**
      * Reset to parts of game state done at the start of each round, also runs at the beginning of each game.
      * Things to be reset each round:
      *  - deck
@@ -310,5 +361,9 @@ module.exports = class Game
             this.players[this.getPlayerIndex(player)].hand = [new (Cards[cardName])()]
         else
             this.players[this.getPlayerIndex(player)].hand.push(new (Cards[cardName])())
+    }
+
+    _dealPlayedCard(player, cardName) {
+        this.players[this.getPlayerIndex(player)].playedCards.push(new (Cards[cardName])())
     }
 }
