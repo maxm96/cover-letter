@@ -339,9 +339,9 @@ module.exports = class Game
             return res
 
         // Only one or zero players should need a new card, so order shouldn't matter
-        if (player.needsCard && !player.isOut && this.deck.length)
+        if (player.needsCard && this.deck.length)
             player.hand.push(this.deck.draw())
-        if (victim && victim.needsCard && !victim.isOut && this.deck.length)
+        if (victim && victim.needsCard && this.deck.length)
             victim.hand.push(this.deck.draw())
 
         // Update player turn

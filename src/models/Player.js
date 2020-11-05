@@ -11,7 +11,7 @@ module.exports = class Player
     }
 
     get needsCard() {
-        return this.hand.length === 0
+        return !this.isOut && !this.disconnected && this.hand.length === 0
     }
 
     /**
