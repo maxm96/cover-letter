@@ -119,6 +119,52 @@ function hideCountdown() {
     document.getElementById('countdown').style.display = 'none'
 }
 
+/**
+ * Clear all cards from hand.
+ */
+function resetHand() {
+    document.getElementById('user-cards').innerHTML = ''
+}
+
+/**
+ * Remove a card from the user's hand. Removes a card with the same number that is given.
+ * @param {string|number} cardNumber
+ */
+function removeCardFromHand(cardNumber) {
+    let userCards = document.getElementById('user-cards')
+    let card = userCards.getElementsByClassName(`card-${cardNumber}`)[0]
+
+    if (!card)
+        return console.log(`card-${cardNumber} child class not found in user-cards`)
+
+    userCards.removeChild(card)
+}
+
+/**
+ * Append a new card to the user's hand. Clones the card template and appends to user-cards.
+ * @param {string|number} number
+ * @param {string} name
+ * @param {string} description
+ */
+function appendCardToHand({ number, name, description }) {
+    let cardTemplate = document.getElementById('card-template').cloneNode(true)
+
+    // Remove template id and add card class
+    cardTemplate.id = ''
+    cardTemplate.classList.add('card')
+
+    // Add a more searchable class to make removing cards a bit easier
+    cardTemplate.classList.add(`card-${number}`)
+
+    // Update the card with the given values
+    cardTemplate.getElementsByClassName('card-number')[0].innerText = number
+    cardTemplate.getElementsByClassName('card-title')[0].innerText = name
+    cardTemplate.getElementsByClassName('card-description')[0].innerText = description
+
+    // Append the card to the user's hand
+    document.getElementById('user-cards').appendChild(cardTemplate)
+}
+
 // ---- Utils ---- //
 function handleStateChange(state, options) {
     // Just clear the countdown interval on each state change

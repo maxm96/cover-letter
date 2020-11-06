@@ -128,3 +128,7 @@
 .card-title {
 	margin-left: 20px;
 }
+
+#card-template {
+	display: none;
+}

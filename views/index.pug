@@ -50,5 +50,11 @@ html
                         p Description
 
         input(type="hidden" value=username id="client_username")
+
+        div(id="card-template")
+            span(class="card-number") N
+            span(class="card-title") Title
+            div(class="card-picture") Picture
+            p(class="card-description") description
     script(src="/socket.io/socket.io.js")
     script(src="/public/client.js")
