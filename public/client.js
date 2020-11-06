@@ -81,14 +81,27 @@ function gameplayTransition() {
     let gameBoard = document.getElementById('game-board')
     gameBoard.style.display = 'block'
 
-    // Recreate scoreboard
+    // Reset scoreboard
     let scoreboard = document.getElementById('scoreboard').getElementsByTagName('tbody')[0]
     scoreboard.innerHTML = ''
 
-    clientState.players.forEach(p => addUserToScoreboard({
-        username: p.username,
-        score:  clientState.scores[p.username] || 0
-    }))
+    // Add players to scoreboard and opponents list
+    clientState.players.forEach((p) => {
+        addUserToScoreboard({
+            username: p.username,
+            score: clientState.scores[p.username] || 0
+        })
+
+        // Don't add the current player to the opponents list
+        if (p.username === clientUsername)
+            return
+
+        appendOpponent({
+            name: p.username,
+            status: 'Connected',
+            playedCards: []
+        })
+    })
 
     // Log the first player
     if (clientState.playerTurn === clientUsername)
