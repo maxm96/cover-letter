@@ -25,8 +25,9 @@ html
                 span #{username}
 
             div(id="top-bar")
-                div(id="scoreboard")
-                div(id="log")
+                table(id="scoreboard")
+                    tbody
+                textarea(id="log", disabled)
 
             div(id="notifications")
                 span(id="timer") 2:00
@@ -35,8 +36,18 @@ html
             div(id="opponents")
 
             div(id="user-area")
-                div(id="deck")
+                div(id="deck") Deck:
                 div(id="user-cards")
+                    div(class="card")
+                        span N
+                        span(class="card-title") Title
+                        div Picture
+                        p Description
+                    div(class="card")
+                        span N
+                        span(class="card-title") Title
+                        div Picture
+                        p Description
 
         input(type="hidden" value=username id="client_username")
     script(src="/socket.io/socket.io.js")

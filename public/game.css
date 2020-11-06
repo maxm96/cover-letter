@@ -34,7 +34,8 @@
 }
 
 #game-board {
-	display: none;
+	/* TODO: don't forget to change this back */
+	display: block;
 }
 
 #navbar {
@@ -57,12 +58,27 @@
 
 #scoreboard {
 	flex: 1;
-	border: 1px red solid;
+	border: 1px solid black;
+	margin: 0;
+	height: 100%;
+	padding: 10px;
+}
+
+#scoreboard thead, #scoreboard tbody {
+	text-align: left;
+}
+
+#scoreboard tbody tr:nth-of-type(odd) {
+	background-color: #33363a;
+	color: white;
 }
 
 #log {
 	flex: 2;
-	border: 1px blue solid;
+	border: 1px solid black;
+	overflow-y: scroll;
+	font-size: 16px;
+	padding: 5px;
 }
 
 #notifications {
@@ -74,4 +90,41 @@
 #notifications span {
 	padding: 5px 10px;
 	font-size: 1.6em;
+}
+
+#opponents {
+	border: 1px solid red;
+	width: 100%;
+	min-height: 350px;
+}
+
+#user-area {
+	margin-top: 5px;
+	display: flex;
+	width: 100%;
+	min-height: 250px;
+}
+
+#deck {
+	flex: 1;
+	font-size: 20px;
+}
+
+#user-cards {
+	display: flex;
+	flex: 2;
+	justify-content: flex-end;
+}
+
+.card {
+	height: 175px;
+	width: 150px;
+	border: 1px solid grey;
+	border-radius: 5px;
+	padding: 2px;
+	margin-left: 2px;
+}
+
+.card-title {
+	margin-left: 20px;
 }
