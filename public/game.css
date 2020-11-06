@@ -93,9 +93,30 @@
 }
 
 #opponents {
-	border: 1px solid red;
+	display: flex;
 	width: 100%;
-	min-height: 350px;
+	min-height: 150px;
+}
+
+.opponent {
+	border: 1px solid grey;
+	border-radius: 5px;
+	padding: 5px;
+	width: 300px;
+}
+
+.opponent-name {
+	font-size: 20px;
+}
+
+.opponent-status {
+	font-size: 14px;
+	float: right;
+}
+
+.opponent-card-list {
+	list-style-type: none;
+	overflow-y: scroll;
 }
 
 #user-area {
@@ -129,6 +150,6 @@
 	margin-left: 20px;
 }
 
-#card-template {
+#card-template, #opponent-template {
 	display: none;
 }

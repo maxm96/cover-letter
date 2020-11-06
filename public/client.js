@@ -165,6 +165,66 @@ function appendCardToHand({ number, name, description }) {
     document.getElementById('user-cards').appendChild(cardTemplate)
 }
 
+/**
+ * Append an opponent to the opponents div. Creates an opponent from the opponent template.
+ * @param {string} name
+ * @param {string} status
+ * @param {array} playedCards
+ */
+function appendOpponent({ name, status, playedCards }) {
+    let opponentTemplate = document.getElementById('opponent-template').cloneNode(true)
+
+    // Remove template id and add opponent class
+    opponentTemplate.id = ''
+    opponentTemplate.classList.add('opponent')
+
+    // Create a better class name
+    opponentTemplate.classList.add(`opponent-${name}`)
+
+    // Update the opponent with the give values
+    opponentTemplate.getElementsByClassName('opponent-name')[0].innerText = name
+    opponentTemplate.getElementsByClassName('opponent-status')[0].innerText = status
+
+    // Create played card list
+    let playedCardList = opponentTemplate.getElementsByClassName('opponent-card-list')[0]
+    if (playedCards.length) {
+        // Remove no cards played message from the list if it exists
+        let noCardsPlayedMessage = playedCardList.getElementsByClassName('no-cards-played')
+        if (noCardsPlayedMessage.length > 0)
+            playedCardList.removeChild(noCardsPlayedMessage[0])
+
+        playedCards.forEach(pc => addPlayedCardToList(playedCardList, pc))
+    } else {
+        // If there are no played cards, append a message saying so
+        addPlayedCardToList(playedCardList, 'No cards played yet', 'no-cards-played')
+    }
+
+    document.getElementById('opponents').appendChild(opponentTemplate)
+}
+
+/**
+ * Reset the opponents div.
+ */
+function resetOpponents() {
+    document.getElementById('opponents').innerHTML = ''
+}
+
+/**
+ * Create and append a list item to the given list. Set the list items text and class if given one.
+ * @param  {object} playedCardsList
+ * @param {string} text
+ * @param {string|null} someClass
+ */
+function addPlayedCardToList(playedCardsList, text, someClass = null) {
+    let li = document.createElement('li')
+    li.innerText = text
+
+    if (someClass)
+        li.classList.add(someClass)
+
+    playedCardsList.append(li)
+}
+
 // ---- Utils ---- //
 function handleStateChange(state, options) {
     // Just clear the countdown interval on each state change
