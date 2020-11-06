@@ -34,7 +34,6 @@
 }
 
 #game-board {
-	/* TODO: don't forget to change this back */
 	display: block;
 }
 
@@ -62,10 +61,19 @@
 	margin: 0;
 	height: 100%;
 	padding: 10px;
+	border-collapse: collapse;
 }
 
 #scoreboard thead, #scoreboard tbody {
 	text-align: left;
+}
+
+#scoreboard tr {
+	line-height: 14px;
+}
+
+#scoreboard tr > td {
+	padding: 5px;
 }
 
 #scoreboard tbody tr:nth-of-type(odd) {

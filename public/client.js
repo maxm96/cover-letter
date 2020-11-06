@@ -66,6 +66,13 @@ function flashErrorMessage(message) {
     }, 5000)
 }
 
+function logMessage(message) {
+    let log = document.getElementById('log')
+
+    // Don't add a newline if this is the first message
+    log.value = log.value + `${log.value !== '' ? '\n' : ''}>> ${message}`
+}
+
 // Hide lobby UI, show game board UI
 function gameplayTransition() {
     let lobby = document.getElementById('lobby')
@@ -73,6 +80,40 @@ function gameplayTransition() {
 
     let gameBoard = document.getElementById('game-board')
     gameBoard.style.display = 'block'
+
+    // Recreate scoreboard
+    let scoreboard = document.getElementById('scoreboard').getElementsByTagName('tbody')[0]
+    scoreboard.innerHTML = ''
+
+    clientState.players.forEach(p => addUserToScoreboard({
+        username: p.username,
+        score:  clientState.scores[p.username] || 0
+    }))
+
+    // Log the first player
+    if (clientState.playerTurn === clientUsername)
+        logMessage('You go first.')
+    else
+        logMessage(`${clientState.playerTurn} goes first.`)
+}
+
+/**
+ * Append a table row to the scoreboard.
+ * @param {string} username
+ * @param {string|number|undefined} score
+ */
+function addUserToScoreboard({ username, score = '0' }) {
+    let scoreboard = document.getElementById('scoreboard').getElementsByTagName('tbody')[0]
+    let row = scoreboard.insertRow(-1)
+    let usernameCell = row.insertCell(0)
+    let scoreCell = row.insertCell(1)
+
+    usernameCell.appendChild(document.createTextNode(username))
+    scoreCell.appendChild(document.createTextNode(score))
+
+    row.id = `scoreboard-${username}`
+    usernameCell.id = `scoreboard-username-${username}`
+    scoreCell.id = `scoreboard-score-${username}`
 }
 
 // Hide game board UI, show lobby UI
@@ -117,6 +158,14 @@ function startCountdown() {
 
 function hideCountdown() {
     document.getElementById('countdown').style.display = 'none'
+}
+
+function updateHandUI(newHand) {
+
+}
+
+function updatePlayerTurnUI(newPlayerTurn) {
+
 }
 
 /**
@@ -251,7 +300,8 @@ function handleStateChange(state, options) {
                 clientState.playerTurn = options.playerTurn
 
             // Reset the scores object
-            clientState.scores = clientState.players.map((p) => ({ [p.username]: 0 }))
+            clientState.scores = {}
+            clientState.players.forEach(p => clientState.scores[p.username] = 0)
 
             // Transition the UI
             gameplayTransition()
@@ -259,6 +309,16 @@ function handleStateChange(state, options) {
         default:
             console.log(`Unknown state change: ${state}`)
     }
+}
+
+function updateHand(newHand) {
+    updateHandUI(newHand)
+    clientState.hand = newHand
+}
+
+function updatePlayerTurn(newPlayerTurn) {
+    updatePlayerTurnUI(newPlayerTurn)
+    clientState.playerTurn = newPlayerTurn
 }
 
 // ---- Socket events ---- //
@@ -299,6 +359,28 @@ socket.on('statechange', function ({ state, playerHands, playerTurn }) {
         playerHands: playerHands,
         playerTurn: playerTurn
     })
+})
+
+socket.on('handplayed', function ({ state, playerHands, playerTurn, log, victimCard }) {
+    if (state !== clientState.gameState)
+        handleStateChange(state, {
+            playerHands: playerHands,
+            playerTurn: playerTurn
+        })
+    else {
+        updateHand(playerHands[clientUsername])
+        updatePlayerTurn(playerTurn)
+    }
+
+    if (log)
+        logMessage(log)
+
+    if (victimCard)
+        logMessage(`${victimCard.username} has the card ${victimCard.card}.`)
+})
+
+socket.on('handplayedfailed', function ({ message }) {
+    flashErrorMessage(message)
 })
 
 socket.on('connectionfailed', function ({ message }) {
