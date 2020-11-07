@@ -116,6 +116,13 @@ function gameplayTransition(clientState, clientUsername) {
     document.getElementById('lobby').style.display = 'none'
     document.getElementById('game-board').style.display = 'block'
 
+    // Reset log
+    document.getElementById('log').value = ''
+
+    // Remove any current-turn classes
+    document.querySelectorAll('.current-turn')
+        .forEach(ct => ct.classList.remove('current-turn'))
+
     // Reset scoreboard
     let scoreboard = document.getElementById('scoreboard').getElementsByTagName('tbody')[0]
     scoreboard.innerHTML = ''
