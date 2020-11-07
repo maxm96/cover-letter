@@ -178,7 +178,19 @@ function updateHandUI(newHand) {
 }
 
 function updatePlayerTurnUI(newPlayerTurn) {
+    // Remove current-turn class from old player
+    let currentTurn = document.querySelector('.current-turn')
+    if (currentTurn)
+        currentTurn.classList.remove('current-turn')
 
+    if (newPlayerTurn === clientUsername) {
+        logMessage('It is your turn.')
+
+        // Don't set current-turn class on user, because user doesn't exist
+        return
+    }
+
+    document.getElementById(`opponent-${newPlayerTurn}`).classList.add('current-turn')
 }
 
 /**
@@ -261,6 +273,9 @@ function appendOpponent({ name, status, playedCards }) {
         addPlayedCardToList(playedCardList, 'No cards played yet', 'no-cards-played')
     }
 
+    // Assign a nice id
+    opponentTemplate.id = `opponent-${name}`
+
     document.getElementById('opponents').appendChild(opponentTemplate)
 }
 
@@ -334,6 +349,20 @@ function updatePlayerTurn(newPlayerTurn) {
     clientState.playerTurn = newPlayerTurn
 }
 
+function updatePlayers(players) {
+    clientState.players.forEach((p) => {
+
+    })
+}
+
+function updateScores(scores) {
+
+}
+
+function handleWin(winner) {
+
+}
+
 // ---- Socket events ---- //
 // This is the initial message from the server
 socket.on('curstate', function (curState) {
@@ -374,22 +403,27 @@ socket.on('statechange', function ({ state, playerHands, playerTurn }) {
     })
 })
 
-socket.on('handplayed', function ({ state, playerHands, playerTurn, log, victimCard }) {
+socket.on('handplayed', function ({ state, playerHands, playerTurn, players, scores, winner, log, victimCard }) {
+    if (log)
+        logMessage(log)
+
+    if (winner)
+        handleWin(winner)
+
     if (state !== clientState.gameState)
         handleStateChange(state, {
             playerHands: playerHands,
             playerTurn: playerTurn
         })
     else {
+        updatePlayers(players)
+        updateScores(scores)
         updateHand(playerHands[clientUsername])
         updatePlayerTurn(playerTurn)
     }
 
-    if (log)
-        logMessage(log)
-
     if (victimCard)
-        logMessage(`${victimCard.username} has the card ${victimCard.card}.`)
+        logMessage(`${victimCard.username} has the card ${victimCard}.`)
 })
 
 socket.on('handplayedfailed', function ({ message }) {

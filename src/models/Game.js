@@ -188,7 +188,7 @@ module.exports = class Game
 
     /**
      * Creates an object to emit to clients. If in waiting state, only send usernames and ready status.
-     * If in Gameplay state, send a bit more player information as well as the game log.
+     * If in Gameplay state, send a bit more player information.
      * @param {Object|null} addendum
      * @return {any}
      */
@@ -207,7 +207,7 @@ module.exports = class Game
                 stateObj = {
                     players: this.createPlayersArray(['username', 'isOut', 'isProtected', 'playedCards', 'disconnected']),
                     gameState: this.state,
-                    log: this.log
+                    scores: this.scores
                 }
                 break
             default:
@@ -347,7 +347,11 @@ module.exports = class Game
         // Update player turn
         this.advanceTurn()
 
-        return res
+        // Update game log
+        if (res.log)
+            this.log.push(res.log)
+
+        return this.clientState(res)
     }
 
     // ---- Test functions ---- //

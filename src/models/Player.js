@@ -43,7 +43,7 @@ module.exports = class Player
         victim = victim || this
         let card = this.getCard(cardName)
 
-        this.playedCards.push(card)
+        this.playedCards.push(card.name)
 
         return card.apply({ player: this, victim: victim, guess: guess, protectedToRound: protectedToRound })
     }

@@ -48,5 +48,17 @@ module.exports = function (sio, Game) {
                 socket.emit('readyfailed', res)
             }
         })
+
+        socket.on('playhand', ({ player, card, victim, guess }) => {
+            console.log(`${player} played card ${card}`)
+
+            let res = Game.onPlayHand({ cardName: card, playerName: player, victimName: victim, guess: guess })
+            if (res.success)
+                sio.emit('handplayed')
+            else {
+                console.log(`Failed to play hand: ${res.message}`)
+                socket.emit('playhandfailed', res)
+            }
+        })
     })
 }
