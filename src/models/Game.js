@@ -176,12 +176,16 @@ module.exports = class Game
             // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
             // socket event on the client side.
             let playerHands = {}
-            this.players.forEach(p => playerHands[p.username] = p.hand.map(h => h.name))
+            this.players
+                .forEach(p => playerHands[p.username] = p.hand.map(h =>
+                    ({ name: h.name, number: h.number, description: h.description })
+                ))
 
             this.socketHandle.emit('statechange', {
                 state: this.state,
                 playerHands: playerHands,
-                playerTurn: this.playerTurn
+                playerTurn: this.playerTurn,
+                deckCount: this.deck.length
             })
         }
     }

@@ -33,11 +33,22 @@ function handleStateChange(state, options) {
             break
         case 'g':
             // Get our first dealt hand
-            if (options.playerHands)
+            if (options.playerHands) {
                 clientState.hand = options.playerHands[clientUsername]
+                clientState.hand.forEach(card => appendCardToHand({
+                    number: card.number,
+                    name: card.name,
+                    description: card.description
+                }))
+            }
+
             // Get the player whose turn it is
             if (options.playerTurn)
                 clientState.playerTurn = options.playerTurn
+
+            // Set deck count
+            if (options.deckCount)
+                updateDeckCount(options.deckCount)
 
             // Reset the scores object
             clientState.scores = {}
@@ -108,10 +119,11 @@ socket.on('playerready', function ({ username, ready, gameState }) {
     }
 })
 
-socket.on('statechange', function ({ state, playerHands, playerTurn }) {
+socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount }) {
     handleStateChange(state, {
         playerHands: playerHands,
-        playerTurn: playerTurn
+        playerTurn: playerTurn,
+        deckCount: deckCount
     })
 })
 

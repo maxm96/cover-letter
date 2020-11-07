@@ -337,6 +337,14 @@ function addPlayedCardToList(playedCardsList, text, someClass = null) {
     playedCardsList.append(li)
 }
 
+/**
+ * Update the deck count.
+ * @param {string|number} newCount
+ */
+function updateDeckCount(newCount) {
+    document.getElementById('deck').innerText = `Deck: ${newCount}`
+}
+
 function updateHandUI(newHand) {
     // TODO
 }
