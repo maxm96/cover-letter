@@ -21,6 +21,16 @@ describe('Game', function () {
             let res = Game.onConnection('onemore')
             assert(!res.success)
         })
+
+        it('should accept a disconnected user during gameplay', function () {
+            Game.state = GameStates.GAMEPLAY
+            let res = Game.onDisconnect('someusername')
+            assert(res.success)
+
+            res = Game.onConnection('someusername')
+            assert(res.success)
+            assert(!Game.players[Game.getPlayerIndex('someusername')].disconnected)
+        })
     })
 
     describe('onDisconnect', function () {
@@ -45,6 +55,23 @@ describe('Game', function () {
             Game.state = GameStates.COUNTDOWN
             res = Game.onDisconnect('someusername')
             assert(res.state === GameStates.WAITING)
+        })
+
+        it('should set the disconnected property on a disconnect during gameply', function () {
+            let res = Game.onConnection('someusername')
+            assert(res.success)
+
+            Game.state = GameStates.GAMEPLAY
+            res = Game.onDisconnect('someusername')
+            assert(res.success)
+
+            let playerIndex = Game.getPlayerIndex('someusername')
+
+            // someusername exists in players array
+            assert(playerIndex > -1)
+
+            // someusername disconnected is properly set
+            assert(Game.players[playerIndex].disconnected)
         })
     })
 
