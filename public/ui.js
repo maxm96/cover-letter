@@ -196,6 +196,19 @@ function addUserToScoreboard({ username, score = '0' }) {
 }
 
 /**
+ * Update the given user's score.
+ * @param {string} username
+ * @param {string|number} score
+ */
+function updateUserScore({ username, score }) {
+    let userScoreCell = document.getElementById(`scoreboard-score-${username}`)
+    if (!userScoreCell)
+        return console.log(`No element found for id scoreboard-score-${username}`)
+
+    userScoreCell.innerText = score
+}
+
+/**
  * Set the current-turn class on the correct opponent, or nobody if the player turn is the client.
  * @param {string} newPlayerTurn
  */
