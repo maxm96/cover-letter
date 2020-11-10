@@ -14,6 +14,10 @@ let clientState = {
 // Keep track of the countdown interval
 let countdownHandle = null
 
+// Keep track of selected card and victim
+let selectedCard = null
+let selectedVictim = null
+
 // ---- Utils ---- //
 function getPlayerIndex(username) {
     return clientState.players.findIndex(p => p.username === username)
@@ -195,3 +199,24 @@ socket.on('connectionfailed', function ({ message }) {
 socket.on('readyfailed', function ({ message }) {
     flashErrorMessage(message)
 })
+
+// ---- Listeners ---- //
+document.getElementById('ready-btn').addEventListener('click', function (e) {
+    socket.emit('ready', { ready: e.target.checked })
+})
+
+function setCardListeners() {
+
+}
+
+function clearCardListeners() {
+
+}
+
+function setOpponentListeners() {
+
+}
+
+function clearOpponentListeners() {
+
+}
