@@ -130,7 +130,7 @@ socket.on('playerreconnect', function ({ username }) {
     if (playerIndex < 0)
         return console.log(`Received reconnect from unknown player ${username}`)
 
-    clientState[playerIndex].disconnected = false
+    clientState.players[playerIndex].disconnected = false
     setOpponentStatus({ name: username, status: 'Connected' })
     logMessage(`${username} has reconnected.`)
 })
