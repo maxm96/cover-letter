@@ -179,7 +179,7 @@ module.exports = class Game
             // Deal a card to everyone
             this.players.forEach(p => p.hand.push(this.deck.draw()))
 
-            // Deal a second one to the first person
+            // Deal a second one to the first perso2020_11_09_160654_rename_list_options_code_to_slugn
             this.players[0].hand.push(this.deck.draw())
 
             // For now just emit all player's hand on the state change. I actually don't think I can send each individual
@@ -218,7 +218,10 @@ module.exports = class Game
                 stateObj = {
                     players: this.createPlayersArray(['username', 'isOut', 'isProtected', 'playedCards', 'disconnected']),
                     gameState: this.state,
-                    scores: this.scores
+                    scores: this.scores,
+                    playerHands: this.playerHands,
+                    deckCount: this.deck.length,
+                    playerTurn: this.playerTurn
                 }
                 break
             default:

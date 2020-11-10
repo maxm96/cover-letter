@@ -19,7 +19,14 @@ function getPlayerIndex(username) {
     return clientState.players.findIndex(p => p.username === username)
 }
 
-function handleStateChange(state, options) {
+/**
+ * Handle a state change.
+ * @param state
+ * @param playerHands
+ * @param playerTurn
+ * @param deckCount
+ */
+function handleStateChange(state, { playerHands, playerTurn, deckCount } = {}) {
     // Just clear the countdown interval on each state change
     if (countdownHandle !== null) {
         clearInterval(countdownHandle)
@@ -37,8 +44,8 @@ function handleStateChange(state, options) {
             break
         case 'g':
             // Get our first dealt hand
-            if (options.playerHands) {
-                clientState.hand = options.playerHands[clientUsername]
+            if (playerHands) {
+                clientState.hand = playerHands[clientUsername]
                 clientState.hand.forEach(card => appendCardToHand({
                     number: card.number,
                     name: card.name,
@@ -47,12 +54,12 @@ function handleStateChange(state, options) {
             }
 
             // Get the player whose turn it is
-            if (options.playerTurn)
-                clientState.playerTurn = options.playerTurn
+            if (playerTurn)
+                clientState.playerTurn = playerTurn
 
             // Set deck count
-            if (options.deckCount)
-                updateDeckCount(options.deckCount)
+            if (deckCount)
+                updateDeckCount(deckCount)
 
             // Reset the scores object
             clientState.scores = {}
@@ -94,7 +101,11 @@ function handleWin(winner) {
 // This is the initial message from the server
 socket.on('curstate', function (curState) {
     clientState = curState
-    handleStateChange(curState.gameState)
+    handleStateChange(curState.gameState, {
+        playerHands: curState.playerHands,
+        playerTurn: curState.playerTurn,
+        deckCount: curState.deckCount
+    })
 })
 
 socket.on('playerconnection', function (payload) {
