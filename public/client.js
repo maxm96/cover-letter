@@ -195,9 +195,3 @@ socket.on('connectionfailed', function ({ message }) {
 socket.on('readyfailed', function ({ message }) {
     flashErrorMessage(message)
 })
-
-// ---- Listeners ---- //
-const readyBtn = document.getElementById('ready-btn')
-readyBtn.addEventListener('click', function (e) {
-    socket.emit('ready', { ready: e.target.checked })
-})
