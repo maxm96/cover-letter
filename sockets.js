@@ -29,9 +29,9 @@ module.exports = function (sio, Game) {
             console.log(`Received disconnect from ${username}`)
 
             let res = Game.onDisconnect(username)
-            if (res.success)
+            if (res.success && res.realDisconnect)
                 sio.emit('playerdisconnect', res)
-            else {
+            else if (!res.success) {
                 console.log(`Disconnect failed for ${username}`)
                 socket.emit('disconnectfailed', res)
             }

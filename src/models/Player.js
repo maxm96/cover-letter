@@ -8,6 +8,12 @@ module.exports = class Player
         this.hand = [] // The user's hand
         this.playedCards = [] // The user's played cards
         this.disconnected = false // True if the user disconnects during a game
+
+        // Keep track of how many connections one user is opening. This is so
+        // 1. the user can't have multiple tabs open as that causes problems and
+        // 2. a disconnect from one tab will not cause the player's status to be
+        // set to disconnected if they still have another connection open.
+        this.connections = 1
     }
 
     get needsCard() {

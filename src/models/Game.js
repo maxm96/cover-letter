@@ -238,11 +238,16 @@ module.exports = class Game
      * @return {Object}
      */
     onConnection(username) {
+        let playerIndex = this.getPlayerIndex(username)
+        let playerExists = playerIndex > -1
+
         if (this.state === GameStates.GAMEPLAY) {
-            let playerIndex = this.getPlayerIndex(username)
+            // Increment connections if the player exists
+            if (playerExists)
+                this.players[playerIndex].connections += 1
 
             // Player exists and was disconnected
-            if (playerIndex > -1 && this.players[playerIndex].disconnected) {
+            if (playerExists && this.players[playerIndex].disconnected) {
                 this.players[playerIndex].disconnected = false
                 this.socketHandle.emit('playerreconnect', { username: username })
                 return { success: true }
@@ -260,11 +265,12 @@ module.exports = class Game
 
         // Prevent duplicate usernames being created from someone making new tabs.
         // Also don't want to broadcast a join if the user is already technically joined.
-        if (!this.players.map(p => p.username).includes(username)) {
+        if (!playerExists) {
             let player = new Player(username)
             this.players.push(player)
             return { success: true, username: username, isReady: false }
-        }
+        } else
+            this.players[playerIndex].connections += 1
 
         return { success: true }
     }
@@ -280,17 +286,31 @@ module.exports = class Game
         if (playerIndex < 0)
             return { success: false, message: `Unknown user ${username}` }
 
-        if (this.state === GameStates.GAMEPLAY)
-            this.players[playerIndex].disconnected = true
-        else {
-            this.players = this.players.filter(p => p.username !== username)
+        // Decrement connections count
+        this.players[playerIndex].connections -= 1
 
-            // Cancel the countdown if someone gets disconnected
-            if (this.state === GameStates.COUNTDOWN)
-                this.changeState(GameStates.WAITING)
+        // The player is actually disconnecting if the number of connections has reached 0
+        let realDisconnect = this.players[playerIndex].connections === 0
+
+        // Only do anything if this is a real disconnect
+        if (realDisconnect) {
+            if (this.state === GameStates.GAMEPLAY) {
+                this.players[playerIndex].disconnected = true
+            } else {
+                this.players = this.players.filter(p => p.username !== username)
+
+                // Cancel the countdown if someone gets disconnected
+                if (this.state === GameStates.COUNTDOWN)
+                    this.changeState(GameStates.WAITING)
+            }
         }
 
-        return { success: true, username: username, state: this.state }
+        return {
+            success: true,
+            username: username,
+            state: this.state,
+            realDisconnect: realDisconnect // If there are still open connections, don't broadcast that user has disconnected
+        }
     }
 
     /**
