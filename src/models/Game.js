@@ -31,6 +31,16 @@ module.exports = class Game
         this.lastWinner = null // Set this when someone wins a round so they can go first on the next round
     }
 
+    get playerHands() {
+        let playerHands = {}
+        this.players
+            .forEach(p => playerHands[p.username] = p.hand.map(h =>
+                ({ name: h.name, number: h.number, description: h.description })
+            ))
+
+        return playerHands
+    }
+
     getPlayerIndex(username) {
         return this.players.findIndex(p => p.username === username)
     }
@@ -175,17 +185,14 @@ module.exports = class Game
             // For now just emit all player's hand on the state change. I actually don't think I can send each individual
             // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
             // socket event on the client side.
-            let playerHands = {}
-            this.players
-                .forEach(p => playerHands[p.username] = p.hand.map(h =>
-                    ({ name: h.name, number: h.number, description: h.description })
-                ))
+            let playerHands = this.playerHands
 
             this.socketHandle.emit('statechange', {
                 state: this.state,
                 playerHands: playerHands,
                 playerTurn: this.playerTurn,
-                deckCount: this.deck.length
+                deckCount: this.deck.length,
+                players: this.players
             })
         }
     }
@@ -228,9 +235,22 @@ module.exports = class Game
      * @return {Object}
      */
     onConnection(username) {
-        // Deny any users if not in the waiting state
-        if (this.state !== GameStates.WAITING)
-            return { success: false, message: 'Not in waiting state.' }
+        if (this.state === GameStates.GAMEPLAY) {
+            let playerIndex = this.getPlayerIndex(username)
+
+            // Player exists and was disconnected
+            if (playerIndex > -1 && this.players[playerIndex].disconnected) {
+                this.players[playerIndex].disconnected = false
+                this.socketHandle.emit('playerreconnect', { username: username })
+                return { success: true }
+            }
+            // Player does not exist or the username is already being used, reject
+            else
+                return { success: false, message: 'Game in progress.' }
+        }
+
+        if (this.state === GameStates.COUNTDOWN)
+            return { success: false, message: 'Game in progress.' }
 
         if (this.players.length === 4)
             return { success: false, message: 'Maximum number of players has been reached.' }

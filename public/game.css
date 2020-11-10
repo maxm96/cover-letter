@@ -34,7 +34,7 @@
 }
 
 #game-board {
-	display: block;
+	display: none;
 }
 
 #navbar {

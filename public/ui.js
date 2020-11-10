@@ -159,18 +159,15 @@ function gameplayTransition(clientState, clientUsername) {
 function waitingTransition(clientState) {
     let lobby = document.getElementById('lobby')
 
-    // Transitioning from a game state to waiting, show table and update ready statuses
-    if (lobby.style.display === 'none') {
-        lobby.style.display = 'block'
+    lobby.style.display = 'block'
 
-        // Reset ready table tbody
-        let oldBody = document.querySelector('tbody')
-        let newBody = document.createElement('tbody')
-        oldBody.parentNode.replaceChild(newBody, oldBody)
+    // Reset ready table tbody
+    let oldBody = document.querySelector('tbody')
+    let newBody = document.createElement('tbody')
+    oldBody.parentNode.replaceChild(newBody, oldBody)
 
-        // Repopulate table
-        clientState.players.forEach(p => addPlayerToReadyBoard(p.username, p.isReady))
-    }
+    // Repopulate table
+    clientState.players.forEach(p => addPlayerToReadyBoard(p.username, p.isReady))
 
     // Just hide the game board
     document.getElementById('game-board').style.display = 'none'
@@ -314,6 +311,14 @@ function appendOpponent({ name, status, playedCards }) {
     document.getElementById('opponents').appendChild(opponentTemplate)
 }
 
+function setOpponentStatus({ name, status }) {
+    let opponent = document.getElementById(`opponent-${name}`)
+    if (!opponent)
+        return console.log(`No opponent found for ${name}`)
+
+    opponent.getElementsByClassName('opponent-status')[0].innerText = status
+}
+
 /**
  * Reset the opponents div.
  */
@@ -323,7 +328,7 @@ function resetOpponents() {
 
 /**
  * Create and append a list item to the given list. Set the list items text and class if given one.
- * @param  {object} playedCardsList
+ * @param {object} playedCardsList
  * @param {string} text
  * @param {string|null} someClass
  */

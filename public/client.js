@@ -15,6 +15,10 @@ let clientState = {
 let countdownHandle = null
 
 // ---- Utils ---- //
+function getPlayerIndex(username) {
+    return clientState.players.findIndex(p => p.username === username)
+}
+
 function handleStateChange(state, options) {
     // Just clear the countdown interval on each state change
     if (countdownHandle !== null) {
@@ -90,7 +94,7 @@ function handleWin(winner) {
 // This is the initial message from the server
 socket.on('curstate', function (curState) {
     clientState = curState
-    clientState.players.forEach(p => addPlayerToReadyBoard(p.username, p.isReady))
+    handleStateChange(curState.gameState)
 })
 
 socket.on('playerconnection', function (payload) {
@@ -98,13 +102,30 @@ socket.on('playerconnection', function (payload) {
     addPlayerToReadyBoard(payload.username, payload.isReady)
 })
 
-socket.on('playerdisconnect', function ({ username }) {
-    clientState.players = clientState.players.filter(p => p.username !== username)
-    removePlayerFromReadyBoard(username)
+socket.on('playerdisconnect', function ({ username, state }) {
+    if (state === 'g') {
+        let playerIndex = getPlayerIndex(username)
+        clientState.players[playerIndex].disconnected = true
+        setOpponentStatus({ name: username, status: 'Disconnected' })
+        logMessage(`${username} has disconnected.`)
+    } else {
+        clientState.players = clientState.players.filter(p => p.username !== username)
+        removePlayerFromReadyBoard(username)
+    }
+})
+
+socket.on('playerreconnect', function ({ username }) {
+    let playerIndex = getPlayerIndex(username)
+    if (playerIndex < 0)
+        return console.log(`Received reconnect from unknown player ${username}`)
+
+    clientState[playerIndex].disconnected = false
+    setOpponentStatus({ name: username, status: 'Connected' })
+    logMessage(`${username} has reconnected.`)
 })
 
 socket.on('playerready', function ({ username, ready, gameState }) {
-    let playerIndex = clientState.players.findIndex(p => p.username === username)
+    let playerIndex = getPlayerIndex(username)
     if (playerIndex < 0)
         return
 
@@ -119,11 +140,12 @@ socket.on('playerready', function ({ username, ready, gameState }) {
     }
 })
 
-socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount }) {
+socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount, players }) {
     handleStateChange(state, {
         playerHands: playerHands,
         playerTurn: playerTurn,
-        deckCount: deckCount
+        deckCount: deckCount,
+        players: players
     })
 })
 
