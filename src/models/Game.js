@@ -34,9 +34,14 @@ module.exports = class Game
     get playerHands() {
         let playerHands = {}
         this.players
-            .forEach(p => playerHands[p.username] = p.hand.map(h =>
-                ({ name: h.name, number: h.number, description: h.description })
-            ))
+            .forEach(p => playerHands[p.username] = p.hand.map(h => (
+                {
+                    name: h.name,
+                    number: h.number,
+                    description: h.description,
+                    requiresVictim: h.requiresVictim ? 1 : 0
+                }
+            )))
 
         return playerHands
     }

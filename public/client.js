@@ -48,7 +48,8 @@ function handleStateChange(state, { playerHands, deckCount } = {}) {
                 clientState.hand.forEach(card => appendCardToHand({
                     number: card.number,
                     name: card.name,
-                    description: card.description
+                    description: card.description,
+                    requiresVictim: card.requiresVictim
                 }))
             }
 
@@ -278,6 +279,7 @@ function onCardClick(e) {
 
     let cardTitle = card.getElementsByClassName('card-title')[0].innerText
     let cardNumber = card.getElementsByClassName('card-number')[0].innerText
+    let requiresVictim = card.getElementsByClassName('requires-victim')[0].value
 
     // Card is already selected, deselect card
     if (selectedCard && selectedCard.title === cardTitle) {
@@ -294,7 +296,8 @@ function onCardClick(e) {
 
         selectedCard = {
             title: cardTitle,
-            number: cardNumber
+            number: cardNumber,
+            requiresVictim: Boolean(requiresVictim)
         }
 
         card.classList.add('selected')
