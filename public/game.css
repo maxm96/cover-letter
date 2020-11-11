@@ -165,3 +165,7 @@
 .current-turn {
 	border: 3px solid red;
 }
+
+.selected {
+	border: 3px solid #edea42;
+}

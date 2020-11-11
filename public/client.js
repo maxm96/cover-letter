@@ -209,7 +209,17 @@ function onCardClick(e) {
     // I want the main card element, so if the user clicks on something inside the
     // card, get the parent node. There is only one level of children so this should be fine.
     let card = e.target.classList.contains('card') ? e.target : e.target.parentNode
-    console.log(card)
+
+    let cardTitle = card.getElementsByClassName('card-title')[0].innerText
+
+    // Card is already selected, deselect card
+    if (selectedCard === cardTitle) {
+        selectedCard = null
+        card.classList.remove('selected')
+    } else {
+        selectedCard = cardTitle
+        card.classList.add('selected')
+    }
 }
 
 function setCardListeners() {
@@ -221,6 +231,7 @@ function setCardListeners() {
 function clearCardListeners() {
     document.querySelectorAll('.card').forEach((el) => {
         el.removeEventListener('click', onCardClick)
+        el.classList.remove('selected')
     })
 }
 
@@ -243,7 +254,16 @@ function onOpponentClick(e) {
         return
     }
 
-    console.log(opponent)
+    let opponentName = opponent.getElementsByClassName('opponent-name')[0].innerText
+
+    // Similar to onCardClick above
+    if (selectedVictim === opponentName) {
+        selectedVictim = null
+        opponent.classList.remove('selected')
+    } else {
+        selectedVictim = opponentName
+        opponent.classList.add('selected')
+    }
 }
 
 function setOpponentListeners() {
@@ -255,5 +275,6 @@ function setOpponentListeners() {
 function clearOpponentListeners() {
     document.querySelectorAll('.opponent').forEach((el) => {
         el.removeEventListener('click', onOpponentClick)
+        el.classList.remove('selected')
     })
 }
