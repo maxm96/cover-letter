@@ -401,6 +401,26 @@ function setOpponentIsProtected({ opponentName, isProtected }) {
         opponent.classList.remove('protected')
 }
 
+/**
+ * Either show or hide the available cards list.
+ * @param {boolean} show
+ */
 function toggleAvailableCards(show) {
     document.getElementById('available-cards').style.display = show ? 'inline-block' : 'none'
+}
+
+/**
+ * Update scoreboard with the given scores
+ * @param {object} scores
+ */
+function updateScoreboard(scores) {
+    Object.keys(scores).forEach((user) => {
+        let score = document.getElementById(`scoreboard-score-${user}`)
+        if (!score) {
+            console.error(`Unable to find scoreboard score for ${user}`)
+            return
+        }
+
+        score.innerText = scores[user]
+    })
 }

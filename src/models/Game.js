@@ -159,7 +159,16 @@ module.exports = class Game
         this.players.forEach((p) => {
             p.isOut = false
             p.isProtected = false
+            p.hand = []
         })
+        this.playerTurn = this.lastWinner || this.players[0].username
+
+        // Deal cards
+        // TODO: deal in turn order
+        this.players.forEach(p => p.hand.push(this.deck.draw()))
+
+        // Deal an extra card to the first player
+        this.players[this.getPlayerIndex(this.playerTurn)].hand.push(this.deck.draw())
     }
 
     /**
@@ -173,7 +182,8 @@ module.exports = class Game
     gameReset() {
         this.roundReset()
         this.lastWinner = null
-        this.scores = this.players.map(p => ({ [p.username]: 0 }))
+        this.scores = {}
+        this.players.forEach(p => this.scores[p.username] = 0)
         this.log = []
     }
 
@@ -196,13 +206,6 @@ module.exports = class Game
         if (state === GameStates.GAMEPLAY) {
             // Init the gameplay state
             this.gameReset()
-            this.playerTurn = this.players[0].username // Just let the first person go first. TODO: pick a random person
-
-            // Deal a card to everyone
-            this.players.forEach(p => p.hand.push(this.deck.draw()))
-
-            // Deal a second one to the first perso2020_11_09_160654_rename_list_options_code_to_slugn
-            this.players[0].hand.push(this.deck.draw())
 
             // For now just emit all player's hand on the state change. I actually don't think I can send each individual
             // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
@@ -413,6 +416,21 @@ module.exports = class Game
         if (victim && victim.needsCard && this.deck.length)
             victim.hand.push(this.deck.draw())
 
+        // TODO: fix tests to work with these functions
+        if (process.env.NODE_ENV !== 'testing') {
+            let winner = this.checkForEliminationVictory()
+            if (winner !== false) {
+                res.winner = winner
+                return this.handleWin(res)
+            }
+
+            winner = this.checkForCardVictory()
+            if (winner !== false) {
+                res.winner = winner
+                return this.handleWin(res)
+            }
+        }
+
         // Update player turn
         this.advanceTurn()
 
@@ -433,6 +451,13 @@ module.exports = class Game
         // Increment round count if round count should be incremented
         this.incrementRound()
 
+        return this.clientState(res)
+    }
+
+    handleWin(res) {
+        this.lastWinner = res.winner
+        this.scores[res.winner]++
+        this.roundReset()
         return this.clientState(res)
     }
 

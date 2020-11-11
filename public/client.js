@@ -137,7 +137,8 @@ function updatePlayers(players) {
 }
 
 function updateScores(scores) {
-
+    updateScoreboard(scores)
+    clientState.scores = scores
 }
 
 function handleWin(winner) {
@@ -218,8 +219,10 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
     if (log)
         logMessage(log)
 
-    if (winner)
+    if (winner) {
         handleWin(winner)
+        updateScores(scores)
+    }
 
     if (gameState !== clientState.gameState) {
         handleStateChange(gameState, {
@@ -228,7 +231,6 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
         })
     } else {
         updatePlayers(players)
-        updateScores(scores)
         updateHand(playerHands[clientUsername])
         updatePlayerTurn(playerTurn)
         updateDeckCount(deckCount)
