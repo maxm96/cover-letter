@@ -346,6 +346,14 @@ function updateDeckCount(newCount) {
     document.getElementById('deck').innerText = `Deck: ${newCount}`
 }
 
+/**
+ * Append an array of cards to the user's hand.
+ * @param newHand
+ */
 function updateHandUI(newHand) {
-    // TODO
+    resetHand()
+
+    newHand.forEach((nh) => {
+        appendCardToHand({ number: nh.number, name: nh.name, description: nh.description })
+    })
 }
