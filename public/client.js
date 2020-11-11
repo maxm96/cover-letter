@@ -205,18 +205,55 @@ document.getElementById('ready-btn').addEventListener('click', function (e) {
     socket.emit('ready', { ready: e.target.checked })
 })
 
-function setCardListeners() {
+function onCardClick(e) {
+    // I want the main card element, so if the user clicks on something inside the
+    // card, get the parent node. There is only one level of children so this should be fine.
+    let card = e.target.classList.contains('card') ? e.target : e.target.parentNode
+    console.log(card)
+}
 
+function setCardListeners() {
+    document.querySelectorAll('.card').forEach((el) => {
+        el.addEventListener('click', onCardClick)
+    })
 }
 
 function clearCardListeners() {
+    document.querySelectorAll('.card').forEach((el) => {
+        el.removeEventListener('click', onCardClick)
+    })
+}
 
+function onOpponentClick(e) {
+    // Same thing as onCardClick except there are multiple levels of children so we must loopty loop
+    let depth = 3
+    let opponent = e.target
+    let found = false
+
+    do {
+        if (opponent.classList.contains('opponent')) {
+            found = true
+            break
+        } else
+            opponent = opponent.parentNode
+    } while (--depth > -1)
+
+    if (!found) {
+        console.error("Couldn't find opponent parent element.")
+        return
+    }
+
+    console.log(opponent)
 }
 
 function setOpponentListeners() {
-
+    document.querySelectorAll('.opponent').forEach((el) => {
+        el.addEventListener('click', onOpponentClick)
+    })
 }
 
 function clearOpponentListeners() {
-
+    document.querySelectorAll('.opponent').forEach((el) => {
+        el.removeEventListener('click', onOpponentClick)
+    })
 }
