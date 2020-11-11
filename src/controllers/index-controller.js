@@ -1,4 +1,5 @@
 const UserStore = require('../stores/user-store')
+const availableCards = require('../utils/available-cards')
 
 function get(req, res) {
     let username = req.session.username
@@ -22,7 +23,7 @@ function get(req, res) {
         return res.redirect('/login')
     }
 
-    res.render('index', { username: req.session.username })
+    res.render('index', { username: req.session.username, availableCards: availableCards() })
 }
 
 module.exports = { get }

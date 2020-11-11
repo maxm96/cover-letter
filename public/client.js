@@ -8,7 +8,8 @@ let clientState = {
     players: [],
     hand: [],
     playerTurn: null,
-    scores: null
+    scores: null,
+    availableCards: []
 }
 
 // Keep track of the countdown interval
@@ -251,11 +252,11 @@ document.getElementById('ready-btn').addEventListener('click', function (e) {
 })
 
 function playCard() {
-    // TODO: get requiresVictim property from server
     // TODO: if all opponents are unavailable for victimizing, discard card either against self or no effect
 
-    // Can't play card unless a card and victim are selected
-    if (!selectedCard || !selectedVictim)
+    // Can't play card unless a card has been selected.
+    // Can't play card if it requires a victim and no victim has been selected.
+    if (!selectedCard || (selectedCard.requiresVictim && !selectedVictim))
         return
 
     // Prompt user for their guess
