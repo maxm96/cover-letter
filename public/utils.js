@@ -22,3 +22,13 @@ function getParentRec(el, test, depth = 3) {
 
     return found ? el : false
 }
+
+/**
+ * Find the player with the given username.
+ * @param {array} players
+ * @param {string} username
+ * @return {*}
+ */
+function getPlayerIndex(players, username) {
+    return players.findIndex(p => p.username === username)
+}

@@ -18,11 +18,6 @@ let countdownHandle = null
 let selectedCard = null
 let selectedVictim = null
 
-// ---- Utils ---- //
-function getPlayerIndex(username) {
-    return clientState.players.findIndex(p => p.username === username)
-}
-
 /**
  * Handle a state change.
  * @param state
@@ -129,7 +124,7 @@ socket.on('playerconnection', function (payload) {
 
 socket.on('playerdisconnect', function ({ username, state }) {
     if (state === 'g') {
-        let playerIndex = getPlayerIndex(username)
+        let playerIndex = getPlayerIndex(clientState.players, username)
         clientState.players[playerIndex].disconnected = true
         setOpponentStatus({ name: username, status: 'Disconnected' })
         logMessage(`${username} has disconnected.`)
@@ -140,7 +135,7 @@ socket.on('playerdisconnect', function ({ username, state }) {
 })
 
 socket.on('playerreconnect', function ({ username }) {
-    let playerIndex = getPlayerIndex(username)
+    let playerIndex = getPlayerIndex(clientState.players, username)
     if (playerIndex < 0)
         return console.log(`Received reconnect from unknown player ${username}`)
 
@@ -150,7 +145,7 @@ socket.on('playerreconnect', function ({ username }) {
 })
 
 socket.on('playerready', function ({ username, ready, gameState }) {
-    let playerIndex = getPlayerIndex(username)
+    let playerIndex = getPlayerIndex(clientState.players, username)
     if (playerIndex < 0)
         return
 
