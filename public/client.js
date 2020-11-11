@@ -93,8 +93,43 @@ function updatePlayerTurn(newPlayerTurn) {
 }
 
 function updatePlayers(players) {
-    clientState.players.forEach((p) => {
+    players.forEach((p) => {
+        let playerIndex = getPlayerIndex(clientState.players, p.username)
+        if (playerIndex < 0) {
+            console.log(`Unable to find player ${p.username} in players list`)
+            return
+        }
 
+        let player = clientState.players[playerIndex]
+        let isOpponent = player.username !== clientUsername
+
+        // Update isOut status
+        if (p.isOut !== player.isOut) {
+            player.isOut = p.isOut
+
+            if (player.isOut) {
+                if (isOpponent) {
+                    setOpponentIsOut({ opponentName: player.username, isOut: player.isOut })
+                    logMessage(`${player.username} is out.`)
+                } else
+                    logMessage('You are out.')
+            }
+        }
+
+        // Update isProtected status
+        if (p.isProtected !== player.isProtected) {
+            player.isProtected = p.isProtected
+
+            if (player.isProtected) {
+                if (isOpponent) {
+                    setOpponentIsProtected({ opponentName: player.username, isProtected: player.isProtected })
+                    logMessage(`${player.username} has protection until round ${player.isProtected}.`)
+                } else
+                    logMessage(`You have protection until round ${player.isProtected}.`)
+            }
+        }
+
+        // update playedCards list
     })
 }
 
@@ -103,7 +138,7 @@ function updateScores(scores) {
 }
 
 function handleWin(winner) {
-
+    console.log('Winner:', winner)
 }
 
 // ---- Socket events ---- //

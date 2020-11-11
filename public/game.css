@@ -163,7 +163,7 @@
 }
 
 .current-turn {
-	border: 3px solid red;
+	border: 3px solid green;
 }
 
 .selectable {
@@ -172,4 +172,14 @@
 
 .selected {
 	border: 3px solid #edea42;
+}
+
+.out {
+	cursor: not-allowed;
+	border: 3px solid red;
+}
+
+.protected {
+	cursor: not-allowed;
+	border: 3px solid lightblue;
 }

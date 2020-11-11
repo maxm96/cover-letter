@@ -357,3 +357,34 @@ function updateHandUI(newHand) {
         appendCardToHand({ number: nh.number, name: nh.name, description: nh.description })
     })
 }
+
+/**
+ * Add or remove the out class on the given opponent.
+ * @param {string} opponentName
+ * @param {boolean} isOut
+ */
+function setOpponentIsOut({ opponentName, isOut }) {
+    let opponent = document.getElementById(`opponent-${opponentName}`)
+    if (!opponent) {
+        console.error(`Unable to find opponent ${opponentName}`)
+        return
+    }
+
+    if (isOut)
+        opponent.classList.add('out')
+    else
+        opponent.classList.remove('out')
+}
+
+function setOpponentIsProtected({ opponentName, isProtected }) {
+    let opponent = document.getElementById(`opponent-${opponentName}`)
+    if (!opponent) {
+        console.error(`Unable to find opponent ${opponentName}`)
+        return
+    }
+
+    if (isProtected !== false)
+        opponent.classList.add('protected')
+    else
+        opponent.classList.remove('protected')
+}
