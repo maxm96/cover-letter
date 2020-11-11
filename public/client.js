@@ -237,20 +237,9 @@ function clearCardListeners() {
 
 function onOpponentClick(e) {
     // Same thing as onCardClick except there are multiple levels of children so we must loopty loop
-    let depth = 3
-    let opponent = e.target
-    let found = false
-
-    do {
-        if (opponent.classList.contains('opponent')) {
-            found = true
-            break
-        } else
-            opponent = opponent.parentNode
-    } while (--depth > -1)
-
-    if (!found) {
-        console.error("Couldn't find opponent parent element.")
+    let opponent = getParentRec(e.target, (el) => el.classList.contains('opponent'))
+    if (opponent === false) {
+        console.error('Unable to find parent opponent node.')
         return
     }
 
