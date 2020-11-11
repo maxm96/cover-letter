@@ -186,4 +186,15 @@
 
 #available-cards {
 	display: none;
+	list-style-type: none;
+}
+
+.available-card {
+	padding: 2px;
+}
+
+.available-card:hover, .available-card.selected {
+	background-color: black;
+	color: white;
+	border: none;
 }

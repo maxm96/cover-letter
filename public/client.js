@@ -259,17 +259,26 @@ document.getElementById('ready-btn').addEventListener('click', function (e) {
 function playCard() {
     // TODO: if all opponents are unavailable for victimizing, discard card either against self or no effect
 
-    // Can't play card unless a card has been selected.
-    // Can't play card if it requires a victim and no victim has been selected.
-    if (!selectedCard || (selectedCard.requiresVictim && !selectedVictim))
+    // Can't play card unless a card has been selected
+    if (!selectedCard)
         return
 
     // Show the available cards list and set available card listeners
-    if (selectedCard.title === 'Wagie' && !selectedAvailableCard) {
+    if (selectedCard.title === 'Wagie') {
         toggleAvailableCards(true)
         setAvailableCardListeners()
-        return
+    } else {
+        toggleAvailableCards(false)
+        clearAvailableCardListeners()
     }
+
+    // Can't play card if it requires a victim and no victim has been selected.
+    if (selectedCard.requiresVictim && !selectedVictim)
+        return
+
+    // If an available card hasn't yet been picked, don't play the card
+    if (selectedCard.title === 'Wagie' && !selectedAvailableCard)
+        return
 
     // Hide available card list and clear listeners if the played card is not the Wagie
     if (selectedCard.title !== 'Wagie') {
@@ -386,6 +395,8 @@ function clearOpponentListeners() {
 function onAvailableCardClick(e) {
     // Only the li's should be clicked on
     selectedAvailableCard = e.target.innerText
+
+    e.target.classList.add('selected')
 
     playCard()
 }
