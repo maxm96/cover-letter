@@ -14,8 +14,10 @@ module.exports = class CEO extends Card
 
     /**
      * Nothing happens.
+     * @return {*}
      */
     apply({ player }) {
+        super.apply({ player })
         return { success: true, log: `${player.username} played the ${this.name}.` }
     }
 }

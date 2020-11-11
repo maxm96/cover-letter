@@ -32,6 +32,7 @@ module.exports = class Wagie extends Card
         } else
             log = `${player.username} incorrectly guessed ${victim.username}'s as ${guess}.`
 
+        super.apply({ player, victim })
         return { success: true, log: log }
     }
 }

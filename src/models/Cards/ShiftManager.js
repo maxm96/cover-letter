@@ -15,6 +15,7 @@ module.exports = class ShiftManager extends Card
      * If a player has a lower card number than the other, they are out.
      * @param player
      * @param victim
+     * @return {*}
      */
     apply({ player, victim }) {
         if (player.username === victim.username)
@@ -33,6 +34,7 @@ module.exports = class ShiftManager extends Card
         } else
             log = `${player.username} and ${victim.username} has identical cards.`
 
+        super.apply({ player, victim })
         return { success: true, log: log }
     }
 }

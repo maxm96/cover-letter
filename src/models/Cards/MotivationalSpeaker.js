@@ -15,6 +15,7 @@ module.exports = class MotivationalSpeaker extends Card
      * Swap hands.
      * @param player
      * @param victim
+     * @return {*}
      */
     apply({ player, victim }) {
         if (player.username === victim.username)
@@ -24,6 +25,7 @@ module.exports = class MotivationalSpeaker extends Card
         player.hand = victim.hand
         victim.hand = temp
 
+        super.apply({ player, victim })
         return { success: true, log: `${player.username} swapped hands with ${victim.username}.` }
     }
 }
