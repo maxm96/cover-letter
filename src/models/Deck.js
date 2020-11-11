@@ -3,7 +3,13 @@ const shuffle = require('../utils/shuffle')
 
 module.exports = class Deck
 {
-    constructor() {
+    constructor(deck = null) {
+        // Use deck if given one, as is the case with tests
+        if (deck !== null) {
+            this.deck = deck
+            return
+        }
+
         this.deck = []
 
         // Create the deck by reading the Card models in the Cards directory

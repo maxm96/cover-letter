@@ -1,6 +1,8 @@
 const assert = require('assert')
 const G = require('../src/models/Game')
 const GameStates = require('../src/models/GameStates')
+const Shareholder = require('../src/models/Cards/Shareholder')
+const Deck = require('../src/models/Deck')
 
 describe('Game', function () {
     describe('onConnection', function () {
@@ -517,6 +519,57 @@ describe('Game', function () {
 
             assert(res.success)
             assert(Game.players[Game.getPlayerIndex('someuser1')].isOut)
+        })
+
+        it('should draw a card for a player who needs one', function () {
+            Game.state = GameStates.GAMEPLAY
+            Game.playerTurn = 'someuser1'
+            Game._setIsProperty('someuser1', 'isOut', false)
+            Game._dealCard('someuser1', 'Salaried Worker')
+            Game._dealCard('someuser1', 'Wagie', false)
+            Game._dealCard('someuser2', 'Wagie')
+
+            // Create deck with just the Shareholder card. This card should be dealt to someuser2.
+            Game.deck = new Deck([new Shareholder()])
+
+            let res = Game.onPlayHand({
+                cardName: 'Salaried Worker',
+                playerName: 'someuser1',
+                victimName: 'someuser2'
+            })
+
+            let playerHand = Game.players[Game.getPlayerIndex('someuser1')].hand
+            let victimHand = Game.players[Game.getPlayerIndex('someuser2')].hand
+
+            assert(res.success)
+            assert(playerHand.length === 1)
+            assert(victimHand.length === 1)
+            assert(victimHand[0].name === 'Shareholder')
+        })
+
+        it('should give a card to the current turn player', function () {
+            Game.state = GameStates.GAMEPLAY
+            Game.playerTurn = 'someuser1'
+            Game._dealCard('someuser1', 'Wagie')
+            Game._dealCard('someuser1', 'Salaried Worker', false)
+            Game._dealCard('someuser2', 'CEO')
+
+            Game.deck = new Deck([new Shareholder()])
+
+            let res = Game.onPlayHand({
+                cardName: 'Wagie',
+                playerName: 'someuser1',
+                victimName: 'someuser2',
+                guess: 'Shareholder'
+            })
+
+            let playerHand = Game.players[Game.getPlayerIndex('someuser1')].hand
+            let victimHand = Game.players[Game.getPlayerIndex('someuser2')].hand
+
+            assert(res.success)
+            assert(playerHand.length === 1)
+            assert(victimHand.length === 2)
+            assert(victimHand.map(h => h.name).includes('Shareholder'))
         })
     })
 })

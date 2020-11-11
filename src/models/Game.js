@@ -394,6 +394,16 @@ module.exports = class Game
         // Update player turn
         this.advanceTurn()
 
+        // Deal card to the current turn player
+        let currentTurnPlayerIndex = this.getPlayerIndex(this.playerTurn)
+        if (currentTurnPlayerIndex < 0) {
+            console.error(`Unable to find the current turn player ${this.playerTurn}`)
+            return { success: false, message: 'Server error.' }
+        }
+
+        if (this.deck.length)
+            this.players[currentTurnPlayerIndex].hand.push(this.deck.draw())
+
         // Update game log
         if (res.log)
             this.log.push(res.log)
