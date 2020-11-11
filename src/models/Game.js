@@ -74,6 +74,23 @@ module.exports = class Game
     }
 
     /**
+     * If the current turn player is the first player, increment the round count.
+     */
+    incrementRound() {
+        let firstTurnPlayerIndex
+
+        // We have a last winner so assume this person went first
+        if (this.lastWinner)
+            firstTurnPlayerIndex = this.getPlayerIndex(this.lastWinner)
+        // For now, assume the first person in the players array is the first player in turn order
+        else
+            firstTurnPlayerIndex = 0
+
+        if (this.players[firstTurnPlayerIndex].username === this.playerTurn)
+            this.currentRound++
+    }
+
+    /**
      * Returns the winning username if there is only one person left in. Returns false otherwise.
      * @return {boolean|string}
      */
@@ -407,6 +424,9 @@ module.exports = class Game
         // Update game log
         if (res.log)
             this.log.push(res.log)
+
+        // Increment round count if round count should be incremented
+        this.incrementRound()
 
         return this.clientState(res)
     }

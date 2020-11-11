@@ -2,6 +2,7 @@ const assert = require('assert')
 const G = require('../src/models/Game')
 const GameStates = require('../src/models/GameStates')
 const Shareholder = require('../src/models/Cards/Shareholder')
+const Wagie = require('../src/models/Cards/Wagie')
 const Deck = require('../src/models/Deck')
 
 describe('Game', function () {
@@ -570,6 +571,47 @@ describe('Game', function () {
             assert(playerHand.length === 1)
             assert(victimHand.length === 2)
             assert(victimHand.map(h => h.name).includes('Shareholder'))
+        })
+
+        it('should increment the round count when the first player in turn order plays a hand', function () {
+            Game.state = GameStates.GAMEPLAY
+            Game.playerTurn = 'someuser1'
+            Game.currentRound = 0
+            Game._dealCard('someuser1', 'Motivational Speaker')
+            Game._dealCard('someuser1', 'Wagie', false)
+            Game._dealCard('someuser2', 'HR')
+
+            Game.deck = new Deck([
+                new Wagie(),
+                new Wagie(),
+                new Wagie(),
+            ])
+
+            let res = Game.onPlayHand({
+                cardName: 'Wagie',
+                playerName: 'someuser1',
+                victimName: 'someuser2',
+                guess: 'Shareholder'
+            })
+
+            assert(res.success)
+            assert(Game.players[Game.getPlayerIndex('someuser1')].hand.length === 1)
+            assert(Game.players[Game.getPlayerIndex('someuser2')].hand.length === 2)
+            assert(Game.playerTurn === 'someuser2')
+            assert(Game.currentRound === 0)
+
+            res = Game.onPlayHand({
+                cardName: 'Wagie',
+                playerName: 'someuser2',
+                victimName: 'someuser1',
+                guess: 'Shareholder'
+            })
+
+            assert(res.success)
+            assert(Game.players[Game.getPlayerIndex('someuser1')].hand.length === 2)
+            assert(Game.players[Game.getPlayerIndex('someuser2')].hand.length === 1)
+            assert(Game.playerTurn === 'someuser1')
+            assert(Game.currentRound === 1)
         })
     })
 })
