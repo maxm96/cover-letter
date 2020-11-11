@@ -77,6 +77,9 @@ function logMessage(message, admin = false) {
 
     // Don't add a newline if this is the first message
     log.value = log.value + `${log.value !== '' ? '\n' : ''}${formatted}`
+
+    // Manually dispatch change event
+    log.dispatchEvent(new Event('change'))
 }
 
 /**

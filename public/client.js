@@ -426,3 +426,9 @@ function clearAvailableCardListeners() {
         el.classList.remove('selectable')
     })
 }
+
+// Automatically scroll log to bottom on change
+// TODO: disable this when the mouse is over the log to prevent log jumping when trying to read
+document.getElementById('log').addEventListener('change', function (e) {
+    e.target.scrollTop = e.target.scrollHeight
+})
