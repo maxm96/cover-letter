@@ -275,6 +275,9 @@ function setCardListeners() {
 }
 
 function clearCardListeners() {
+    // Also reset selected card
+    selectedCard = null
+
     document.querySelectorAll('.card').forEach((el) => {
         el.removeEventListener('click', onCardClick)
         el.classList.remove('selected')
@@ -318,6 +321,9 @@ function setOpponentListeners() {
 }
 
 function clearOpponentListeners() {
+    // Also reset selected victim
+    selectedVictim = null
+
     document.querySelectorAll('.opponent').forEach((el) => {
         el.removeEventListener('click', onOpponentClick)
         el.classList.remove('selected')
