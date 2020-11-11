@@ -207,7 +207,7 @@ socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount, 
     updatePlayerTurn(playerTurn)
 })
 
-socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard }) {
+socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard, deckCount }) {
     if (log)
         logMessage(log)
 
@@ -224,6 +224,7 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
         updateScores(scores)
         updateHand(playerHands[clientUsername])
         updatePlayerTurn(playerTurn)
+        updateDeckCount(deckCount)
     }
 
     if (victimCard)
