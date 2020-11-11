@@ -142,7 +142,13 @@ function updateScores(scores) {
 }
 
 function handleWin(winner) {
-    console.log('Winner:', winner)
+    logMessage(`${winner} won the round.`)
+
+    // Clear listeners and hide things that should be hidden
+    clearCardListeners()
+    clearOpponentListeners()
+    clearAvailableCardListeners()
+    toggleAvailableCards(false)
 }
 
 // ---- Socket events ---- //
