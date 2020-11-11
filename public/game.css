@@ -166,6 +166,10 @@
 	border: 3px solid red;
 }
 
+.selectable {
+	cursor: pointer;
+}
+
 .selected {
 	border: 3px solid #edea42;
 }

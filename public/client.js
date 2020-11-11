@@ -30,7 +30,7 @@ function getPlayerIndex(username) {
  * @param playerTurn
  * @param deckCount
  */
-function handleStateChange(state, { playerHands, playerTurn, deckCount } = {}) {
+function handleStateChange(state, { playerHands, deckCount } = {}) {
     // Just clear the countdown interval on each state change
     if (countdownHandle !== null) {
         clearInterval(countdownHandle)
@@ -57,10 +57,6 @@ function handleStateChange(state, { playerHands, playerTurn, deckCount } = {}) {
                 }))
             }
 
-            // Get the player whose turn it is
-            if (playerTurn)
-                clientState.playerTurn = playerTurn
-
             // Set deck count
             if (deckCount)
                 updateDeckCount(deckCount)
@@ -83,7 +79,19 @@ function updateHand(newHand) {
 }
 
 function updatePlayerTurn(newPlayerTurn) {
+    if (!newPlayerTurn)
+        return
+
     updatePlayerTurnUI(newPlayerTurn)
+
+    if (newPlayerTurn === clientUsername) {
+        setCardListeners()
+        setOpponentListeners()
+    } else {
+        clearCardListeners()
+        clearOpponentListeners()
+    }
+
     clientState.playerTurn = newPlayerTurn
 }
 
@@ -105,11 +113,13 @@ function handleWin(winner) {
 // This is the initial message from the server
 socket.on('curstate', function (curState) {
     clientState = curState
+
     handleStateChange(curState.gameState, {
         playerHands: curState.playerHands,
-        playerTurn: curState.playerTurn,
         deckCount: curState.deckCount
     })
+
+    updatePlayerTurn(curState.playerTurn)
 })
 
 socket.on('playerconnection', function (payload) {
@@ -158,10 +168,11 @@ socket.on('playerready', function ({ username, ready, gameState }) {
 socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount, players }) {
     handleStateChange(state, {
         playerHands: playerHands,
-        playerTurn: playerTurn,
         deckCount: deckCount,
         players: players
     })
+
+    updatePlayerTurn(playerTurn)
 })
 
 socket.on('handplayed', function ({ state, playerHands, playerTurn, players, scores, winner, log, victimCard }) {
@@ -171,12 +182,12 @@ socket.on('handplayed', function ({ state, playerHands, playerTurn, players, sco
     if (winner)
         handleWin(winner)
 
-    if (state !== clientState.gameState)
+    if (state !== clientState.gameState) {
         handleStateChange(state, {
             playerHands: playerHands,
             playerTurn: playerTurn
         })
-    else {
+    } else {
         updatePlayers(players)
         updateScores(scores)
         updateHand(playerHands[clientUsername])
@@ -211,13 +222,26 @@ function onCardClick(e) {
     let card = e.target.classList.contains('card') ? e.target : e.target.parentNode
 
     let cardTitle = card.getElementsByClassName('card-title')[0].innerText
+    let cardNumber = card.getElementsByClassName('card-number')[0].innerText
 
     // Card is already selected, deselect card
-    if (selectedCard === cardTitle) {
+    if (selectedCard && selectedCard.title === cardTitle) {
         selectedCard = null
         card.classList.remove('selected')
     } else {
-        selectedCard = cardTitle
+        // If another card is selected, remove the selected class from it
+        if (selectedCard) {
+            let previousSelection = document.getElementsByClassName(`card-${selectedCard.number}`)[0]
+            if (previousSelection) {
+                previousSelection.classList.remove('selected')
+            }
+        }
+
+        selectedCard = {
+            title: cardTitle,
+            number: cardNumber
+        }
+
         card.classList.add('selected')
     }
 }
@@ -225,6 +249,7 @@ function onCardClick(e) {
 function setCardListeners() {
     document.querySelectorAll('.card').forEach((el) => {
         el.addEventListener('click', onCardClick)
+        el.classList.add('selectable')
     })
 }
 
@@ -232,6 +257,7 @@ function clearCardListeners() {
     document.querySelectorAll('.card').forEach((el) => {
         el.removeEventListener('click', onCardClick)
         el.classList.remove('selected')
+        el.classList.remove('selectable')
     })
 }
 
@@ -245,10 +271,15 @@ function onOpponentClick(e) {
 
     let opponentName = opponent.getElementsByClassName('opponent-name')[0].innerText
 
+    if (selectedVictim) {
+        let previousSelection = document.getElementsByClassName(`opponent-${selectedVictim}`)[0]
+        if (previousSelection)
+            previousSelection.classList.remove('selected')
+    }
+
     // Similar to onCardClick above
     if (selectedVictim === opponentName) {
         selectedVictim = null
-        opponent.classList.remove('selected')
     } else {
         selectedVictim = opponentName
         opponent.classList.add('selected')
@@ -258,6 +289,7 @@ function onOpponentClick(e) {
 function setOpponentListeners() {
     document.querySelectorAll('.opponent').forEach((el) => {
         el.addEventListener('click', onOpponentClick)
+        el.classList.add('selectable')
     })
 }
 
@@ -265,5 +297,6 @@ function clearOpponentListeners() {
     document.querySelectorAll('.opponent').forEach((el) => {
         el.removeEventListener('click', onOpponentClick)
         el.classList.remove('selected')
+        el.classList.remove('selectable')
     })
 }
