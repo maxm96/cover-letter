@@ -143,6 +143,7 @@ function updateScores(scores) {
 
 function handleWin(winner) {
     logMessage(`${winner} won the round.`)
+    logMessage('******** New round ********', true)
 
     // Clear listeners and hide things that should be hidden
     clearCardListeners()

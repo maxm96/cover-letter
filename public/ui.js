@@ -68,12 +68,15 @@ function flashErrorMessage(message) {
 /**
  * Append the given message to the log box.
  * @param {string} message
+ * @param {boolean} admin Log message without the '>>' prepend
  */
-function logMessage(message) {
+function logMessage(message, admin = false) {
     let log = document.getElementById('log')
 
+    let formatted = admin ? message : `>> ${message}`
+
     // Don't add a newline if this is the first message
-    log.value = log.value + `${log.value !== '' ? '\n' : ''}>> ${message}`
+    log.value = log.value + `${log.value !== '' ? '\n' : ''}${formatted}`
 }
 
 /**
