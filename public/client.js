@@ -66,6 +66,8 @@ function handleStateChange(state, { playerHands, deckCount } = {}) {
         default:
             console.log(`Unknown state change: ${state}`)
     }
+
+    clientState.gameState = state
 }
 
 function updateHand(newHand) {
@@ -170,15 +172,15 @@ socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount, 
     updatePlayerTurn(playerTurn)
 })
 
-socket.on('handplayed', function ({ state, playerHands, playerTurn, players, scores, winner, log, victimCard }) {
+socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard }) {
     if (log)
         logMessage(log)
 
     if (winner)
         handleWin(winner)
 
-    if (state !== clientState.gameState) {
-        handleStateChange(state, {
+    if (gameState !== clientState.gameState) {
+        handleStateChange(gameState, {
             playerHands: playerHands,
             playerTurn: playerTurn
         })
@@ -211,6 +213,28 @@ document.getElementById('ready-btn').addEventListener('click', function (e) {
     socket.emit('ready', { ready: e.target.checked })
 })
 
+function playCard() {
+    // TODO: get requiresVictim property from server
+    // TODO: if all opponents are unavailable for victimizing, discard card either against self or no effect
+
+    // Can't play card unless a card and victim are selected
+    if (!selectedCard || !selectedVictim)
+        return
+
+    // Prompt user for their guess
+    let guess = null
+    if (selectedCard.title === 'Wagie') {
+        // TODO
+    }
+
+    socket.emit('playhand', {
+        player: clientUsername,
+        card: selectedCard.title,
+        victim: selectedVictim,
+        guess: guess
+    })
+}
+
 function onCardClick(e) {
     // I want the main card element, so if the user clicks on something inside the
     // card, get the parent node. There is only one level of children so this should be fine.
@@ -239,6 +263,8 @@ function onCardClick(e) {
 
         card.classList.add('selected')
     }
+
+    playCard()
 }
 
 function setCardListeners() {
@@ -280,6 +306,8 @@ function onOpponentClick(e) {
         selectedVictim = opponentName
         opponent.classList.add('selected')
     }
+
+    playCard()
 }
 
 function setOpponentListeners() {

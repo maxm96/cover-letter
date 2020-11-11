@@ -54,7 +54,7 @@ module.exports = function (sio, Game) {
 
             let res = Game.onPlayHand({ cardName: card, playerName: player, victimName: victim, guess: guess })
             if (res.success)
-                sio.emit('handplayed')
+                sio.emit('handplayed', res)
             else {
                 console.log(`Failed to play hand: ${res.message}`)
                 socket.emit('playhandfailed', res)

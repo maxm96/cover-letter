@@ -369,7 +369,7 @@ module.exports = class Game
                 return { success: false, message: `${victimName} is already out.` }
             if (victim.disconnected)
                 return { success: false, message: `${victimName} was disconnected.` }
-            if (victim.isProtected >= this.currentRound)
+            if (victim.isProtected !== false && victim.isProtected >= this.currentRound)
                 return { success: false, message: `Victim has protection until round ${victim.isProtected}.` }
         }
 
