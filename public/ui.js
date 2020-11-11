@@ -144,12 +144,6 @@ function gameplayTransition(clientState, clientUsername) {
             playedCards: []
         })
     })
-
-    // Log the first player
-    if (clientState.playerTurn === clientUsername)
-        logMessage('You go first.')
-    else
-        logMessage(`${clientState.playerTurn} goes first.`)
 }
 
 /**
@@ -221,6 +215,8 @@ function updatePlayerTurnUI(newPlayerTurn) {
         // Don't set current-turn class on user, because user doesn't exist
         return
     }
+
+    logMessage(`It is ${newPlayerTurn}'s turn.`)
 
     document.getElementById(`opponent-${newPlayerTurn}`).classList.add('current-turn')
 }

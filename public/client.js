@@ -271,6 +271,7 @@ function onOpponentClick(e) {
 
     let opponentName = opponent.getElementsByClassName('opponent-name')[0].innerText
 
+    // Remove selected class from a previous selection
     if (selectedVictim) {
         let previousSelection = document.getElementsByClassName(`opponent-${selectedVictim}`)[0]
         if (previousSelection)
