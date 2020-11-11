@@ -18,6 +18,7 @@ let countdownHandle = null
 // Keep track of selected card and victim
 let selectedCard = null
 let selectedVictim = null
+let selectedAvailableCard = null
 
 /**
  * Handle a state change.
@@ -210,6 +211,10 @@ socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount, 
 })
 
 socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard, deckCount }) {
+    // Clear available card listeners and hide available card list
+    clearAvailableCardListeners()
+    toggleAvailableCards(false)
+
     if (log)
         logMessage(log)
 
@@ -259,17 +264,24 @@ function playCard() {
     if (!selectedCard || (selectedCard.requiresVictim && !selectedVictim))
         return
 
-    // Prompt user for their guess
-    let guess = null
-    if (selectedCard.title === 'Wagie') {
-        // TODO
+    // Show the available cards list and set available card listeners
+    if (selectedCard.title === 'Wagie' && !selectedAvailableCard) {
+        toggleAvailableCards(true)
+        setAvailableCardListeners()
+        return
+    }
+
+    // Hide available card list and clear listeners if the played card is not the Wagie
+    if (selectedCard.title !== 'Wagie') {
+        clearAvailableCardListeners()
+        toggleAvailableCards(false)
     }
 
     socket.emit('playhand', {
         player: clientUsername,
         card: selectedCard.title,
         victim: selectedVictim,
-        guess: guess
+        guess: selectedAvailableCard
     })
 }
 
@@ -366,6 +378,30 @@ function clearOpponentListeners() {
 
     document.querySelectorAll('.opponent').forEach((el) => {
         el.removeEventListener('click', onOpponentClick)
+        el.classList.remove('selected')
+        el.classList.remove('selectable')
+    })
+}
+
+function onAvailableCardClick(e) {
+    // Only the li's should be clicked on
+    selectedAvailableCard = e.target.innerText
+
+    playCard()
+}
+
+function setAvailableCardListeners() {
+    document.querySelectorAll('.available-card').forEach((el) => {
+        el.addEventListener('click', onAvailableCardClick)
+        el.classList.add('selectable')
+    })
+}
+
+function clearAvailableCardListeners() {
+    selectedAvailableCard = null
+
+    document.querySelectorAll('.available-card').forEach((el) => {
+        el.removeEventListener('click', onAvailableCardClick)
         el.classList.remove('selected')
         el.classList.remove('selectable')
     })

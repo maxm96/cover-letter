@@ -383,6 +383,11 @@ function setOpponentIsOut({ opponentName, isOut }) {
         opponent.classList.remove('out')
 }
 
+/**
+ * Add or remove the protected class on the given opponent.
+ * @param {string} opponentName
+ * @param {boolean} isProtected
+ */
 function setOpponentIsProtected({ opponentName, isProtected }) {
     let opponent = document.getElementById(`opponent-${opponentName}`)
     if (!opponent) {
@@ -394,4 +399,8 @@ function setOpponentIsProtected({ opponentName, isProtected }) {
         opponent.classList.add('protected')
     else
         opponent.classList.remove('protected')
+}
+
+function toggleAvailableCards(show) {
+    document.getElementById('available-cards').style.display = show ? 'inline-block' : 'none'
 }

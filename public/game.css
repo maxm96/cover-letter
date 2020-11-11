@@ -183,3 +183,7 @@
 	cursor: not-allowed;
 	border: 3px solid lightblue;
 }
+
+#available-cards {
+	display: none;
+}
