@@ -8,7 +8,8 @@ module.exports = class CEO extends Card
             'Discard if with Motivational Speaker or Salaried Worker.',
             1,
             7,
-            false
+            false,
+            true
         )
     }
 

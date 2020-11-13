@@ -7,7 +7,9 @@ module.exports = class SalariedWorker extends Card
             'Salaried Worker',
             'Choose a player to discard their hand, or discard your hand.',
             2,
-            5
+            5,
+            true,
+            true
         )
     }
 
