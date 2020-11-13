@@ -410,10 +410,24 @@ function clearOpponentListeners() {
 }
 
 function onAvailableCardClick(e) {
-    // Only the li's should be clicked on
-    selectedAvailableCard = e.target.innerText
+    // Unselect available card if clicking on an already selected li
+    if (e.target.innerText === selectedAvailableCard) {
+        selectedAvailableCard = null
+        e.target.classList.remove('selected')
+    }
+    // Set available card
+    else {
+        selectedAvailableCard = e.target.innerText
 
-    e.target.classList.add('selected')
+        // Remove any other selected classes from the available cards
+        document.querySelectorAll('.available-card').forEach((ac) => {
+            if (!ac.classList.contains('selected'))
+                return
+            ac.classList.remove('selected')
+        })
+
+        e.target.classList.add('selected')
+    }
 
     playCard()
 }
