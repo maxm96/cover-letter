@@ -236,11 +236,11 @@ function updatePlayerTurnUI(newPlayerTurn) {
  * @param {int} canPlayAgainstSelf
  */
 function appendCardToHand({
-                              number,
-                              name,
-                              description,
-                              requiresVictim,
-                              canPlayAgainstSelf
+       number,
+       name,
+       description,
+       requiresVictim,
+       canPlayAgainstSelf
 }) {
     let cardTemplate = document.getElementById('card-template').cloneNode(true)
 
