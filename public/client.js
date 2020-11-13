@@ -19,6 +19,7 @@ let countdownHandle = null
 let selectedCard = null
 let selectedVictim = null
 let selectedAvailableCard = null
+let discard = false
 
 /**
  * Handle a state change.
@@ -282,18 +283,15 @@ function playCard() {
         clearAvailableCardListeners()
     }
 
-    // Can't play card if it requires a victim and no victim has been selected.
-    if (selectedCard.requiresVictim && !selectedVictim)
-        return
+    // A victim and available card are not needed if discarding
+    if (!discard) {
+        // Can't play card if it requires a victim and no victim has been selected.
+        if (selectedCard.requiresVictim && !selectedVictim)
+            return
 
-    // If an available card hasn't yet been picked, don't play the card
-    if (selectedCard.title === 'Wagie' && !selectedAvailableCard)
-        return
-
-    // Hide available card list and clear listeners if the played card is not the Wagie
-    if (selectedCard.title !== 'Wagie') {
-        clearAvailableCardListeners()
-        toggleAvailableCards(false)
+        // If an available card hasn't yet been picked, don't play the card
+        if (selectedCard.title === 'Wagie' && !selectedAvailableCard)
+            return
     }
 
     socket.emit('playhand', {
@@ -304,6 +302,20 @@ function playCard() {
     })
 }
 
+function onDiscardBtnClick() {
+    discard = true
+    playCard()
+}
+
+function setDiscardBtnListener() {
+    document.getElementById('discard-btn').addEventListener('click', onDiscardBtnClick)
+}
+
+function clearDiscardBtnListener() {
+    discard = false
+    document.getElementById('discard-btn').removeEventListener('click', onDiscardBtnClick)
+}
+
 function onCardClick(e) {
     // I want the main card element, so if the user clicks on something inside the
     // card, get the parent node. There is only one level of children so this should be fine.
@@ -312,6 +324,7 @@ function onCardClick(e) {
     let cardTitle = card.getElementsByClassName('card-title')[0].innerText
     let cardNumber = card.getElementsByClassName('card-number')[0].innerText
     let requiresVictim = card.getElementsByClassName('requires-victim')[0].value
+    let canPlayAgainstSelf = card.getElementsByClassName('against-self')[0].value
 
     // Card is already selected, deselect card
     if (selectedCard && selectedCard.title === cardTitle) {
@@ -329,10 +342,19 @@ function onCardClick(e) {
         selectedCard = {
             title: cardTitle,
             number: cardNumber,
-            requiresVictim: Boolean(requiresVictim)
+            requiresVictim: Boolean(Number(requiresVictim)),
+            canPlayAgainstSelf: Boolean(Number(canPlayAgainstSelf))
         }
 
         card.classList.add('selected')
+    }
+
+    if (selectedCard && canDiscardCard(clientState.players, clientUsername, selectedCard)) {
+        toggleDiscardBtn(true)
+        setDiscardBtnListener()
+    } else {
+        toggleDiscardBtn(false)
+        clearDiscardBtnListener()
     }
 
     playCard()

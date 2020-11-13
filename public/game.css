@@ -198,3 +198,8 @@
 	color: white;
 	border: none;
 }
+
+#discard-btn {
+	display: none;
+	height: 35px;
+}

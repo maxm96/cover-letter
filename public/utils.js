@@ -32,3 +32,18 @@ function getParentRec(el, test, depth = 3) {
 function getPlayerIndex(players, username) {
     return players.findIndex(p => p.username === username)
 }
+
+/**
+ * Returns true if the given user can discard their card. This is the case if all other players are either out
+ * or have protection. If the card can be played against the user, it must be used that way.
+ * @param {array} players
+ * @param {string} username
+ * @param {object} card
+ * @return {boolean}
+ */
+function canDiscardCard(players, username, card) {
+    let nonUserPlayers = players.filter(p => p.username !== username)
+    let allUsersAreUnavailable = nonUserPlayers.every(p => p.isOut || p.isProtected)
+
+    return allUsersAreUnavailable && !card.canPlayAgainstSelf
+}

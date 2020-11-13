@@ -439,3 +439,11 @@ function updateScoreboard(scores) {
         score.innerText = scores[user]
     })
 }
+
+/**
+ * Toggle the discard button.
+ * @param {boolean} show
+ */
+function toggleDiscardBtn(show) {
+    document.getElementById('discard-btn').style.display = show ? 'inline-block' : 'none'
+}
