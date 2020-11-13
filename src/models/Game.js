@@ -366,7 +366,7 @@ module.exports = class Game
         return { success: true, username: username, ready: ready, gameState: this.state }
     }
 
-    onPlayHand({ cardName, playerName, victimName, guess }) {
+    onPlayHand({ cardName, playerName, victimName, guess, discard }) {
         // Do some validation
         if (this.state !== GameStates.GAMEPLAY)
             return { success: false, message: 'Invalid game state.' }
@@ -399,13 +399,25 @@ module.exports = class Game
                 return { success: false, message: `Victim has protection until round ${victim.isProtected}.` }
         }
 
-        // Play the card
-        let res = player.playCard({
-            cardName: cardName,
-            victim: victim,
-            guess: guess,
-            protectedToRound: this.currentRound + 1
-        })
+        let res
+
+        if (discard) {
+            let canDiscard = this.canDiscard(player.username, player.peekCard(cardName))
+            if (canDiscard === true)
+                res = player.discardCard(cardName)
+            else
+                res = { success: false, message: canDiscard }
+        } else {
+            // Play the card
+            res = player.playCard({
+                cardName: cardName,
+                victim: victim,
+                guess: guess,
+                protectedToRound: this.currentRound + 1
+            })
+        }
+
+
 
         // Return response early if playCard fails
         if (!res.success)
@@ -460,6 +472,22 @@ module.exports = class Game
         this.scores[res.winner]++
         this.roundReset()
         return this.clientState(res)
+    }
+
+    /**
+     * Check if the player can legally discard the given card.
+     * @param {string} playerName
+     * @param {object} card
+     */
+    canDiscard(playerName, card) {
+        let nonUserPlayers = this.players.filter(p => p.username !== playerName)
+        if (!nonUserPlayers.every(p => p.isOut || p.isProtected))
+            return 'There are still valid players.'
+
+        if (card.canPlayAgainstSelf)
+            return 'The card can be played against self.'
+
+        return true
     }
 
     // ---- Test functions ---- //

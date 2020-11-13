@@ -49,10 +49,17 @@ module.exports = function (sio, Game) {
             }
         })
 
-        socket.on('playhand', ({ player, card, victim, guess }) => {
+        socket.on('playhand', ({ player, card, victim, guess, discard }) => {
             console.log(`${player} played card ${card}`)
 
-            let res = Game.onPlayHand({ cardName: card, playerName: player, victimName: victim, guess: guess })
+            let res = Game.onPlayHand({
+                cardName: card,
+                playerName: player,
+                victimName: victim,
+                guess: guess,
+                discard: discard
+            })
+
             if (res.success)
                 sio.emit('handplayed', res)
             else {

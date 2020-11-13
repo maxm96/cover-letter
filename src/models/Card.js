@@ -18,4 +18,8 @@ module.exports = class Card
         if (victim)
             console.log('Victim:', victim)
     }
+
+    discard({ player }) {
+        return { success: true, log: `${player.username} has discarded the ${this.name}.` }
+    }
 }

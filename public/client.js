@@ -298,7 +298,8 @@ function playCard() {
         player: clientUsername,
         card: selectedCard.title,
         victim: selectedVictim,
-        guess: selectedAvailableCard
+        guess: selectedAvailableCard,
+        discard: discard
     })
 }
 

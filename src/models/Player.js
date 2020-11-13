@@ -21,19 +21,44 @@ module.exports = class Player
     }
 
     /**
+     * Get the index of the card matching the given card name.
+     * @param cardName
+     * @return {number}
+     */
+    getCardIndex(cardName) {
+        let cardIndex = this.hand.findIndex(c => c.name === cardName)
+        if (cardIndex < 0)
+            throw new Error(`No card found for ${cardName}`)
+
+        return cardIndex
+    }
+
+    /**
      * Return the card from the player's hand that matches the given card name.
      * @param cardName
      * @return {*}
      */
     getCard(cardName) {
-        let cardIndex = this.hand.findIndex(c => c.name === cardName)
-        if (cardIndex < 0)
-            throw new Error(`No card found for ${cardName}`)
-
+        let cardIndex = this.getCardIndex(cardName)
         let card = this.hand[cardIndex]
         this.hand.splice(cardIndex, 1)
 
         return card
+    }
+
+    /**
+     * Returns the player's card matching the given card name but does not remove it from the player's hand.
+     * @param cardName
+     * @return {*}
+     */
+    peekCard(cardName) {
+        let cardIndex = this.getCardIndex(cardName)
+        return {...this.hand[cardIndex]}
+    }
+
+    discardCard(cardName) {
+        let card = this.getCard(cardName)
+        return card.discard({ player: this })
     }
 
     /**
