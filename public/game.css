@@ -171,7 +171,8 @@
 }
 
 .selected {
-	border: 3px solid #edea42;
+	background-color: black;
+	color: white;
 }
 
 .out {
