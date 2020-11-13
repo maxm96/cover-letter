@@ -420,11 +420,7 @@ function onAvailableCardClick(e) {
         selectedAvailableCard = e.target.innerText
 
         // Remove any other selected classes from the available cards
-        document.querySelectorAll('.available-card').forEach((ac) => {
-            if (!ac.classList.contains('selected'))
-                return
-            ac.classList.remove('selected')
-        })
+        document.querySelectorAll('.available-card').forEach(ac => ac.classList.remove('selected'))
 
         e.target.classList.add('selected')
     }
