@@ -51,7 +51,8 @@ function handleStateChange(state, { playerHands, deckCount } = {}) {
                     number: card.number,
                     name: card.name,
                     description: card.description,
-                    requiresVictim: card.requiresVictim
+                    requiresVictim: card.requiresVictim,
+                    canPlayAgainstSelf: card.canPlayAgainstSelf
                 }))
             }
 

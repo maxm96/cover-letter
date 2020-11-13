@@ -233,8 +233,15 @@ function updatePlayerTurnUI(newPlayerTurn) {
  * @param {string} name
  * @param {string} description
  * @param {int} requiresVictim
+ * @param {int} canPlayAgainstSelf
  */
-function appendCardToHand({ number, name, description, requiresVictim }) {
+function appendCardToHand({
+                              number,
+                              name,
+                              description,
+                              requiresVictim,
+                              canPlayAgainstSelf
+}) {
     let cardTemplate = document.getElementById('card-template').cloneNode(true)
 
     // Remove template id and add card class
@@ -249,6 +256,7 @@ function appendCardToHand({ number, name, description, requiresVictim }) {
     cardTemplate.getElementsByClassName('card-title')[0].innerText = name
     cardTemplate.getElementsByClassName('card-description')[0].innerText = description
     cardTemplate.getElementsByClassName('requires-victim')[0].value = requiresVictim
+    cardTemplate.getElementsByClassName('against-self')[0].value = canPlayAgainstSelf
 
     // Append the card to the user's hand
     document.getElementById('user-cards').appendChild(cardTemplate)
@@ -366,7 +374,8 @@ function updateHandUI(newHand) {
             number: nh.number,
             name: nh.name,
             description: nh.description,
-            requiresVictim: nh.requiresVictim
+            requiresVictim: nh.requiresVictim,
+            canPlayAgainstSelf: nh.canPlayAgainstSelf
         })
     })
 }

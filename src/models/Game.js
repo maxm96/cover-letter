@@ -39,7 +39,8 @@ module.exports = class Game
                     name: h.name,
                     number: h.number,
                     description: h.description,
-                    requiresVictim: h.requiresVictim ? 1 : 0
+                    requiresVictim: h.requiresVictim ? 1 : 0,
+                    canPlayAgainstSelf: h.canPlayAgainstSelf ? 1 : 0
                 }
             )))
 
