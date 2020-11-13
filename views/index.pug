@@ -39,7 +39,11 @@ html
                 div(id="deck") Deck:
                 ul(id="available-cards")
                     each card in availableCards
-                        li(class="available-card")= card
+                        li(
+                            class="available-card",
+                            data-name=card.name,
+                            data-number=card.number
+                            ) #{card.number}&nbsp;&nbsp;#{card.name}
                     else
                         li There are no available cards
                 button(id="discard-btn") Discard Card

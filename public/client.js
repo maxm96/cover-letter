@@ -434,14 +434,16 @@ function clearOpponentListeners() {
 }
 
 function onAvailableCardClick(e) {
+    let cardName = e.target.dataset.name
+
     // Unselect available card if clicking on an already selected li
-    if (e.target.innerText === selectedAvailableCard) {
+    if (cardName === selectedAvailableCard) {
         selectedAvailableCard = null
         e.target.classList.remove('selected')
     }
     // Set available card
     else {
-        selectedAvailableCard = e.target.innerText
+        selectedAvailableCard = cardName
 
         // Remove any other selected classes from the available cards
         document.querySelectorAll('.available-card').forEach(ac => ac.classList.remove('selected'))
