@@ -385,6 +385,14 @@ function onOpponentClick(e) {
 
 function setOpponentListeners() {
     document.querySelectorAll('.opponent').forEach((el) => {
+        let opponentName = el.getElementsByClassName('opponent-name')[0].innerText
+        let opponentIndex = getPlayerIndex(clientState.players, opponentName)
+        let opponent = clientState.players[opponentIndex]
+
+        // Do not set listener if the opponent is protected or out
+        if (opponent.isProtected || opponent.isOut)
+            return
+
         el.addEventListener('click', onOpponentClick)
         el.classList.add('selectable')
     })
