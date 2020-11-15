@@ -229,6 +229,8 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
     toggleAvailableCards(false)
     clearDiscardBtnListener()
     toggleDiscardBtn(false)
+    clearAgainstSelfBtnListener()
+    toggleAgainstSelfBtn(false)
 
     if (log)
         logMessage(log)
@@ -322,6 +324,20 @@ function clearDiscardBtnListener() {
     document.getElementById('discard-btn').removeEventListener('click', onDiscardBtnClick)
 }
 
+function onAgainstSelfBtnClick() {
+    selectedVictim = clientUsername
+    playCard()
+}
+
+function setAgainstSelfBtnListener() {
+    document.getElementById('against-self-btn').addEventListener('click', onAgainstSelfBtnClick)
+}
+
+function clearAgainstSelfBtnListener() {
+    selectedVictim = null
+    document.getElementById('against-self-btn').removeEventListener('click', onAgainstSelfBtnClick)
+}
+
 function onCardClick(e) {
     // I want the main card element, so if the user clicks on something inside the
     // card, get the parent node. There is only one level of children so this should be fine.
@@ -361,6 +377,14 @@ function onCardClick(e) {
     } else {
         toggleDiscardBtn(false)
         clearDiscardBtnListener()
+    }
+
+    if (selectedCard && selectedCard.canPlayAgainstSelf) {
+        toggleAgainstSelfBtn(true)
+        setAgainstSelfBtnListener()
+    } else {
+        toggleAgainstSelfBtn(false)
+        clearAgainstSelfBtnListener()
     }
 
     playCard()

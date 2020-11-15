@@ -451,3 +451,11 @@ function updateScoreboard(scores) {
 function toggleDiscardBtn(show) {
     document.getElementById('discard-btn').style.display = show ? 'inline-block' : 'none'
 }
+
+/**
+ * Toggle the play against self button.
+ * @param show
+ */
+function toggleAgainstSelfBtn(show) {
+    document.getElementById('against-self-btn').style.display = show ? 'inline-block' : 'none'
+}

@@ -200,7 +200,14 @@
 	border: none;
 }
 
+#user-area button {
+	height: 35px;
+}
+
 #discard-btn {
 	display: none;
-	height: 35px;
+}
+
+#against-self-btn {
+	display: none;
 }
