@@ -125,11 +125,13 @@ function updatePlayers(players) {
         if (p.isProtected !== player.isProtected) {
             player.isProtected = p.isProtected
 
+            if (isOpponent)
+                setOpponentIsProtected({ opponentName: player.username, isProtected: player.isProtected })
+
             if (player.isProtected) {
-                if (isOpponent) {
-                    setOpponentIsProtected({ opponentName: player.username, isProtected: player.isProtected })
+                if (isOpponent)
                     logMessage(`${player.username} has protection until round ${player.isProtected}.`)
-                } else
+                else
                     logMessage(`You have protection until round ${player.isProtected}.`)
             }
         }
