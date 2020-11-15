@@ -457,19 +457,17 @@ module.exports = class Game
         if (this.deck.length)
             this.players[currentTurnPlayerIndex].hand.push(this.deck.draw())
 
-        // Update isProtected
-        if (this.players[currentTurnPlayerIndex].isProtected !== false
-            && this.players[currentTurnPlayerIndex].isProtected <= this.currentRound)
-            this.players[currentTurnPlayerIndex].isProtected = false
-
-
-
         // Update game log
         if (res.log)
             this.log.push(res.log)
 
         // Increment round count if round count should be incremented
         this.incrementRound()
+
+        // Update isProtected
+        if (this.players[currentTurnPlayerIndex].isProtected !== false
+            && this.players[currentTurnPlayerIndex].isProtected <= this.currentRound)
+            this.players[currentTurnPlayerIndex].isProtected = false
 
         return this.clientState(res)
     }

@@ -613,5 +613,42 @@ describe('Game', function () {
             assert(Game.playerTurn === 'someuser1')
             assert(Game.currentRound === 1)
         })
+
+        it("should update a player's isProtected property", function () {
+            Game.state = GameStates.GAMEPLAY
+            Game.playerTurn = 'someuser1'
+            Game.currentRound = 0
+            Game._dealCard('someuser1', 'Recommendation Letter')
+            Game._dealCard('someuser1', 'Wagie', false)
+            Game._dealCard('someuser2', 'Wagie')
+
+            let res = Game.onPlayHand({
+                cardName: 'Recommendation Letter',
+                playerName: 'someuser1'
+            })
+
+            assert(res.success)
+            assert(Game.players[Game.getPlayerIndex('someuser1')].isProtected === Game.currentRound + 1)
+
+            res = Game.onPlayHand({
+                cardName: 'Wagie',
+                playerName: 'someuser2',
+                discard: true
+            })
+
+            assert(res.success)
+
+            Game._dealCard('someuser2', 'Shareholder')
+
+            res = Game.onPlayHand({
+                cardName: 'Wagie',
+                playerName: 'someuser1',
+                victimName: 'someuser2',
+                guess: 'CEO'
+            })
+
+            assert(res.success)
+            assert(Game.players[Game.getPlayerIndex('someuser1')].isProtected === false)
+        })
     })
 })
