@@ -136,7 +136,21 @@ function updatePlayers(players) {
             }
         }
 
-        // update playedCards list
+        // Update playedCards list
+        if (p.playedCards) {
+            player.playedCards = p.playedCards.map(pc => pc.name)
+            if (isOpponent && player.playedCards.length) {
+                let opponent = document.getElementById(`opponent-${p.username}`)
+                if (!opponent) {
+                    console.log(`Unable to find opponent card for ${p.username}`)
+                    return
+                }
+
+                let playedCardList = opponent.getElementsByClassName('opponent-card-list')[0]
+                resetPlayedCardList(playedCardList)
+                player.playedCards.forEach(pc => addPlayedCardToList(playedCardList, pc))
+            }
+        }
     })
 }
 
@@ -154,6 +168,9 @@ function handleWin(winner) {
     clearOpponentListeners()
     clearAvailableCardListeners()
     toggleAvailableCards(false)
+    clearDiscardBtnListener()
+    toggleDiscardBtn(false)
+    resetAllPlayedCardLists()
 }
 
 // ---- Socket events ---- //
@@ -168,6 +185,8 @@ socket.on('curstate', function (curState) {
 
     if (curState.scores)
         updateScores(curState.scores)
+    if (curState.players)
+        updatePlayers(curState.players)
 
     updatePlayerTurn(curState.playerTurn)
 })

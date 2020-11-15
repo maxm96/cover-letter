@@ -168,6 +168,9 @@ module.exports = class Game
         // TODO: deal in turn order
         this.players.forEach(p => p.hand.push(this.deck.draw()))
 
+        // Reset played card list
+        this.players.forEach(p => p.playedCards = [])
+
         // Deal an extra card to the first player
         this.players[this.getPlayerIndex(this.playerTurn)].hand.push(this.deck.draw())
     }

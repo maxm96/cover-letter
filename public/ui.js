@@ -355,7 +355,29 @@ function addPlayedCardToList(playedCardsList, text, someClass = null) {
     if (someClass)
         li.classList.add(someClass)
 
+    // Remove No cards played yet message
+    let noCardsMsg = playedCardsList.getElementsByClassName('no-cards-played')[0]
+    if (noCardsMsg)
+        noCardsMsg.parentNode.removeChild(noCardsMsg)
+
     playedCardsList.append(li)
+}
+
+/**
+ * Reset the given played card list.
+ * @param playedCardList
+ */
+function resetPlayedCardList(playedCardList) {
+    playedCardList.innerHTML = ''
+    addPlayedCardToList(playedCardList, 'No cards played yet', 'no-cards-played')
+}
+
+function resetAllPlayedCardLists() {
+    document.querySelectorAll('.opponent').forEach((opp) => {
+        let playedCardList = opp.getElementsByClassName('opponent-card-list')[0]
+        playedCardList.innerHTML = ''
+        addPlayedCardToList(playedCardList, 'No cards played yet', 'no-cards-played')
+    })
 }
 
 /**

@@ -58,6 +58,7 @@ module.exports = class Player
 
     discardCard(cardName) {
         let card = this.getCard(cardName)
+        this.playedCards.push(card)
         return card.discard({ player: this })
     }
 
@@ -74,7 +75,7 @@ module.exports = class Player
         victim = victim || this
         let card = this.getCard(cardName)
 
-        this.playedCards.push(card.name)
+        this.playedCards.push(card)
 
         return card.apply({ player: this, victim: victim, guess: guess, protectedToRound: protectedToRound })
     }
