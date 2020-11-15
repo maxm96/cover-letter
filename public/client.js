@@ -221,9 +221,11 @@ socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount, 
 })
 
 socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard, deckCount }) {
-    // Clear available card listeners and hide available card list
+    // Clear listeners and hide things that shouldn't be visible
     clearAvailableCardListeners()
     toggleAvailableCards(false)
+    clearDiscardBtnListener()
+    toggleDiscardBtn(false)
 
     if (log)
         logMessage(log)
