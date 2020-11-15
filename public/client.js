@@ -157,12 +157,15 @@ function handleWin(winner) {
 // ---- Socket events ---- //
 // This is the initial message from the server
 socket.on('curstate', function (curState) {
-    clientState = curState
+    clientState = {...curState}
 
     handleStateChange(curState.gameState, {
         playerHands: curState.playerHands,
         deckCount: curState.deckCount
     })
+
+    if (curState.scores)
+        updateScores(curState.scores)
 
     updatePlayerTurn(curState.playerTurn)
 })
@@ -230,10 +233,8 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
     if (log)
         logMessage(log)
 
-    if (winner) {
+    if (winner)
         handleWin(winner)
-        updateScores(scores)
-    }
 
     if (gameState !== clientState.gameState) {
         handleStateChange(gameState, {
@@ -246,6 +247,8 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
         updatePlayerTurn(playerTurn)
         updateDeckCount(deckCount)
     }
+
+    updateScores(scores)
 
     if (victimCard)
         logMessage(`${victimCard.username} has the card ${victimCard}.`)
