@@ -149,6 +149,10 @@ function gameplayTransition(clientState, clientUsername) {
             status: 'Connected',
             playedCards: []
         })
+
+        setOpponentStatus({ name: p.username, status: p.disconnected ? 'Disconnected' : 'Connected' })
+        setOpponentIsProtected({ opponentName: p.username, isProtected: p.isProtected })
+        setOpponentIsOut({ opponentName: p.username, isOut: p.isOut })
     })
 }
 
@@ -410,7 +414,7 @@ function setOpponentIsProtected({ opponentName, isProtected }) {
         return
     }
 
-    if (isProtected !== false)
+    if (isProtected !== false && isProtected !== undefined)
         opponent.classList.add('protected')
     else
         opponent.classList.remove('protected')
