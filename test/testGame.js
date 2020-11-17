@@ -369,7 +369,20 @@ describe('Game', function () {
         })
 
         it('should properly apply the HR card', function () {
-            // TODO
+            Game.state = GameStates.GAMEPLAY
+            Game.playerTurn = 'someuser1'
+            Game._dealCard('someuser1', 'HR')
+            Game._dealCard('someuser1', 'Wagie', false)
+            Game._dealCard('someuser2', 'CEO')
+
+            let res = Game.onPlayHand({
+                cardName: 'HR',
+                playerName: 'someuser1',
+                victimName: 'someuser2'
+            })
+
+            assert(res.success)
+            assert(res.victimHand === 'CEO')
         })
 
         it('should properly apply the Shift Manager card', function () {
