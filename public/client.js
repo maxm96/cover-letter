@@ -9,7 +9,8 @@ let clientState = {
     hand: [],
     playerTurn: null,
     scores: null,
-    availableCards: []
+    availableCards: [],
+    discardedCards: []
 }
 
 // Keep track of the countdown interval
@@ -159,6 +160,12 @@ function updateScores(scores) {
     clientState.scores = scores
 }
 
+function updateDiscardedCards(discardedCards) {
+    removeDiscardedCardsOpponent()
+    createDiscardedCardsOpponent(discardedCards)
+    clientState.discardedCards = discardedCards
+}
+
 function handleWin(winner) {
     logMessage(`${winner} won the round.`)
     logMessage('******** New round ********', true)
@@ -171,6 +178,7 @@ function handleWin(winner) {
     clearDiscardBtnListener()
     toggleDiscardBtn(false)
     resetAllPlayedCardLists()
+    removeDiscardedCardsOpponent()
 }
 
 // ---- Socket events ---- //
@@ -187,6 +195,8 @@ socket.on('curstate', function (curState) {
         updateScores(curState.scores)
     if (curState.players)
         updatePlayers(curState.players)
+    if (curState.discardedCards)
+        updateDiscardedCards(curState.discardedCards)
 
     updatePlayerTurn(curState.playerTurn)
 })
@@ -234,17 +244,20 @@ socket.on('playerready', function ({ username, ready, gameState }) {
     }
 })
 
-socket.on('statechange', function ({ state, playerHands, playerTurn, deckCount, players }) {
-    handleStateChange(state, {
+socket.on('statechange', function ({ gameState, playerHands, playerTurn, deckCount, players, discardedCards }) {
+    handleStateChange(gameState, {
         playerHands: playerHands,
         deckCount: deckCount,
         players: players
     })
 
+    if (discardedCards)
+        updateDiscardedCards(discardedCards)
+
     updatePlayerTurn(playerTurn)
 })
 
-socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard, deckCount }) {
+socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard, deckCount, discardedCards }) {
     // Clear listeners and hide things that shouldn't be visible
     clearAvailableCardListeners()
     toggleAvailableCards(false)
@@ -258,6 +271,9 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
 
     if (winner)
         handleWin(winner)
+
+    if (discardedCards && discardedCards.some((dc, index) => dc !== clientState.discardedCards[index]))
+        updateDiscardedCards(discardedCards)
 
     if (gameState !== clientState.gameState) {
         handleStateChange(gameState, {

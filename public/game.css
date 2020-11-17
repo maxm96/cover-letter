@@ -211,3 +211,10 @@
 #against-self-btn {
 	display: none;
 }
+
+.discarded-cards {
+	border: 5px solid black;
+	margin-left: 20px;
+	padding: 7px;
+	border-radius: 5px;
+}

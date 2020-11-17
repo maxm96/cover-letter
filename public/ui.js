@@ -292,16 +292,20 @@ function resetHand() {
  * @param {string} name
  * @param {string} status
  * @param {array} playedCards
+ * @param {string|null} someClass
  */
-function appendOpponent({ name, status, playedCards }) {
+function appendOpponent({ name, status, playedCards, someClass = null }) {
     let opponentTemplate = document.getElementById('opponent-template').cloneNode(true)
 
-    // Remove template id and add opponent class
-    opponentTemplate.id = ''
-    opponentTemplate.classList.add('opponent')
+    // Remove template id and add opponent class or the given class
+    opponentTemplate.classList.add(someClass || 'opponent')
+
+    let smooshedName = name.split(' ').join('-').toLowerCase()
 
     // Create a better class name
-    opponentTemplate.classList.add(`opponent-${name}`)
+    opponentTemplate.classList.add(`opponent-${smooshedName}`)
+    // Make a nice id
+    opponentTemplate.id = `opponent-${smooshedName}`
 
     // Update the opponent with the give values
     opponentTemplate.getElementsByClassName('opponent-name')[0].innerText = name
@@ -320,9 +324,6 @@ function appendOpponent({ name, status, playedCards }) {
         // If there are no played cards, append a message saying so
         addPlayedCardToList(playedCardList, 'No cards played yet', 'no-cards-played')
     }
-
-    // Assign a nice id
-    opponentTemplate.id = `opponent-${name}`
 
     document.getElementById('opponents').appendChild(opponentTemplate)
 }
@@ -480,4 +481,29 @@ function toggleDiscardBtn(show) {
  */
 function toggleAgainstSelfBtn(show) {
     document.getElementById('against-self-btn').style.display = show ? 'inline-block' : 'none'
+}
+
+/**
+ * Create an opponent which is just a list of discarded cards.
+ * @param {array} discardedCards
+ */
+function createDiscardedCardsOpponent(discardedCards) {
+    if (discardedCards.length)
+        appendOpponent({
+            name: 'Discarded Cards',
+            status: '',
+            playedCards: discardedCards,
+            someClass: 'discarded-cards'
+        })
+}
+
+/**
+ * Remove the discarded cards opponent from the opponents list.
+ */
+function removeDiscardedCardsOpponent() {
+    let discardedCardsOpponent = document.getElementById('opponent-discarded-cards')
+    if (!discardedCardsOpponent)
+        return
+
+    discardedCardsOpponent.parentNode.removeChild(discardedCardsOpponent)
 }

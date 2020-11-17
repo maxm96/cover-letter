@@ -29,6 +29,7 @@ module.exports = class Game
         this.currentRound = 0
         this.scores = {}
         this.lastWinner = null // Set this when someone wins a round so they can go first on the next round
+        this.discardedCards = []
     }
 
     get playerHands() {
@@ -153,6 +154,8 @@ module.exports = class Game
      *  - deck
      *  - current round
      *  - player is* properties
+     *  - played cards
+     *  - player's hand
      */
     roundReset() {
         this.deck = new Deck()
@@ -164,6 +167,9 @@ module.exports = class Game
         })
         this.playerTurn = this.lastWinner || this.players[0].username
 
+        // Discard cards
+        this.discardTopDeck()
+
         // Deal cards
         // TODO: deal in turn order
         this.players.forEach(p => p.hand.push(this.deck.draw()))
@@ -173,6 +179,20 @@ module.exports = class Game
 
         // Deal an extra card to the first player
         this.players[this.getPlayerIndex(this.playerTurn)].hand.push(this.deck.draw())
+    }
+
+    discardTopDeck() {
+        // Discard top card "face down"
+        this.deck.draw()
+
+        // Reset discarded cards array
+        this.discardedCards = []
+
+        // If there are only two players, discard 3 additional cards "face up"
+        if (this.players.length === 2) {
+            for (let i = 0; i < 3; i++)
+                this.discardedCards.push(this.deck.draw().name)
+        }
     }
 
     /**
@@ -216,13 +236,7 @@ module.exports = class Game
             // socket event on the client side.
             let playerHands = this.playerHands
 
-            this.socketHandle.emit('statechange', {
-                state: this.state,
-                playerHands: playerHands,
-                playerTurn: this.playerTurn,
-                deckCount: this.deck.length,
-                players: this.players
-            })
+            this.socketHandle.emit('statechange', this.clientState())
         }
     }
 
@@ -250,7 +264,8 @@ module.exports = class Game
                     scores: this.scores,
                     playerHands: this.playerHands,
                     deckCount: this.deck.length,
-                    playerTurn: this.playerTurn
+                    playerTurn: this.playerTurn,
+                    discardedCards: this.discardedCards
                 }
                 break
             default:
