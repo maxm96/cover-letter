@@ -257,7 +257,7 @@ socket.on('statechange', function ({ gameState, playerHands, playerTurn, deckCou
     updatePlayerTurn(playerTurn)
 })
 
-socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimCard, deckCount, discardedCards }) {
+socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimHand, deckCount, discardedCards }) {
     // Clear listeners and hide things that shouldn't be visible
     clearAvailableCardListeners()
     toggleAvailableCards(false)
@@ -289,8 +289,8 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
 
     updateScores(scores)
 
-    if (victimCard)
-        logMessage(`${victimCard.username} has the card ${victimCard}.`)
+    if (victimHand && victimHand.player === clientUsername)
+        logMessage(`${victimHand.username} has the card ${victimHand.card}.`)
 })
 
 socket.on('handplayedfailed', function ({ message }) {

@@ -382,7 +382,8 @@ describe('Game', function () {
             })
 
             assert(res.success)
-            assert(res.victimHand === 'CEO')
+            assert(res.victimHand.username === 'someuser2')
+            assert(res.victimHand.card === 'CEO')
         })
 
         it('should properly apply the Shift Manager card', function () {

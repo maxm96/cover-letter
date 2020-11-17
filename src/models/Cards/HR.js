@@ -24,7 +24,11 @@ module.exports = class HR extends Card
         super.apply({ player, victim })
         return {
             success: true,
-            victimHand: victim.hand[0].name,
+            victimHand: {
+                username: victim.username,
+                card: victim.hand[0].name,
+                player: player.username
+            },
             log: `${player.username} looked at ${victim.username}'s hand.`
         }
     }

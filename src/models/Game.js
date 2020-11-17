@@ -435,8 +435,6 @@ module.exports = class Game
             })
         }
 
-
-
         // Return response early if playCard fails
         if (!res.success)
             return res
