@@ -24,12 +24,18 @@ let discard = false
 
 /**
  * Handle a state change.
- * @param state
- * @param playerHands
- * @param playerTurn
- * @param deckCount
+ * @param {string} state
+ * @param {array|undefined} playerHands
+ * @param {string|undefined} playerTurn
+ * @param {int|string|undefined} deckCount
+ * @param {array|undefined} discardedCards
  */
-function handleStateChange(state, { playerHands, deckCount } = {}) {
+function handleStateChange(state, {
+    playerHands,
+    deckCount,
+    discardedCards,
+    playerTurn
+} = {}) {
     // Just clear the countdown interval on each state change
     if (countdownHandle !== null) {
         clearInterval(countdownHandle)
@@ -58,16 +64,19 @@ function handleStateChange(state, { playerHands, deckCount } = {}) {
                 }))
             }
 
-            // Set deck count
-            if (deckCount)
-                updateDeckCount(deckCount)
-
             // Reset the scores object
             clientState.scores = {}
             clientState.players.forEach(p => clientState.scores[p.username] = 0)
 
             // Transition the UI
             gameplayTransition(clientState, clientUsername)
+
+            if (deckCount)
+                updateDeckCount(deckCount)
+            if (discardedCards)
+                updateDiscardedCards(discardedCards)
+            if (playerTurn)
+                updatePlayerTurn(playerTurn)
             break
         default:
             console.log(`Unknown state change: ${state}`)
@@ -168,17 +177,11 @@ function updateDiscardedCards(discardedCards) {
 
 function handleWin(winner) {
     logMessage(`${winner} won the round.`)
-    logMessage('******** New round ********', true)
 
-    // Clear listeners and hide things that should be hidden
-    clearCardListeners()
-    clearOpponentListeners()
-    clearAvailableCardListeners()
-    toggleAvailableCards(false)
-    clearDiscardBtnListener()
-    toggleDiscardBtn(false)
-    resetAllPlayedCardLists()
-    removeDiscardedCardsOpponent()
+    if (clientState.gameState === 'g')
+        logMessage('******** New round ********', true)
+
+    clearAllListenersAndHideThings()
 }
 
 // ---- Socket events ---- //
@@ -245,16 +248,7 @@ socket.on('playerready', function ({ username, ready, gameState }) {
 })
 
 socket.on('statechange', function ({ gameState, playerHands, playerTurn, deckCount, players, discardedCards }) {
-    handleStateChange(gameState, {
-        playerHands: playerHands,
-        deckCount: deckCount,
-        players: players
-    })
-
-    if (discardedCards)
-        updateDiscardedCards(discardedCards)
-
-    updatePlayerTurn(playerTurn)
+    handleStateChange(gameState, { playerHands, deckCount, players, discardedCards, playerTurn })
 })
 
 socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimHand, deckCount, discardedCards }) {
@@ -275,19 +269,20 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
     if (discardedCards && discardedCards.some((dc, index) => dc !== clientState.discardedCards[index]))
         updateDiscardedCards(discardedCards)
 
-    if (gameState !== clientState.gameState) {
-        handleStateChange(gameState, {
-            playerHands: playerHands,
-            playerTurn: playerTurn
-        })
-    } else {
+    if (players)
         updatePlayers(players)
-        updateHand(playerHands[clientUsername])
-        updatePlayerTurn(playerTurn)
-        updateDeckCount(deckCount)
-    }
 
-    updateScores(scores)
+    if (playerHands && playerHands[clientUsername])
+        updateHand(playerHands[clientUsername])
+
+    if (playerTurn)
+        updatePlayerTurn(playerTurn)
+
+    if (deckCount)
+        updateDeckCount(deckCount)
+
+    if (scores)
+        updateScores(scores)
 
     if (victimHand && victimHand.player === clientUsername)
         logMessage(`${victimHand.username} has the card ${victimHand.card}.`)
@@ -307,13 +302,26 @@ socket.on('readyfailed', function ({ message }) {
 })
 
 // ---- Listeners ---- //
+// Clear all listeners/hide things revealed by listeners
+function clearAllListenersAndHideThings() {
+    // Clear all listeners
+    clearCardListeners()
+    clearOpponentListeners()
+    clearAvailableCardListeners()
+    clearDiscardBtnListener()
+
+    // Hide things
+    toggleAvailableCards(false)
+    toggleDiscardBtn(false)
+    resetAllPlayedCardLists()
+    removeDiscardedCardsOpponent()
+}
+
 document.getElementById('ready-btn').addEventListener('click', function (e) {
     socket.emit('ready', { ready: e.target.checked })
 })
 
 function playCard() {
-    // TODO: if all opponents are unavailable for victimizing, discard card either against self or no effect
-
     // Can't play card unless a card has been selected
     if (!selectedCard)
         return

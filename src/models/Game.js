@@ -30,6 +30,7 @@ module.exports = class Game
         this.scores = {}
         this.lastWinner = null // Set this when someone wins a round so they can go first on the next round
         this.discardedCards = []
+        this.winAmounts = { 2: 7, 3: 5, 4: 4 }
     }
 
     get playerHands() {
@@ -220,23 +221,23 @@ module.exports = class Game
             this.timeoutHandle = null
         }
 
-        if (state === GameStates.COUNTDOWN) {
-            // In 5 seconds start the game
-            this.timeoutHandle = setTimeout(() => {
-                this.changeState(GameStates.GAMEPLAY)
-            }, 5000)
-        }
-
-        if (state === GameStates.GAMEPLAY) {
-            // Init the gameplay state
-            this.gameReset()
-
-            // For now just emit all player's hand on the state change. I actually don't think I can send each individual
-            // player their hand from here because I don't know the identifiers. Oh well, maybe I'll make that a separate
-            // socket event on the client side.
-            let playerHands = this.playerHands
-
-            this.socketHandle.emit('statechange', this.clientState())
+        switch (this.state) {
+            case GameStates.WAITING:
+                this.socketHandle.emit('statechange', this.clientState())
+                break
+            case GameStates.COUNTDOWN:
+                // In 5 seconds start the game
+                this.timeoutHandle = setTimeout(() => {
+                    this.changeState(GameStates.GAMEPLAY)
+                }, 5000)
+                break
+            case GameStates.GAMEPLAY:
+                // Init the gameplay state
+                this.gameReset()
+                this.socketHandle.emit('statechange', this.clientState())
+                break
+            default:
+                console.log(`Unknown game state ${this.state}`)
         }
     }
 
@@ -488,7 +489,12 @@ module.exports = class Game
     handleWin(res) {
         this.lastWinner = res.winner
         this.scores[res.winner]++
-        this.roundReset()
+        if (this.scores[res.winner] === this.winAmounts[this.players.length])
+            // Hooray, someone won
+            this.changeState(GameStates.WAITING)
+        else
+            this.roundReset()
+
         return this.clientState(res)
     }
 
