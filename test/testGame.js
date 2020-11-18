@@ -386,7 +386,7 @@ describe('Game', function () {
             assert(victimHand.map(h => h.name).includes('Shareholder'))
         })
 
-        it.skip('should increment the round count when the first player in turn order plays a hand', function () {
+        it('should increment the round count when the first player in turn order plays a hand', function () {
             Game.state = GameStates.GAMEPLAY
             Game.playerTurn = 'someuser1'
             Game.currentRound = 0
@@ -427,13 +427,16 @@ describe('Game', function () {
             assert(Game.currentRound === 1)
         })
 
-        it.skip("should update a player's isProtected property", function () {
+        it("should update a player's isProtected property", function () {
             Game.state = GameStates.GAMEPLAY
             Game.playerTurn = 'someuser1'
             Game.currentRound = 0
             Game._dealCard('someuser1', 'Recommendation Letter')
             Game._dealCard('someuser1', 'Wagie', false)
             Game._dealCard('someuser2', 'Wagie')
+
+            // Pad the deck
+            Game.deck = new Deck([new Wagie(), new Wagie(), new Wagie(), new Wagie()])
 
             let res = Game.onPlayHand({
                 cardName: 'Recommendation Letter',
