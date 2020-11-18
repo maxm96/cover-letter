@@ -446,18 +446,16 @@ module.exports = class Game
             victim.hand.push(this.deck.draw())
 
         // TODO: fix tests to work with these functions
-        if (process.env.NODE_ENV !== 'testing') {
-            let winner = this.checkForEliminationVictory()
-            if (winner !== false) {
-                res.winner = winner
-                return this.handleWin(res)
-            }
+        let winner = this.checkForEliminationVictory()
+        if (winner !== false) {
+            res.winner = winner
+            return this.handleWin(res)
+        }
 
-            winner = this.checkForCardVictory()
-            if (winner !== false) {
-                res.winner = winner
-                return this.handleWin(res)
-            }
+        winner = this.checkForCardVictory()
+        if (winner !== false) {
+            res.winner = winner
+            return this.handleWin(res)
         }
 
         // Update player turn
