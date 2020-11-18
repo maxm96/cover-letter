@@ -335,7 +335,7 @@ describe('Game', function () {
             Game._setIsProperty('someuser2', 'disconnected', false)
         })
 
-        it.skip('should draw a card for a player who needs one', function () {
+        it('should draw a card for a player who needs one', function () {
             Game.state = GameStates.GAMEPLAY
             Game.playerTurn = 'someuser1'
             Game._setIsProperty('someuser1', 'isOut', false)

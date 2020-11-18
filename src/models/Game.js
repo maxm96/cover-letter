@@ -439,13 +439,6 @@ module.exports = class Game
         if (!res.success)
             return res
 
-        // Only one or zero players should need a new card, so order shouldn't matter
-        if (player.needsCard && this.deck.length)
-            player.hand.push(this.deck.draw())
-        if (victim && victim.needsCard && this.deck.length)
-            victim.hand.push(this.deck.draw())
-
-        // TODO: fix tests to work with these functions
         let winner = this.checkForEliminationVictory()
         if (winner !== false) {
             res.winner = winner
@@ -457,6 +450,12 @@ module.exports = class Game
             res.winner = winner
             return this.handleWin(res)
         }
+
+        // Only one or zero players should need a new card, so order shouldn't matter
+        if (player.needsCard && this.deck.length)
+            player.hand.push(this.deck.draw())
+        if (victim && victim.needsCard && this.deck.length)
+            victim.hand.push(this.deck.draw())
 
         // Update player turn
         this.advanceTurn()
