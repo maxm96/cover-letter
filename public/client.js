@@ -10,11 +10,15 @@ let clientState = {
     playerTurn: null,
     scores: null,
     availableCards: [],
-    discardedCards: []
+    discardedCards: [],
+    roundTime: null
 }
 
 // Keep track of the countdown interval
 let countdownHandle = null
+
+// Keep track of the round time countdown
+let roundTimeHandle = null
 
 // Keep track of selected card and victim
 let selectedCard = null
@@ -29,12 +33,14 @@ let discard = false
  * @param {string|undefined} playerTurn
  * @param {int|string|undefined} deckCount
  * @param {array|undefined} discardedCards
+ * @param {string|int|undefined} roundTime
  */
 function handleStateChange(state, {
     playerHands,
     deckCount,
     discardedCards,
-    playerTurn
+    playerTurn,
+    roundTime
 } = {}) {
     // Just clear the countdown interval on each state change
     if (countdownHandle !== null) {
@@ -77,6 +83,8 @@ function handleStateChange(state, {
                 updateDiscardedCards(discardedCards)
             if (playerTurn)
                 updatePlayerTurn(playerTurn)
+            if (roundTime)
+                updateRoundTimer(roundTime)
             break
         default:
             console.log(`Unknown state change: ${state}`)
@@ -169,6 +177,22 @@ function updateScores(scores) {
     clientState.scores = scores
 }
 
+function updateRoundTimer(time) {
+    clientState.roundTime = time
+
+    if (roundTimeHandle !== null) {
+        clearInterval(roundTimeHandle)
+        roundTimeHandle = null
+    }
+
+    roundTimeHandle = setInterval(() => {
+        setRoundTime(clientState.roundTime)
+
+        if (--clientState.roundTime < 0)
+            clearInterval(roundTimeHandle)
+    }, 1000)
+}
+
 function updateDiscardedCards(discardedCards) {
     removeDiscardedCardsOpponent()
     createDiscardedCardsOpponent(discardedCards)
@@ -200,6 +224,8 @@ socket.on('curstate', function (curState) {
         updatePlayers(curState.players)
     if (curState.discardedCards)
         updateDiscardedCards(curState.discardedCards)
+    if (curState.roundTime)
+        updateRoundTimer(curState.roundTime)
 
     updatePlayerTurn(curState.playerTurn)
 })
@@ -247,11 +273,16 @@ socket.on('playerready', function ({ username, ready, gameState }) {
     }
 })
 
-socket.on('statechange', function ({ gameState, playerHands, playerTurn, deckCount, players, discardedCards }) {
-    handleStateChange(gameState, { playerHands, deckCount, players, discardedCards, playerTurn })
+socket.on('statechange', function ({ gameState, playerHands, playerTurn, deckCount, players, discardedCards, roundTime }) {
+    handleStateChange(gameState, { playerHands, deckCount, players, discardedCards, playerTurn, roundTime })
 })
 
-socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players, scores, winner, log, victimHand, deckCount, discardedCards }) {
+const onHandPlayed = ({
+    gameState, playerHands,
+    playerTurn, players, scores,
+    winner, log, victimHand,
+    deckCount, discardedCards, roundTime
+}) => {
     // Clear listeners and hide things that shouldn't be visible
     clearAvailableCardListeners()
     toggleAvailableCards(false)
@@ -260,32 +291,48 @@ socket.on('handplayed', function ({ gameState, playerHands, playerTurn, players,
     clearAgainstSelfBtnListener()
     toggleAgainstSelfBtn(false)
 
-    if (log)
-        logMessage(log)
+    if (log) logMessage(log)
 
-    if (winner)
-        handleWin(winner)
+    if (winner) handleWin(winner)
 
     if (discardedCards && discardedCards.some((dc, index) => dc !== clientState.discardedCards[index]))
         updateDiscardedCards(discardedCards)
 
-    if (players)
-        updatePlayers(players)
+    if (players) updatePlayers(players)
 
-    if (playerHands && playerHands[clientUsername])
-        updateHand(playerHands[clientUsername])
+    if (playerHands && playerHands[clientUsername]) updateHand(playerHands[clientUsername])
 
-    if (playerTurn)
-        updatePlayerTurn(playerTurn)
+    if (playerTurn) updatePlayerTurn(playerTurn)
 
-    if (deckCount)
-        updateDeckCount(deckCount)
+    if (deckCount) updateDeckCount(deckCount)
 
-    if (scores)
-        updateScores(scores)
+    if (scores) updateScores(scores)
 
     if (victimHand && victimHand.player === clientUsername)
         logMessage(`${victimHand.username} has the card ${victimHand.card}.`)
+
+    if (roundTime) {
+        updateRoundTimer(roundTime)
+    }
+}
+
+socket.on('handplayed', onHandPlayed)
+
+socket.on('timesup', function (player) {
+    if (player !== clientUsername)
+        return
+
+    // Randomly choose a card and play it
+    let play = playRandomCard(clientState.players, clientState.hand, clientUsername)
+    selectedCard = play.card
+    if (play.victim)
+        selectedVictim = play.victim
+    if (play.guess)
+        selectedAvailableCard = play.guess
+    if (play.discard)
+        discard = play.discard
+
+    playCard()
 })
 
 socket.on('handplayedfailed', function ({ message }) {
@@ -338,12 +385,16 @@ function playCard() {
     // A victim and available card are not needed if discarding
     if (!discard) {
         // Can't play card if it requires a victim and no victim has been selected.
-        if (selectedCard.requiresVictim && !selectedVictim)
+        if (selectedCard.requiresVictim && !selectedVictim) {
+            console.log('No victim selected.')
             return
+        }
 
         // If an available card hasn't yet been picked, don't play the card
-        if (selectedCard.title === 'Wagie' && !selectedAvailableCard)
+        if (selectedCard.title === 'Wagie' && !selectedAvailableCard) {
+            console.log('No selected available card.')
             return
+        }
     }
 
     socket.emit('playhand', {

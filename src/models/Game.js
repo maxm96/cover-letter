@@ -31,6 +31,8 @@ module.exports = class Game
         this.lastWinner = null // Set this when someone wins a round so they can go first on the next round
         this.discardedCards = []
         this.winAmounts = { 2: 7, 3: 5, 4: 4 }
+        this.roundTimer = 60
+        this.roundIntervalHandle = null
     }
 
     get playerHands() {
@@ -63,6 +65,33 @@ module.exports = class Game
         }, [])
     }
 
+    setRoundTimer() {
+        if (process.env.NODE_ENV === 'testing')
+            return
+
+        if (this.roundIntervalHandle !== null) {
+            clearInterval(this.roundIntervalHandle)
+            this.roundIntervalHandle = null
+        }
+
+        // Don't set timer if not in gameplay state
+        if (this.state !== GameStates.GAMEPLAY)
+            return
+
+        this.roundTimer = 60
+
+        this.roundIntervalHandle = setInterval(() => {
+            if (this.roundTimer < 1) {
+                console.log(`Time's up for ${this.playerTurn}`)
+                this.socketHandle.emit('timesup', this.playerTurn)
+                clearInterval(this.roundIntervalHandle)
+                return
+            }
+
+            this.roundTimer--
+        }, 1000)
+    }
+
     /**
      * Advance the playerTurn to the next viable player.
      */
@@ -79,6 +108,9 @@ module.exports = class Game
             playerTurnIndex = 0
 
         this.playerTurn = players[playerTurnIndex].username
+
+        // Reset round timer
+        this.setRoundTimer()
     }
 
     /**
@@ -180,6 +212,9 @@ module.exports = class Game
 
         // Deal an extra card to the first player
         this.players[this.getPlayerIndex(this.playerTurn)].hand.push(this.deck.draw())
+
+        // Set round timer
+        this.setRoundTimer()
     }
 
     discardTopDeck() {
@@ -266,7 +301,8 @@ module.exports = class Game
                     playerHands: this.playerHands,
                     deckCount: this.deck.length,
                     playerTurn: this.playerTurn,
-                    discardedCards: this.discardedCards
+                    discardedCards: this.discardedCards,
+                    roundTime: this.roundTimer
                 }
                 break
             default:

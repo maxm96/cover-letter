@@ -507,3 +507,7 @@ function removeDiscardedCardsOpponent() {
 
     discardedCardsOpponent.parentNode.removeChild(discardedCardsOpponent)
 }
+
+function setRoundTime(roundTime) {
+    document.getElementById('timer').innerText = roundTime
+}

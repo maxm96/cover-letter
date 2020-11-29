@@ -47,3 +47,36 @@ function canDiscardCard(players, username, card) {
 
     return allUsersAreUnavailable && !card.canPlayAgainstSelf
 }
+
+/**
+ * A really dumb function to select a random card and play it either against somebody, against self, or discard.
+ * @param {array} players
+ * @param {array} hand
+ * @param {string} clientUsername
+ * @return {{discard: boolean, card: *}|{guess: string, victim: *, card: *}|{victim: *, card: *}}
+ */
+function playRandomCard(players, hand, clientUsername) {
+    let card = hand[0]
+
+    // TODO: I've made a serious mistake and named the card's name the card's title on the frontend
+    card.title = card.name
+
+    if (card.requiresVictim) {
+        let potentialVictims = players.filter(p => p.username !== clientUsername && !p.isOut && !p.isProtected)
+        if (potentialVictims.length) {
+            let victim = potentialVictims[0].username
+            let guess = ''
+
+            if (card.name === 'Wagie')
+                guess = 'HR'
+
+            return { card: card, victim: victim, guess: guess }
+        }
+    }
+
+    if (card.canPlayAgainstSelf) {
+        return { card: card, victim: clientUsername }
+    }
+
+    return { card: card, discard: true }
+}
