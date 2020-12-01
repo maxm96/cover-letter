@@ -281,6 +281,30 @@ function removeCardFromHand(cardNumber) {
 }
 
 /**
+ * Return true if the card with the given card number is already displayed in the hand UI.
+ * @param {string|int} cardNumber
+ * @return {boolean}
+ */
+function cardInHand(cardNumber) {
+    return Boolean(document.getElementById('user-cards')
+        .getElementsByClassName(`card-${cardNumber}`)[0])
+}
+
+/**
+ * Check if the number of cards in the hand UI matches the given card count.
+ * @param {string|int} cardNumber
+ * @param {string|int} cardCount
+ * @return {boolean}
+ */
+function canAddCardToHand(cardNumber, cardCount) {
+    console.log('Cards in hand:', document.getElementById('user-cards')
+        .getElementsByClassName(`card-${cardNumber}`).length)
+    console.log('cardCount:', cardCount)
+    return document.getElementById('user-cards')
+        .getElementsByClassName(`card-${cardNumber}`).length < cardCount
+}
+
+/**
  * Clear all cards from hand.
  */
 function resetHand() {
@@ -391,19 +415,27 @@ function updateDeckCount(newCount) {
 
 /**
  * Append an array of cards to the user's hand.
- * @param newHand
+ * @param {array} cardsToRemove
+ * @param {array} newHand
  */
-function updateHandUI(newHand) {
-    resetHand()
+function updateHandUI(cardsToRemove, newHand) {
+    cardsToRemove.forEach((ctr) => {
+        removeCardFromHand(ctr)
+    })
 
     newHand.forEach((nh) => {
-        appendCardToHand({
-            number: nh.number,
-            name: nh.name,
-            description: nh.description,
-            requiresVictim: nh.requiresVictim,
-            canPlayAgainstSelf: nh.canPlayAgainstSelf
-        })
+        let cardCount = newHand.reduce((acc, cur) => {
+            return cur.number === nh.number ? acc += 1 : acc
+        }, 0)
+
+        if (canAddCardToHand(nh.number, cardCount))
+            appendCardToHand({
+                number: nh.number,
+                name: nh.name,
+                description: nh.description,
+                requiresVictim: nh.requiresVictim,
+                canPlayAgainstSelf: nh.canPlayAgainstSelf
+            })
     })
 }
 
@@ -508,6 +540,10 @@ function removeDiscardedCardsOpponent() {
     discardedCardsOpponent.parentNode.removeChild(discardedCardsOpponent)
 }
 
+/**
+ * Set the round time.
+ * @param {string|int} roundTime
+ */
 function setRoundTime(roundTime) {
     document.getElementById('timer').innerText = roundTime
 }

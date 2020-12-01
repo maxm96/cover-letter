@@ -94,7 +94,20 @@ function handleStateChange(state, {
 }
 
 function updateHand(newHand) {
-    updateHandUI(newHand)
+    let newHandNums = newHand.map(nh => nh.number)
+    let oldHandNums = clientState.hand.map(nh => nh.number)
+    let handDiff = oldHandNums.filter(ohn => !newHandNums.includes(ohn))
+
+    // There is a case where calculating the difference in this way is incorrect i.e. when
+    // the old hand contains two of some card and the new hand contains one of the same card
+    // (old: Wagie, Wagie ; new: Wagie). This will calculate an empty difference. So, handle
+    // such a case.
+    if (!handDiff.length && oldHandNums.length > newHandNums.length && oldHandNums.every(n => newHandNums.includes(n)))
+        handDiff = [oldHandNums[0]]
+
+
+    updateHandUI(handDiff, newHand)
+
     clientState.hand = newHand
 }
 

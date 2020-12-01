@@ -152,6 +152,7 @@
 	border-radius: 5px;
 	padding: 2px;
 	margin-left: 2px;
+	animation: fadein 1s;
 }
 
 .card-title {
@@ -217,4 +218,13 @@
 	margin-left: 20px;
 	padding: 7px;
 	border-radius: 5px;
+}
+
+@keyframes fadein {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 100%;
+	}
 }
