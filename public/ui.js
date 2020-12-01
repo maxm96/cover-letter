@@ -281,25 +281,12 @@ function removeCardFromHand(cardNumber) {
 }
 
 /**
- * Return true if the card with the given card number is already displayed in the hand UI.
- * @param {string|int} cardNumber
- * @return {boolean}
- */
-function cardInHand(cardNumber) {
-    return Boolean(document.getElementById('user-cards')
-        .getElementsByClassName(`card-${cardNumber}`)[0])
-}
-
-/**
  * Check if the number of cards in the hand UI matches the given card count.
  * @param {string|int} cardNumber
  * @param {string|int} cardCount
  * @return {boolean}
  */
 function canAddCardToHand(cardNumber, cardCount) {
-    console.log('Cards in hand:', document.getElementById('user-cards')
-        .getElementsByClassName(`card-${cardNumber}`).length)
-    console.log('cardCount:', cardCount)
     return document.getElementById('user-cards')
         .getElementsByClassName(`card-${cardNumber}`).length < cardCount
 }
