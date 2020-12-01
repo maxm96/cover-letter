@@ -8,7 +8,9 @@ html
     body
         form(method="post")
             label(for="username") Enter a username:
-            input(type="text", id="username", name="username" placeholder="Username" value=username)
+            input(type="text", id="username", name="username" placeholder="Username" tabindex="1" value=username)
             if error
                 span(class="help-block error") #{error}
             input(type="submit", value="Submit")
+    script(type="text/javascript").
+        document.getElementById('username').focus()
