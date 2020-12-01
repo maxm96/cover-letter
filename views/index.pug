@@ -21,9 +21,6 @@ html
 
             p(id="countdown")
         div(id="game-board")
-            div(id="navbar")
-                span #{username}
-
             div(id="top-bar")
                 table(id="scoreboard")
                     tbody
@@ -55,7 +52,7 @@ html
         div(id="opponent-template")
             span(class="opponent-name") Name
             span(class="opponent-status") Status
-            ul(class="opponent-card-list")
+            ul(class="opponent-card-list no-scrollbar")
 
         div(id="card-template")
             span(class="card-number") N
