@@ -18,8 +18,11 @@ function post(req, res) {
 
     username = username.trim()
 
-    if (username.includes(' '))
+    if (username.includes(' ')) // No spaces allowed in username
         return res.render('login', { error: 'Username cannot contains spaces', username: username })
+
+    if (username === 'discarded-cards') // 'discarded-cards' is a reserved name
+        return res.render('login', { error: 'Invalid username', username: username })
 
     if (username.length < 1 || username.length > 16) // Username does not match length requirements
         return res.render('login', { error: 'Username must be between 1 and 16 characters', username: username })
