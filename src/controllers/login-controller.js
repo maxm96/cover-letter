@@ -18,6 +18,9 @@ function post(req, res) {
 
     username = username.trim()
 
+    if (username.includes(' '))
+        return res.render('login', { error: 'Username cannot contains spaces', username: username })
+
     if (username.length < 1 || username.length > 16) // Username does not match length requirements
         return res.render('login', { error: 'Username must be between 1 and 16 characters', username: username })
 
