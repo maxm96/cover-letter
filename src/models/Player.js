@@ -56,7 +56,24 @@ module.exports = class Player
         return {...this.hand[cardIndex]}
     }
 
+    canPlayCard(cardName) {
+        // Cannot play the Motivational Speaker or Salaried Worker if the player also has the CEO
+        if ((cardName === 'Motivational Speaker' || cardName === 'Salaried Worker')
+            && this.hand.some(c => c.name === 'CEO'))
+            return { success: false, message: 'Must play the CEO.' }
+        return true
+    }
+
+    /**
+     * Discard the given card.
+     * @param {string} cardName
+     * @return {*|{log: string, success: boolean}}
+     */
     discardCard(cardName) {
+        let canPlayCard = this.canPlayCard(cardName)
+        if (canPlayCard !== true)
+            return canPlayCard
+
         let card = this.getCard(cardName)
         this.playedCards.push(card)
         return card.discard({ player: this })
@@ -72,6 +89,10 @@ module.exports = class Player
      * of applying the card i.e. the victim's card name with HR
      */
     playCard({ cardName, victim, guess, protectedToRound }) {
+        let canPlayCard = this.canPlayCard(cardName)
+        if (canPlayCard !== true)
+            return canPlayCard
+
         victim = victim || this
         let card = this.getCard(cardName)
 

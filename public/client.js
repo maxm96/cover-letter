@@ -354,7 +354,8 @@ socket.on('timesup', function (player) {
     playCard()
 })
 
-socket.on('handplayedfailed', function ({ message }) {
+socket.on('playhandfailed', function ({ message }) {
+    console.error(message)
     flashErrorMessage(message)
 })
 
