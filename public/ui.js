@@ -538,3 +538,33 @@ function removeDiscardedCardsOpponent() {
 function setRoundTime(roundTime) {
     document.getElementById('timer').innerText = roundTime
 }
+
+/**
+ * Set the given message and classes and show the win modal for 3 seconds.
+ * @param {string} message
+ * @param {array|string} pClasses
+ */
+function showWinModal(message, pClasses = []) {
+    let winModal = document.getElementById('win-modal')
+    let winModalP = document.getElementById('win-modal-p')
+
+    // I am lazy and forget to give this function an array
+    if (!Array.isArray(pClasses)) pClasses = [pClasses]
+
+    // Set message
+    winModalP.innerText = message
+
+    // Set any given classes
+    pClasses.forEach(pCl => winModalP.classList.add(pCl))
+
+    // Show the modal
+    winModal.style.display = 'block'
+
+    // Show modal for 3 seconds
+    setTimeout(() => {
+        winModal.style.display = 'none'
+
+        // Also reset p classes
+        pClasses.forEach(pCl => winModalP.classList.remove(pCl))
+    }, 3000)
+}

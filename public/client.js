@@ -213,7 +213,13 @@ function updateDiscardedCards(discardedCards) {
 }
 
 function handleWin(winner) {
-    logMessage(`${winner} won the round.`)
+    if (winner === clientUsername) {
+        logMessage('You won the round!')
+        showWinModal('You won!', 'message-win')
+    } else {
+        logMessage(`${winner} won the round.`)
+        showWinModal(`${winner} won!`, 'message-lost')
+    }
 
     if (clientState.gameState === 'g')
         logMessage('******** New round ********', true)

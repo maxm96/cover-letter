@@ -228,6 +228,34 @@
 	padding-left: 4px;
 }
 
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, .3);
+}
+
+.modal-body {
+	font-size: 26px;
+	font-weight: bold;
+	margin: 30% auto;
+	padding: 10px;
+	width: 20%;
+	animation: fadein 1s;
+}
+
+.message-win {
+	color: #463fb1;
+}
+
+.message-lost {
+	color: #bf2929;
+}
+
 @keyframes fadein {
 	0% {
 		opacity: 0;
