@@ -148,15 +148,22 @@
 .card {
 	height: 100%;
 	width: 30%;
+	max-height: 275px;
+	max-width: 240px;
 	border: 1px solid grey;
 	border-radius: 5px;
-	padding: 2px;
+	padding: 4px;
 	margin-left: 2px;
 	animation: fadein 1s;
 }
 
 .card-title {
-	margin-left: 20px;
+	margin-left: 10px;
+}
+
+.card-picture {
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 #card-template, #opponent-template {

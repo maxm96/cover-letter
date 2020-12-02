@@ -262,6 +262,10 @@ function appendCardToHand({
     cardTemplate.getElementsByClassName('requires-victim')[0].value = requiresVictim
     cardTemplate.getElementsByClassName('against-self')[0].value = canPlayAgainstSelf
 
+    // Set image
+    cardTemplate.getElementsByClassName('card-picture')[0].src =
+        `/public/images/${name.replace(' ', '').toLowerCase()}.png`
+
     // Append the card to the user's hand
     document.getElementById('user-cards').appendChild(cardTemplate)
 }
