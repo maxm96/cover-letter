@@ -513,7 +513,7 @@ function toggleAgainstSelfBtn(show) {
 function createDiscardedCardsOpponent(discardedCards) {
     if (discardedCards.length)
         appendOpponent({
-            name: 'Discarded Cards',
+            name: 'Discard Pile',
             status: '',
             playedCards: discardedCards,
             someClass: 'discarded-cards'

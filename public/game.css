@@ -171,6 +171,7 @@
 }
 
 .current-turn {
+	background-color: #c8f7c8;
 	border: 3px solid green;
 }
 
@@ -190,6 +191,7 @@
 
 .protected {
 	cursor: not-allowed;
+	background-color: #88e2de;
 	border: 3px solid lightblue;
 }
 
@@ -221,10 +223,15 @@
 }
 
 .discarded-cards {
-	border: 5px solid black;
+	border: 3px solid #777777;
 	margin-left: 20px;
 	padding: 7px;
 	border-radius: 5px;
+}
+
+.discarded-cards ul {
+	margin-left: 0;
+	padding-left: 4px;
 }
 
 @keyframes fadein {
