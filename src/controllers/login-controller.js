@@ -21,7 +21,7 @@ function post(req, res) {
     if (username.includes(' ')) // No spaces allowed in username
         return res.render('login', { error: 'Username cannot contains spaces', username: username })
 
-    if (username === 'discarded-cards') // 'discarded-cards' is a reserved name
+    if (username === 'discarded-cards' || username === 'discard-pile') // These are reserved names
         return res.render('login', { error: 'Invalid username', username: username })
 
     if (username.length < 1 || username.length > 16) // Username does not match length requirements

@@ -524,7 +524,7 @@ function createDiscardedCardsOpponent(discardedCards) {
  * Remove the discarded cards opponent from the opponents list.
  */
 function removeDiscardedCardsOpponent() {
-    let discardedCardsOpponent = document.getElementById('opponent-discarded-cards')
+    let discardedCardsOpponent = document.getElementById('opponent-discard-pile')
     if (!discardedCardsOpponent)
         return
 
