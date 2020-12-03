@@ -256,6 +256,42 @@
 	color: #bf2929;
 }
 
+.help-btn {
+	padding: 3px;
+}
+
+#lobby .help-btn {
+	margin-top: 20px;
+}
+
+.help-btn:before {
+	content: '?';
+	display: inline-block;
+	font-family: sans-serif;
+	font-weight: bold;
+	text-align: center;
+	width: 2ex;
+	height: 2ex;
+	font-size: 1.8ex;
+	line-height: 2ex;
+	border-radius: 1.4ex;
+	margin-right: 4px;
+	padding: 1px;
+	color: black;
+	background: white;
+	border: 1px solid black;
+	text-decoration: none;
+}
+
+#how-to-modal-body {
+	background: white;
+	width: 80%;
+	margin: 5% auto;
+	font-size: initial;
+	font-weight: initial;
+	overflow: scroll;
+}
+
 /* Smart phone styling */
 @media only screen and (min-width: 360px) and (max-width: 767px) {
 	#lobby {
@@ -302,6 +338,22 @@
 	}
 	.modal-body {
 		margin: 50% auto;
+	}
+	#how-to-modal-body {
+		margin: 20% auto;
+		height: 80%;
+	}
+	#lobby .help-btn {
+		font-size: 16px;
+		margin-top: 40px;
+		height: 35px;
+	}
+	#how-to-modal-body dl {
+		font-size: 14px;
+	}
+	#how-to-modal-body dl dd {
+		margin-left: 15px;
+		margin-bottom: 5px;
 	}
 }
 

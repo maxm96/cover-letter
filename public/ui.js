@@ -568,3 +568,11 @@ function showWinModal(message, pClasses = []) {
         pClasses.forEach(pCl => winModalP.classList.remove(pCl))
     }, 3000)
 }
+
+/**
+ * Show or hide the how to modal.
+ * @param {boolean} show
+ */
+function toggleHowToModal(show) {
+    document.getElementById('how-to-modal').style.display = show ? 'inline-block' : 'none'
+}

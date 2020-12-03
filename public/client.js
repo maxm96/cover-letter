@@ -394,6 +394,18 @@ document.getElementById('ready-btn').addEventListener('click', function (e) {
     socket.emit('ready', { ready: e.target.checked })
 })
 
+document.querySelectorAll('.help-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        toggleHowToModal(true)
+    })
+})
+
+document.querySelectorAll('.how-to-modal-close-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        toggleHowToModal(false)
+    })
+})
+
 function playCard() {
     // Can't play card unless a card has been selected
     if (!selectedCard)
