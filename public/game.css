@@ -264,7 +264,7 @@
 	margin-top: 20px;
 }
 
-.help-btn:before {
+.q-mark:before {
 	content: '?';
 	display: inline-block;
 	font-family: sans-serif;
@@ -283,13 +283,18 @@
 	text-decoration: none;
 }
 
-#how-to-modal-body {
+#how-to-modal-body, #ref-card-modal-body {
 	background: white;
 	width: 80%;
 	margin: 5% auto;
 	font-size: initial;
 	font-weight: initial;
 	overflow: scroll;
+}
+
+#ref-card-modal-body li {
+	list-style-type: none;
+	font-size: 14px;
 }
 
 /* Smart phone styling */
@@ -354,6 +359,9 @@
 	#how-to-modal-body dl dd {
 		margin-left: 15px;
 		margin-bottom: 5px;
+	}
+	#ref-card-modal-body ul {
+		padding-left: 2px;
 	}
 }
 

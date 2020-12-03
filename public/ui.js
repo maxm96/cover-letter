@@ -576,3 +576,11 @@ function showWinModal(message, pClasses = []) {
 function toggleHowToModal(show) {
     document.getElementById('how-to-modal').style.display = show ? 'inline-block' : 'none'
 }
+
+/**
+ * Show or hide the card reference modal.
+ * @param {boolean} show
+ */
+function toggleRefCardModal(show) {
+    document.getElementById('ref-card-modal').style.display = show ? 'inline-block' : 'none'
+}

@@ -394,6 +394,7 @@ document.getElementById('ready-btn').addEventListener('click', function (e) {
     socket.emit('ready', { ready: e.target.checked })
 })
 
+// How to modal button listeners
 document.querySelectorAll('.help-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
         toggleHowToModal(true)
@@ -403,6 +404,17 @@ document.querySelectorAll('.help-btn').forEach(function (btn) {
 document.querySelectorAll('.how-to-modal-close-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
         toggleHowToModal(false)
+    })
+})
+
+// Reference card button listeners
+document.getElementById('ref-card-btn').addEventListener('click', function () {
+    toggleRefCardModal(true)
+})
+
+document.querySelectorAll('.ref-card-modal-close-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        toggleRefCardModal(false)
     })
 })
 
