@@ -25,7 +25,7 @@ html
             div(id="top-bar")
                 table(id="scoreboard")
                     tbody
-                textarea(id="log", disabled)
+                textarea(id="log" disabled)
 
             div(id="notifications")
                 span(id="timer") 60
@@ -41,8 +41,8 @@ html
                     ul(id="available-cards")
                         each card in availableCards
                             li(
-                                class="available-card",
-                                data-name=card.name,
+                                class="available-card"
+                                data-name=card.name
                                 data-number=card.number
                             ) #{card.number}&nbsp;&nbsp;#{card.name}
                         else
@@ -63,10 +63,10 @@ html
         div(id="card-template")
             span(class="card-number") N
             span(class="card-title") Title
-            img(class="card-picture", height="50%", width="80%")
+            img(class="card-picture" height="50%" width="80%")
             p(class="card-description") Description
-            input(hidden="true", class="requires-victim" value="0")
-            input(hidden="true", class="against-self" value="0")
+            input(hidden="true" class="requires-victim" value="0")
+            input(hidden="true" class="against-self" value="0")
     script(src="/socket.io/socket.io.js")
     script(src="/public/utils.js")
     script(src="/public/ui.js")
