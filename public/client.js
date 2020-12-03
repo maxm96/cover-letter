@@ -64,6 +64,7 @@ function handleStateChange(state, {
                 clientState.hand.forEach(card => appendCardToHand({
                     number: card.number,
                     name: card.name,
+                    count: card.count,
                     description: card.description,
                     requiresVictim: card.requiresVictim,
                     canPlayAgainstSelf: card.canPlayAgainstSelf

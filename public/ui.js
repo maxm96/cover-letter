@@ -235,6 +235,7 @@ function updatePlayerTurnUI(newPlayerTurn) {
  * Append a new card to the user's hand. Clones the card template and appends to user-cards.
  * @param {string|number} number
  * @param {string} name
+ * @param {string|int} count
  * @param {string} description
  * @param {int} requiresVictim
  * @param {int} canPlayAgainstSelf
@@ -242,6 +243,7 @@ function updatePlayerTurnUI(newPlayerTurn) {
 function appendCardToHand({
        number,
        name,
+       count,
        description,
        requiresVictim,
        canPlayAgainstSelf
@@ -257,7 +259,7 @@ function appendCardToHand({
 
     // Update the card with the given values
     cardTemplate.getElementsByClassName('card-number')[0].innerText = number
-    cardTemplate.getElementsByClassName('card-title')[0].innerText = name
+    cardTemplate.getElementsByClassName('card-title')[0].innerText = `${name} (${count})`
     cardTemplate.getElementsByClassName('card-description')[0].innerText = description
     cardTemplate.getElementsByClassName('requires-victim')[0].value = requiresVictim
     cardTemplate.getElementsByClassName('against-self')[0].value = canPlayAgainstSelf
@@ -423,6 +425,7 @@ function updateHandUI(cardsToRemove, newHand) {
             appendCardToHand({
                 number: nh.number,
                 name: nh.name,
+                count: nh.count,
                 description: nh.description,
                 requiresVictim: nh.requiresVictim,
                 canPlayAgainstSelf: nh.canPlayAgainstSelf
