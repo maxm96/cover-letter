@@ -302,7 +302,8 @@ module.exports = class Game
                     deckCount: this.deck.length,
                     playerTurn: this.playerTurn,
                     discardedCards: this.discardedCards,
-                    roundTime: this.roundTimer
+                    roundTime: this.roundTimer,
+                    log: this.log
                 }
                 break
             default:

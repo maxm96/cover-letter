@@ -206,6 +206,10 @@ function updateRoundTimer(time) {
     }, 1000)
 }
 
+function updateLog(log) {
+    log.forEach(l => logMessage(l))
+}
+
 function updateDiscardedCards(discardedCards) {
     removeDiscardedCardsOpponent()
     createDiscardedCardsOpponent(discardedCards)
@@ -245,6 +249,8 @@ socket.on('curstate', function (curState) {
         updateDiscardedCards(curState.discardedCards)
     if (curState.roundTime)
         updateRoundTimer(curState.roundTime)
+    if (curState.log)
+        updateLog(curState.log)
 
     updatePlayerTurn(curState.playerTurn)
 })
