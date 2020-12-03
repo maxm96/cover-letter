@@ -29,23 +29,24 @@ html
 
             div(id="notifications")
                 span(id="timer") 60
-                span(id="spinner") Spinner here
+                span(id="spinner")
 
             div(id="opponents")
 
             div(id="user-area")
-                div(id="deck") Deck:
-                ul(id="available-cards")
-                    each card in availableCards
-                        li(
-                            class="available-card",
-                            data-name=card.name,
-                            data-number=card.number
+                div(id="left-bar")
+                    div(id="deck") Deck:
+                    button(id="discard-btn") Discard Card
+                    button(id="against-self-btn") Play against self
+                    ul(id="available-cards")
+                        each card in availableCards
+                            li(
+                                class="available-card",
+                                data-name=card.name,
+                                data-number=card.number
                             ) #{card.number}&nbsp;&nbsp;#{card.name}
-                    else
-                        li There are no available cards
-                button(id="discard-btn") Discard Card
-                button(id="against-self-btn") Play against self
+                        else
+                            li There are no available cards
                 div(id="user-cards")
 
         input(type="hidden" value=username id="client_username")
