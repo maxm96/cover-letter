@@ -4,6 +4,7 @@
   "description": "CIS 598 Project",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "export NODE_ENV=testing; mocha"
   },
   "repository": {
