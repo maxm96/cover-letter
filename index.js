@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // Initialize Redis session store
 const RedisStore = require('connect-redis')(session)
-const RedisClient = redis.createClient()
+const RedisClient = redis.createClient(process.env.REDIS_URL || null)
 
 // Create session parser
 const sessionParser = session({
