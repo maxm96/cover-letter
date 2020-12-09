@@ -490,7 +490,7 @@ function onCardClick(e) {
     // card, get the parent node. There is only one level of children so this should be fine.
     let card = e.target.classList.contains('card') ? e.target : e.target.parentNode
 
-    let cardTitle = card.getElementsByClassName('card-title')[0].innerText
+    let cardTitle = card.getElementsByClassName('card-title')[0].innerText.replace(/\s\(\d\)/, '')
     let cardNumber = card.getElementsByClassName('card-number')[0].innerText
     let requiresVictim = card.getElementsByClassName('requires-victim')[0].value
     let canPlayAgainstSelf = card.getElementsByClassName('against-self')[0].value
