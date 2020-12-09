@@ -259,7 +259,8 @@ function appendCardToHand({
 
     // Update the card with the given values
     cardTemplate.getElementsByClassName('card-number')[0].innerText = number
-    cardTemplate.getElementsByClassName('card-title')[0].innerText = `${name} (${count})`
+    cardTemplate.getElementsByClassName('card-title')[0].innerText = name
+    cardTemplate.getElementsByClassName('card-count')[0].innerText = `(${count})`
     cardTemplate.getElementsByClassName('card-description')[0].innerText = description
     cardTemplate.getElementsByClassName('requires-victim')[0].value = requiresVictim
     cardTemplate.getElementsByClassName('against-self')[0].value = canPlayAgainstSelf
