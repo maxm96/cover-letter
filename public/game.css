@@ -286,6 +286,7 @@
 #how-to-modal-body, #ref-card-modal-body {
 	background: white;
 	width: 80%;
+	height: 80%;
 	margin: 5% auto;
 	font-size: initial;
 	font-weight: initial;
