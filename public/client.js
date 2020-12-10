@@ -230,6 +230,13 @@ function handleWin(winner) {
         logMessage('******** New round ********', true)
 
     clearAllListenersAndHideThings()
+
+    // Clear protected and out classes
+    document.querySelectorAll('.out').forEach(c => c.classList.remove('out'))
+    document.querySelectorAll('.protected').forEach(c => c.classList.remove('protected'))
+
+    // Reset hand
+    resetHand()
 }
 
 // ---- Socket events ---- //
@@ -337,9 +344,7 @@ const onHandPlayed = ({
     if (victimHand && victimHand.player === clientUsername)
         logMessage(`${victimHand.username} has the card ${victimHand.card}.`)
 
-    if (roundTime) {
-        updateRoundTimer(roundTime)
-    }
+    if (roundTime) updateRoundTimer(roundTime)
 }
 
 socket.on('handplayed', onHandPlayed)
