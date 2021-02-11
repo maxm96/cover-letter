@@ -8,16 +8,31 @@ class ClCard extends Component
         const shadow = this.attShad()
         const container = this.createContainer()
 
-        const name = this.getAttr('name')
-        const description = this.getAttr('description')
-        const count = this.getAttr('count')
-        const number = this.getAttr('number')
-        const requiresVictim = this.getAttr('requires-victim')
-        const canPlayAgainstSelf = this.getAttr('can-play-against-self')
-        const picture = this.getAttr('picture')
+        this.name = this.getAttr('name')
+        this.description = this.getAttr('description')
+        this.count = this.getAttr('count')
+        this.number = this.getAttr('number')
+        this.requiresVictim = this.getAttr('requires-victim')
+        this.canPlayAgainstSelf = this.getAttr('can-play-against-self')
+        this.picture = this.getAttr('picture')
 
         container.classList.add('card')
-        container.innerHTML = `
+        container.innerHTML = this.template
+
+        // Get a reference to each element
+        this.numberEl = this.shadowRoot.querySelector('.card-number')
+        this.nameEl = this.shadowRoot.querySelector('.card-name')
+        this.countEl = this.shadowRoot.querySelector('.card-count')
+        this.pictureEl = this.shadowRoot.querySelector('.card-picture')
+        this.descriptionEl = this.shadowRoot.querySelector('.card-description')
+        this.requiresVictimEl = this.shadowRoot.querySelector('.requires-victim')
+        this.canPlayAgainstSelfEl = this.shadowRoot.querySelector('.against-self')
+
+        shadow.appendChild(container)
+    }
+
+    get template() {
+        return `
         <style>
         .card {
             width: 240px;
@@ -45,25 +60,14 @@ class ClCard extends Component
         }
         </style>
         
-        <span class="card-number">${number}</span>
-        <span class="card-name">${name}</span>
-        <span class="card-count">${count}</span>
-        <img class="card-picture" src="${picture}">
-        <p class="card-description">${description}</p>
-        <input class="requires-victim" value="${requiresVictim}" hidden="true">
-        <input class="against-self" value="${canPlayAgainstSelf}" hidden="true">
+        <span class="card-number">${this.number}</span>
+        <span class="card-name">${this.name}</span>
+        <span class="card-count">${this.count}</span>
+        <img class="card-picture" src="${this.picture}">
+        <p class="card-description">${this.description}</p>
+        <input class="requires-victim" value="${this.requiresVictim}" hidden="true">
+        <input class="against-self" value="${this.canPlayAgainstSelf}" hidden="true">
         `
-
-        // Get a reference to each element
-        this.numberEl = this.shadowRoot.querySelector('.card-number')
-        this.nameEl = this.shadowRoot.querySelector('.card-name')
-        this.countEl = this.shadowRoot.querySelector('.card-count')
-        this.pictureEl = this.shadowRoot.querySelector('.card-picture')
-        this.descriptionEl = this.shadowRoot.querySelector('.card-description')
-        this.requiresVictimEl = this.shadowRoot.querySelector('.requires-victim')
-        this.canPlayAgainstSelfEl = this.shadowRoot.querySelector('.against-self')
-
-        shadow.appendChild(container)
     }
 
     connectedCallback() {
