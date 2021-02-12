@@ -25,7 +25,17 @@ class ClBoard extends Component
 
     get template() {
         return `
-        <style></style>
+        <style>
+        #opponents, #user-cards {
+            display: flex;
+            width: 100%;
+            height: 300px;
+        }
+        
+        #user-cards {
+            flex-direction: row-reverse;
+        }
+        </style>
         
         <div id="top-bar"></div>
         
