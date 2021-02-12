@@ -65,7 +65,7 @@ class ClBoard extends Component
             e.dataTransfer.dropEffect = 'link'
         })
         oppEl.addEventListener('drop', (e) => {
-            let cardName = e.dataTransfer.getData('text/plaine')
+            let cardName = e.dataTransfer.getData('text/plain')
             this.removeCard(cardName)
             console.log(cardName)
         })
