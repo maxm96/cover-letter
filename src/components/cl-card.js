@@ -19,15 +19,6 @@ class ClCard extends Component
         container.classList.add('card')
         container.innerHTML = this.template
 
-        // Get a reference to each element
-        this.numberEl = this.shadowRoot.querySelector('.card-number')
-        this.nameEl = this.shadowRoot.querySelector('.card-name')
-        this.countEl = this.shadowRoot.querySelector('.card-count')
-        this.pictureEl = this.shadowRoot.querySelector('.card-picture')
-        this.descriptionEl = this.shadowRoot.querySelector('.card-description')
-        this.requiresVictimEl = this.shadowRoot.querySelector('.requires-victim')
-        this.canPlayAgainstSelfEl = this.shadowRoot.querySelector('.against-self')
-
         shadow.appendChild(container)
     }
 
@@ -71,6 +62,15 @@ class ClCard extends Component
     }
 
     connectedCallback() {
+        // Get a reference to each element
+        this.numberEl = this.shadowRoot.querySelector('.card-number')
+        this.nameEl = this.shadowRoot.querySelector('.card-name')
+        this.countEl = this.shadowRoot.querySelector('.card-count')
+        this.pictureEl = this.shadowRoot.querySelector('.card-picture')
+        this.descriptionEl = this.shadowRoot.querySelector('.card-description')
+        this.requiresVictimEl = this.shadowRoot.querySelector('.requires-victim')
+        this.canPlayAgainstSelfEl = this.shadowRoot.querySelector('.against-self')
+
         this.numberEl.innerText = this.getAttr('number')
         this.nameEl.innerText = this.getAttr('name')
         this.countEl.innerText = this.getAttr('count')

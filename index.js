@@ -32,6 +32,7 @@ app.use(function (req, res, next) {
 
 // Serve files from public directory
 app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use('/dist', express.static(path.join(__dirname, 'dist')))
 
 // Use pug templating
 app.set('view engine', 'pug')
@@ -39,10 +40,12 @@ app.set('view engine', 'pug')
 // Instantiate controllers
 const indexController = require('./src/controllers/index-controller')
 const loginController = require('./src/controllers/login-controller')
+const testController = require('./src/controllers/test-controller')
 
 // Routes
 app.get('/', indexController.get)
 app.get('/login', loginController.get)
+app.get('/test', testController.get)
 app.post('/login', loginController.post)
 
 const server = app.listen(port, () => console.log(`Listening at http://localhost:${port}`))

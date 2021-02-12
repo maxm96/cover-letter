@@ -17,10 +17,6 @@ class ClOpponent extends Component
         container.classList.add('opponent')
         container.innerHTML = this.template
 
-        this.nameEl = this.shadowRoot.querySelector('.name')
-        this.statusEl = this.shadowRoot.querySelector('.status')
-        this.playedCardsEl = this.shadowRoot.querySelector('.opponent-card-list')
-
         shadow.appendChild(container)
     }
 
@@ -60,6 +56,10 @@ class ClOpponent extends Component
     }
 
     connectedCallback() {
+        this.nameEl = this.shadowRoot.querySelector('.name')
+        this.statusEl = this.shadowRoot.querySelector('.status')
+        this.playedCardsEl = this.shadowRoot.querySelector('.opponent-card-list')
+
         this.nameEl.innerText = this.getAttr('name')
         this.statusEl.innerText = this.getAttr('status')
 

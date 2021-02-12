@@ -14,7 +14,6 @@ class ClCountdown extends Component
         container.classList.add('countdown')
         container.innerHTML = this.template
 
-        this.countdownEl = this.shadowRoot.querySelector('.countdown')
 
         this.setTime = this.setTime.bind(this)
         this.startCountdown = this.startCountdown.bind(this)
@@ -44,7 +43,7 @@ class ClCountdown extends Component
 
     setTime(time) {
         this.time = time
-        this.countdownEl.innerText = time
+        this.timeEl.innerText = time
     }
 
     startCountdown() {
@@ -53,7 +52,7 @@ class ClCountdown extends Component
 
         this.countdownHandle = setInterval(() => {
             if (--this.time > -1) {
-                this.countdownEl.innerText = this.time
+                this.timeEl.innerText = this.time
             } else {
                 this.stopCountdown()
 
@@ -69,6 +68,8 @@ class ClCountdown extends Component
     }
 
     connectedCallback() {
+        this.timeEl = this.shadowRoot.querySelector('.time')
+
         this.setTime(this.getAttr('time'))
     }
 }
