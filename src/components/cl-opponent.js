@@ -56,8 +56,8 @@ class ClOpponent extends Component
     }
 
     connectedCallback() {
-        this.nameEl = this.shadowRoot.querySelector('.name')
-        this.statusEl = this.shadowRoot.querySelector('.status')
+        this.nameEl = this.shadowRoot.querySelector('.opponent-name')
+        this.statusEl = this.shadowRoot.querySelector('.opponent-status')
         this.playedCardsEl = this.shadowRoot.querySelector('.opponent-card-list')
 
         this.nameEl.innerText = this.getAttr('name')
