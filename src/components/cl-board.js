@@ -2,6 +2,7 @@ import Component from './component'
 import './cl-card'
 import './cl-opponent'
 import './cl-countdown'
+import './cl-button'
 
 class ClBoard extends Component
 {
@@ -48,8 +49,8 @@ class ClBoard extends Component
         <div id="user-area">
             <div id="left-bar">
                 <div id="deck">Deck: </div>
-                <button type="button" id="discard-btn">Discard</button>
-                <button type="button" id="against-self-btn">Apply to self</button>
+                <cl-button id="discard-btn" text="Discard"></cl-button>
+                <cl-button id="against-self-btn" text="Apply to self"></cl-button>
                 <ul id="available-cards">
                     ${this.avaialableCards
                         .filter(ac => ac)
@@ -125,6 +126,16 @@ class ClBoard extends Component
     connectedCallback() {
         this.opponentsEl = this.shadowRoot.querySelector('#opponents')
         this.userCardsEl = this.shadowRoot.querySelector('#user-cards')
+        this.discardBtnEl = this.shadowRoot.querySelector('#discard-btn')
+        this.againstSelfBtn = this.shadowRoot.querySelector('#against-self-btn')
+
+        this.discardBtnEl.addEventListener('cl-button:onclick', (e) => {
+            console.log('discard button click', e)
+        })
+
+        this.againstSelfBtn.addEventListener('cl-button:onclick', (e) => {
+            console.log('against self button click', e)
+        })
     }
 }
 
