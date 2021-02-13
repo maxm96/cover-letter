@@ -6,6 +6,7 @@ import './cl-button'
 import './cl-available-cards'
 import './cl-deck'
 import './cl-scoreboard'
+import './cl-log'
 
 class ClBoard extends Component
 {
@@ -32,6 +33,7 @@ class ClBoard extends Component
         <style>
         #top-bar {
             display: flex;
+            justify-content: space-between;
             width: 100%;
             height: 250px;
         }
@@ -49,6 +51,7 @@ class ClBoard extends Component
         
         <div id="top-bar">
             <cl-scoreboard id="scoreboard"></cl-scoreboard>
+            <cl-log id="log"></cl-log>
         </div>
         
         <div id="notifications">
@@ -137,6 +140,7 @@ class ClBoard extends Component
         this.availableCardsEl = this.shadowRoot.querySelector('#available-cards')
         this.deckEl = this.shadowRoot.querySelector('#deck')
         this.scoreboardEl = this.shadowRoot.querySelector('#scoreboard')
+        this.logEl = this.shadowRoot.querySelector('#log')
 
         this.discardBtnEl.addEventListener('cl-button:onclick', (e) => {
             console.log('discard button click', e)
