@@ -3,6 +3,7 @@ import './cl-card'
 import './cl-opponent'
 import './cl-countdown'
 import './cl-button'
+import './cl-available-cards'
 
 class ClBoard extends Component
 {
@@ -51,12 +52,7 @@ class ClBoard extends Component
                 <div id="deck">Deck: </div>
                 <cl-button id="discard-btn" text="Discard"></cl-button>
                 <cl-button id="against-self-btn" text="Apply to self"></cl-button>
-                <ul id="available-cards">
-                    ${this.avaialableCards
-                        .filter(ac => ac)
-                        .map(ac => `<li class="available-card" data-name="${ac}">${ac}</li>`)
-                        .join('')}
-                </ul>
+                <cl-available-cards id="available-cards" available-cards="${this.avaialableCards.join(',')}"
             </div>
             <div id="user-cards"></div>
         </div>
@@ -127,14 +123,19 @@ class ClBoard extends Component
         this.opponentsEl = this.shadowRoot.querySelector('#opponents')
         this.userCardsEl = this.shadowRoot.querySelector('#user-cards')
         this.discardBtnEl = this.shadowRoot.querySelector('#discard-btn')
-        this.againstSelfBtn = this.shadowRoot.querySelector('#against-self-btn')
+        this.againstSelfBtnEl = this.shadowRoot.querySelector('#against-self-btn')
+        this.availableCardsEl = this.shadowRoot.querySelector('#available-cards')
 
         this.discardBtnEl.addEventListener('cl-button:onclick', (e) => {
             console.log('discard button click', e)
         })
 
-        this.againstSelfBtn.addEventListener('cl-button:onclick', (e) => {
+        this.againstSelfBtnEl.addEventListener('cl-button:onclick', (e) => {
             console.log('against self button click', e)
+        })
+
+        this.availableCardsEl.addEventListener('cl-available-cards:onclick', (e) => {
+            console.log('available cards click', e)
         })
     }
 }
