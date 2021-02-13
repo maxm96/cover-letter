@@ -105,6 +105,10 @@ class ClScoreboard extends Component
         }
 
         this.tableEl.deleteRow(row.rowIndex)
+
+        // Update players and scores objects
+        this.players = this.players.filter(p => p !== player)
+        delete this.scores[player]
     }
 
     connectedCallback() {
