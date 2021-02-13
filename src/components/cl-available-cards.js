@@ -21,7 +21,22 @@ class ClAvailableCards extends Component
 
     get template() {
         return `
-        <style></style>
+        <style>
+        .available-cards {
+            list-style-type: none;
+        }
+        
+        .available-card {
+            padding: 2px;
+            cursor: pointer;
+        }
+        
+        .available-card:hover, .available-card.selected {
+            background-color: black;
+            color: white;
+            border: none;
+        }
+        </style>
         
         <ul class="available-cards">
             ${this.availableCards
@@ -46,6 +61,19 @@ class ClAvailableCards extends Component
 
     onLiClick(e) {
         e.preventDefault()
+
+        if (e.target.classList.contains('selected')) {
+            e.target.classList.remove('selected')
+        } else {
+            // Remove selected class from any other selected list items
+            this.availableCardsListItems.forEach((acli) => {
+                if (acli.classList.contains('selected'))
+                    acli.classList.remove('selected')
+            })
+
+            // Set selected class on clicked list item
+            e.target.classList.add('selected')
+        }
 
         let card = e.target.dataset.card
         this.dispatchEvent(new CustomEvent('cl-available-cards:onclick', { card }))
