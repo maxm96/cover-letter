@@ -4,6 +4,7 @@ import './cl-opponent'
 import './cl-countdown'
 import './cl-button'
 import './cl-available-cards'
+import './cl-deck'
 
 class ClBoard extends Component
 {
@@ -49,7 +50,7 @@ class ClBoard extends Component
         
         <div id="user-area">
             <div id="left-bar">
-                <div id="deck">Deck: </div>
+                <cl-deck id="deck" count="${this.deckCount}"></cl-deck>
                 <cl-button id="discard-btn" text="Discard"></cl-button>
                 <cl-button id="against-self-btn" text="Apply to self"></cl-button>
                 <cl-available-cards id="available-cards" available-cards="${this.avaialableCards.join(',')}"
@@ -125,6 +126,7 @@ class ClBoard extends Component
         this.discardBtnEl = this.shadowRoot.querySelector('#discard-btn')
         this.againstSelfBtnEl = this.shadowRoot.querySelector('#against-self-btn')
         this.availableCardsEl = this.shadowRoot.querySelector('#available-cards')
+        this.deckEl = this.shadowRoot.querySelector('#deck')
 
         this.discardBtnEl.addEventListener('cl-button:onclick', (e) => {
             console.log('discard button click', e)
