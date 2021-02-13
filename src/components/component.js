@@ -8,8 +8,8 @@ module.exports = class Component extends HTMLElement
         super()
     }
 
-    getAttr(attr) {
-        return this.getAttribute(attr) || ''
+    getAttr(attr, defaultVal = '') {
+        return this.getAttribute(attr) || defaultVal
     }
 
     attShad(mode = 'open') {

@@ -5,6 +5,7 @@ import './cl-countdown'
 import './cl-button'
 import './cl-available-cards'
 import './cl-deck'
+import './cl-scoreboard'
 
 class ClBoard extends Component
 {
@@ -29,6 +30,12 @@ class ClBoard extends Component
     get template() {
         return `
         <style>
+        #top-bar {
+            display: flex;
+            width: 100%;
+            height: 250px;
+        }
+        
         #opponents, #user-cards {
             display: flex;
             width: 100%;
@@ -40,7 +47,9 @@ class ClBoard extends Component
         }
         </style>
         
-        <div id="top-bar"></div>
+        <div id="top-bar">
+            <cl-scoreboard id="scoreboard"></cl-scoreboard>
+        </div>
         
         <div id="notifications">
             <cl-countdown time="60"></cl-countdown>
@@ -127,6 +136,7 @@ class ClBoard extends Component
         this.againstSelfBtnEl = this.shadowRoot.querySelector('#against-self-btn')
         this.availableCardsEl = this.shadowRoot.querySelector('#available-cards')
         this.deckEl = this.shadowRoot.querySelector('#deck')
+        this.scoreboardEl = this.shadowRoot.querySelector('#scoreboard')
 
         this.discardBtnEl.addEventListener('cl-button:onclick', (e) => {
             console.log('discard button click', e)
