@@ -11,6 +11,7 @@ class ClLobby extends Component
 
         this.opponents = this.getAttr('opponents').split(',')
 
+        container.id = 'lobby'
         container.innerHTML = this.template
 
         shadow.appendChild(container)
@@ -18,10 +19,15 @@ class ClLobby extends Component
 
     get template() {
         return `
-        <style></style>
+        <style>
+        </style>
         
-        <cl-ready-board></cl-ready-board>
+        <cl-ready-board id="ready-board"></cl-ready-board>
         `
+    }
+
+    connectedCallback() {
+        this.readyBoardEl = this.shadowRoot.querySelector('#ready-board')
     }
 }
 

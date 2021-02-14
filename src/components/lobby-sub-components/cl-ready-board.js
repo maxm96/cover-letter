@@ -15,13 +15,29 @@ class ClReadyBoard extends Components
 
         this.addPlayer = this.addPlayer.bind(this)
         this.removePlayer = this.removePlayer.bind(this)
+        this.updateReadyStatus = this.updateReadyStatus.bind(this)
 
         shadow.appendChild(container)
     }
 
     get template() {
         return `
-        <style></style>
+        <style>
+        table {
+            text-align: left;
+            margin: 0 auto;
+            min-width: 220px;
+        }
+        
+        tr:nth-of-type(even) {
+            background-color: #33363a;
+            color: white;
+        }
+        
+        td {
+            padding: 5px;
+        }
+        </style>
         
         <table>
             <thead>
@@ -78,6 +94,20 @@ class ClReadyBoard extends Components
 
         this.opponents = this.opponents.filter(o => o !== player)
         delete this.readyStatuses[player]
+    }
+
+    updateReadyStatus(player, ready) {
+        let playerId = this.playerId(player)
+
+        let readyCell = this.tableEl.querySelector(`#ready-table-ready-${playerId}`)
+        if (!readyCell) {
+            console.error(`Unable to find ready cell with id #ready-table-ready-${playerId}`)
+            return
+        }
+
+        readyCell.innerText = ready ? 'Yes' : 'No'
+
+        this.readyStatuses[player] = ready
     }
 
     playerId(player) {
