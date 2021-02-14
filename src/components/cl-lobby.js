@@ -21,6 +21,9 @@ class ClLobby extends Component
     get template() {
         return `
         <style>
+        #lobby {
+            text-align: center;
+        }
         </style>
         
         <cl-ready-board id="ready-board"></cl-ready-board>
