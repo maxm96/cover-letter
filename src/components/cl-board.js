@@ -1,12 +1,12 @@
 import Component from './component'
-import './cl-card'
-import './cl-opponent'
-import './cl-countdown'
-import './cl-button'
-import './cl-available-cards'
-import './cl-deck'
-import './cl-scoreboard'
-import './cl-log'
+import './board-sub-components/cl-card'
+import './board-sub-components/cl-opponent'
+import './board-sub-components/cl-countdown'
+import './board-sub-components/cl-button'
+import './board-sub-components/cl-available-cards'
+import './board-sub-components/cl-deck'
+import './board-sub-components/cl-scoreboard'
+import './board-sub-components/cl-log'
 
 class ClBoard extends Component
 {

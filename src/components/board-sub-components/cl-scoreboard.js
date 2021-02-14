@@ -1,4 +1,4 @@
-import Component from './component'
+import Component from '../component'
 
 class ClScoreboard extends Component
 {
