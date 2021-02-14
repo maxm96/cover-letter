@@ -1,5 +1,6 @@
 import Component from './component'
 import './lobby-sub-components/cl-ready-board'
+import './lobby-sub-components/cl-checkbox'
 
 class ClLobby extends Component
 {
@@ -23,11 +24,17 @@ class ClLobby extends Component
         </style>
         
         <cl-ready-board id="ready-board"></cl-ready-board>
+        <cl-checkbox id="ready-checkbox" label="Ready"></cl-checkbox>
         `
     }
 
     connectedCallback() {
         this.readyBoardEl = this.shadowRoot.querySelector('#ready-board')
+        this.readyCheckboxEl = this.shadowRoot.querySelector('#ready-checkbox')
+
+        this.readyCheckboxEl.addEventListener('cl-checkbox:onclick', (e) => {
+            console.log('cl-checkbox:onclick', e.checked)
+        })
     }
 }
 
