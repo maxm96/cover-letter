@@ -20,10 +20,11 @@ class ClLog extends Component
     get template() {
         return `
         <style>
-        tbody {
-            flex: 2;
+        table {
+            border: 1px solid black;
             margin: 0;
             height: 100%;
+            width: 100%;
             padding: 10px;
             border-collapse: collapse;
         }
@@ -48,10 +49,10 @@ class ClLog extends Component
         <table>
             <tbody>
                 ${this.logs.filter(l => l).map((l) => {
-            return `
-                        <tr class="log-item">
-                            <td>${l}</td>
-                        </tr>
+                    return `
+                    <tr class="log-item">
+                        <td>${l}</td>
+                    </tr>
                     `
         }).join('')}
             </tbody>

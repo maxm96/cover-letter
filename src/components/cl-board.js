@@ -38,6 +38,18 @@ class ClBoard extends Component
             height: 250px;
         }
         
+        #scoreboard {
+            flex: 1;
+        }
+        
+        #log {
+            flex: 2;
+        }
+        
+        #scoreboard, #log {
+            overflow-y: scroll;
+        }
+        
         #opponents, #user-cards {
             display: flex;
             width: 100%;
