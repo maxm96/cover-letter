@@ -16,6 +16,7 @@ class ClReadyBoard extends Components
         this.addPlayer = this.addPlayer.bind(this)
         this.removePlayer = this.removePlayer.bind(this)
         this.updateReadyStatus = this.updateReadyStatus.bind(this)
+        this.emitEvent = this.emitEvent.bind(this)
 
         shadow.appendChild(container)
     }

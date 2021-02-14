@@ -28,7 +28,7 @@ class ClCheckbox extends Component
         this.checkboxEl = this.shadowRoot.querySelector('input[type=checkbox]')
 
         this.checkboxEl.addEventListener('change', (e) => {
-            this.dispatchEvent(new CustomEvent('cl-checkbox:onclick', { checked: e.target.checked }))
+            this.dispatchEvent(new CustomEvent('cl-checkbox:onclick', { detail: e.target.checked }))
         })
     }
 }
