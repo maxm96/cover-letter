@@ -45,6 +45,17 @@ class ClLobby extends Component
         this.countdownEl.style.display = 'inline-block'
     }
 
+    onAllReady() {
+        this.countdownEl.setTime(5)
+        this.showCountdown()
+        this.countdownEl.startCountdown()
+    }
+
+    onNotReady() {
+        this.countdownEl.stopCountdown()
+        this.hideCountdown()
+    }
+
     connectedCallback() {
         this.readyBoardEl = this.shadowRoot.querySelector('#ready-board')
         this.readyCheckboxEl = this.shadowRoot.querySelector('#ready-checkbox')
@@ -52,15 +63,8 @@ class ClLobby extends Component
 
         this.hideCountdown()
 
-        this.readyBoardEl.addEventListener('cl-ready-board:all-ready', () => {
-            this.countdownEl.setTime(5)
-            this.showCountdown()
-            this.countdownEl.startCountdown()
-        })
-        this.readyBoardEl.addEventListener('cl-ready-board:not-ready', () => {
-            this.countdownEl.stopCountdown()
-            this.hideCountdown()
-        })
+        this.readyBoardEl.addEventListener('cl-ready-board:all-ready', this.onAllReady)
+        this.readyBoardEl.addEventListener('cl-ready-board:not-ready', this.onNotReady)
 
         this.readyCheckboxEl.addEventListener('cl-checkbox:onclick', (e) => {
             this.readyBoardEl.updateReadyStatus(this.username, e.checked)
