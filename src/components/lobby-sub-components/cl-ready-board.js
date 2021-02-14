@@ -79,6 +79,8 @@ class ClReadyBoard extends Components
 
         this.opponents.push(player)
         this.readyStatuses[player] = ready
+
+        this.emitEvent()
     }
 
     removePlayer(player) {
@@ -108,6 +110,15 @@ class ClReadyBoard extends Components
         readyCell.innerText = ready ? 'Yes' : 'No'
 
         this.readyStatuses[player] = ready
+
+        this.emitEvent()
+    }
+
+    emitEvent() {
+        if (Object.values(this.readyStatuses).every(rs => rs))
+            this.dispatchEvent(new Event('cl-ready-board:all-ready'))
+        else
+            this.dispatchEvent(new Event('cl-ready-board:not-ready'))
     }
 
     playerId(player) {
