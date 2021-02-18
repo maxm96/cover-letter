@@ -96,14 +96,14 @@ class ClGame extends Component
         this.lobbyEl.addEventListener('cl-lobby:countdown-finished', this.onCountdownFinished)
 
         this.registerSocketEvents()
+        this.registerComponentEvents()
     }
 
     getPlayerIndex(players, username) {
-        this.state.players.findIndex(p => p.username === username)
+        return this.state.players.findIndex(p => p.username === username)
     }
 
     handleStateChange(state) {
-        console.log('statechange', state)
         switch (state.gameState) {
             case 'w':
                 // Transition UI
@@ -119,6 +119,9 @@ class ClGame extends Component
                 this.lobbyEl.countdownEl.startCountdown()
                 break
             case 'g':
+                this.hideLobby()
+                this.showBoard()
+
                 if (state.playerHands) {
                     // Update user hand
                     this.state.hand = state.playerHands[this.username]
@@ -135,6 +138,12 @@ class ClGame extends Component
                 this.boardEl.deckEl.setCount(state.deckCount)
                 break
         }
+    }
+
+    registerComponentEvents() {
+        this.lobbyEl.readyCheckboxEl.addEventListener('cl-checkbox:onclick', (e) => {
+            socket.emit('ready', { ready: e.detail })
+        })
     }
 
     registerSocketEvents() {
@@ -179,7 +188,7 @@ class ClGame extends Component
             if (playerIndex < 0)
                 return console.error(`playerready: No user found with username ${username}`)
 
-            this.state.players[playerIndex].isReady = ready
+            this.state.players[playerIndex].ready = ready
             this.lobbyEl.readyBoardEl.updateReadyStatus(username, ready)
 
             if (this.state.gameState !== gameState) {
