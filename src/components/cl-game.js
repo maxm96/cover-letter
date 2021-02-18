@@ -15,6 +15,7 @@ class ClGame extends Component
         this.username = this.getAttr('username')
         this.opponents = this.getAttr('opponents')
         this.readyStatuses = this.getAttr('ready-statuses')
+        this.availableCards = this.getAttr('available-cards')
 
         // Game state
         this.state = {
@@ -61,7 +62,7 @@ class ClGame extends Component
             ready-statuses="${this.readyStatuses}"
         ></cl-lobby>
         
-        <cl-board id="cl-board"></cl-board>
+        <cl-board id="cl-board" available-cards="${this.availableCards}"></cl-board>
         `
     }
 
@@ -123,6 +124,7 @@ class ClGame extends Component
                 this.showBoard()
 
                 if (state.playerHands) {
+                    console.log(state.playerHands[this.username])
                     // Update user hand
                     this.state.hand = state.playerHands[this.username]
                     this.state.hand.forEach(h => this.boardEl.addCard({

@@ -78,6 +78,7 @@ class ClBoard extends Component
                 <cl-button id="discard-btn" text="Discard"></cl-button>
                 <cl-button id="against-self-btn" text="Apply to self"></cl-button>
                 <cl-available-cards id="available-cards" available-cards="${this.avaialableCards.join(',')}"
+                </cl-available-cards>
             </div>
             <div id="user-cards"></div>
         </div>
