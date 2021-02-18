@@ -1,7 +1,7 @@
 import Component from './component'
 import './lobby-sub-components/cl-ready-board'
-import './lobby-sub-components/cl-checkbox'
-import './cl-countdown'
+import './common/cl-checkbox'
+import './common/cl-countdown'
 
 class ClLobby extends Component
 {
