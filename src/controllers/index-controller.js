@@ -23,7 +23,7 @@ function get(req, res) {
         return res.redirect('/login')
     }
 
-    res.render('index', { username: req.session.username, availableCards: availableCards() })
+    res.render('test', { username: req.session.username, availableCards: availableCards() })
 }
 
 module.exports = { get }

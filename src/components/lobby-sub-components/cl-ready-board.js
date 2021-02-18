@@ -126,6 +126,16 @@ class ClReadyBoard extends Components
         return player.toLowerCase().replace(' ', '-')
     }
 
+    reset() {
+        this.opponents = []
+        this.readyStatuses = {}
+
+        let oldBody = this.tableEl.querySelector('tbody')
+        let newBody = document.createElement('tbody')
+
+        oldBody.parentNode.replaceChild(newBody, oldBody)
+    }
+
     connectedCallback() {
         this.tableEl = this.shadowRoot.querySelector('table')
     }

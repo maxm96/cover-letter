@@ -2,6 +2,8 @@ import Component from './component'
 import './cl-lobby'
 import './cl-board'
 
+const socket = io()
+
 class ClGame extends Component
 {
     constructor() {
@@ -100,9 +102,28 @@ class ClGame extends Component
         this.state.players.findIndex(p => p.username === username)
     }
 
+    handleStateChange(state) {
+        switch (state) {
+            case 'w':
+                this.hideBoard()
+                this.showLobby()
+
+                this.lobbyEl.readyBoardEl.reset()
+                this.state.players.forEach(p => this.lobbyEl.readyBoardEl.addPlayer(p.username, false))
+                break
+            case 'c':
+                this.lobbyEl.countdownEl.setTime(5)
+                this.lobbyEl.countdownEl.startCountdown()
+                break
+            case 'g':
+                break
+        }
+    }
+
     registerSocketEvents() {
         socket.on('curstate', (curState) => {
-            // Handle state change
+            this.state = Object.assign(this.state, curState)
+            this.handleStateChange(curState.gameState)
         })
 
         socket.on('playerconnection', (player) => {
