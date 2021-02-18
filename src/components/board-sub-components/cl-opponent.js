@@ -17,6 +17,8 @@ class ClOpponent extends Component
         container.classList.add('opponent')
         container.innerHTML = this.template
 
+        this.updateStatus = this.updateStatus.bind(this)
+
         shadow.appendChild(container)
     }
 
@@ -53,6 +55,10 @@ class ClOpponent extends Component
             ${this.playedCards.filter(pc => pc).map(pc => `<li class="played-card">${pc}</li>`).join('')}
         </ul>
         `
+    }
+
+    updateStatus(status) {
+        this.statusEl.innerText = status
     }
 
     connectedCallback() {

@@ -124,7 +124,6 @@ class ClGame extends Component
                 this.showBoard()
 
                 if (state.playerHands) {
-                    console.log(state.playerHands[this.username])
                     // Update user hand
                     this.state.hand = state.playerHands[this.username]
                     this.state.hand.forEach(h => this.boardEl.addCard({

@@ -92,6 +92,8 @@ class ClBoard extends Component
         if (status) oppEl.setAttribute('status', status)
         if (playedCards) oppEl.setAttribute('played-cards', playedCards.join(','))
 
+        oppEl.id = `opponent-${name}`
+
         // Make the opponent a droppable zone
         oppEl.addEventListener('dragover', (e) => {
             e.preventDefault()
@@ -142,7 +144,7 @@ class ClBoard extends Component
     }
 
     updateOpponentStatus(opponent, status) {
-        // TODO
+        this.opponentsEl.querySelector(`#opponent-${opponent}`).updateStatus(status)
     }
 
     cardClass(cardName) {
