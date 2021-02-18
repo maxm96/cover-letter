@@ -140,6 +140,10 @@ class ClBoard extends Component
         cardEl.parentNode.removeChild(cardEl)
     }
 
+    updateOpponentStatus(opponent, status) {
+        // TODO
+    }
+
     cardClass(cardName) {
         return cardName.toLowerCase().replace(' ', '-')
     }
