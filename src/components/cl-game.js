@@ -103,11 +103,14 @@ class ClGame extends Component
     }
 
     handleStateChange(state) {
-        switch (state) {
+        console.log('statechange', state)
+        switch (state.gameState) {
             case 'w':
+                // Transition UI
                 this.hideBoard()
                 this.showLobby()
 
+                // Reset ready board and add all players to it with an unready status
                 this.lobbyEl.readyBoardEl.reset()
                 this.state.players.forEach(p => this.lobbyEl.readyBoardEl.addPlayer(p.username, false))
                 break
@@ -116,6 +119,20 @@ class ClGame extends Component
                 this.lobbyEl.countdownEl.startCountdown()
                 break
             case 'g':
+                if (state.playerHands) {
+                    // Update user hand
+                    this.state.hand = state.playerHands[this.username]
+                    this.state.hand.forEach(h => this.boardEl.addCard({
+                        name: h.name,
+                        number: h.number,
+                        count: h.count,
+                        description: h.description,
+                        requiresVictim: h.requiresVictim,
+                        canPlayAgainstSelf: h.canPlayAgainstSelf
+                    }))
+                }
+
+                this.boardEl.deckEl.setCount(state.deckCount)
                 break
         }
     }
@@ -123,7 +140,7 @@ class ClGame extends Component
     registerSocketEvents() {
         socket.on('curstate', (curState) => {
             this.state = Object.assign(this.state, curState)
-            this.handleStateChange(curState.gameState)
+            this.handleStateChange(curState)
         })
 
         socket.on('playerconnection', (player) => {
