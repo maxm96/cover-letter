@@ -137,6 +137,14 @@ class ClGame extends Component
                     }))
                 }
 
+                this.state.players.filter(p => p.username !== this.username).forEach((p) => {
+                    this.boardEl.addOpponent({
+                        name: p.username,
+                        status: p.disconnected ? 'Disconnected' : 'Connected',
+                        playedCards: p.playedCards
+                    })
+                })
+
                 this.boardEl.deckEl.setCount(state.deckCount)
                 break
         }
