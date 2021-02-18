@@ -171,11 +171,10 @@ class ClGame extends Component
 
         socket.on('playerdisconnect', ({ username, state }) => {
             if (state === 'g') {
-                let playerIndex = this.getPlayerIndex(this.clientState.players, username)
+                let playerIndex = this.getPlayerIndex(this.state.players, username)
                 if (playerIndex < 0)
                     return console.error(`playerdisconnect: No user found with username ${username}`)
 
-                let username = this.state.players[playerIndex].username
                 this.boardEl.updateOpponentStatus(username, 'Disconnected')
                 this.boardEl.logEl.addLog(`${username} has disconnected`)
             } else {
@@ -192,7 +191,7 @@ class ClGame extends Component
             this.state.players[playerIndex].disconnected = false
 
             this.boardEl.updateOpponentStatus(username, 'Connected')
-            this.boardEl.addLog(`${username} has reconnected`)
+            this.boardEl.logEl.addLog(`${username} has reconnected`)
         })
 
         socket.on('playerready', ({ username, ready, gameState }) => {
