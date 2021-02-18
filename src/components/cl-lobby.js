@@ -23,6 +23,7 @@ class ClLobby extends Component
         this.onAllReady = this.onAllReady.bind(this)
         this.onNotReady = this.onNotReady.bind(this)
         this.onCheckboxClick = this.onCheckboxClick.bind(this)
+        this.onCountdownFinished = this.onCountdownFinished.bind(this)
 
         shadow.appendChild(container)
     }
@@ -32,6 +33,7 @@ class ClLobby extends Component
         <style>
         #lobby {
             text-align: center;
+            width: 100%;
         }
         </style>
         
@@ -66,6 +68,10 @@ class ClLobby extends Component
         this.readyBoardEl.updateReadyStatus(this.username, e.detail)
     }
 
+    onCountdownFinished() {
+        this.dispatchEvent(new Event('cl-lobby:countdown-finished'))
+    }
+
     connectedCallback() {
         this.readyBoardEl = this.shadowRoot.querySelector('#ready-board')
         this.readyCheckboxEl = this.shadowRoot.querySelector('#ready-checkbox')
@@ -78,9 +84,7 @@ class ClLobby extends Component
 
         this.readyCheckboxEl.addEventListener('cl-checkbox:onclick', this.onCheckboxClick)
 
-        this.countdownEl.addEventListener('countdownfinished', (e) => {
-            console.log('countdownfinished', e)
-        })
+        this.countdownEl.addEventListener('countdownfinished', this.onCountdownFinished)
     }
 }
 

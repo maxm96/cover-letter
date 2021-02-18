@@ -6,7 +6,6 @@ html
         title Test
     body
         - let availableCardString = availableCards.map(ac => ac.name).join(',')
-        //cl-board(available-cards=availableCardString)
-        cl-lobby(username=username)
+        cl-game(username=username)
 
         script(type="text/javascript" src="/dist/main.js")
