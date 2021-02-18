@@ -147,10 +147,13 @@ class ClGame extends Component
     }
 
     registerSocketEvents() {
-        socket.on('curstate', (curState) => {
+        const stateChangeFunc = (curState) => {
             this.state = Object.assign(this.state, curState)
             this.handleStateChange(curState)
-        })
+        }
+
+        socket.on('curstate', stateChangeFunc)
+        socket.on('statechange', stateChangeFunc)
 
         socket.on('playerconnection', (player) => {
             this.state.players.push(player)
