@@ -102,7 +102,13 @@ class ClBoard extends Component
         oppEl.addEventListener('drop', (e) => {
             let cardName = e.dataTransfer.getData('text/plain')
             this.removeCard(cardName)
-            console.log(cardName)
+
+            this.dispatchEvent(new CustomEvent('cl-board:ondrop', {
+                detail: {
+                    cardName: cardName,
+                    victim: name
+                }
+            }))
         })
 
         this.opponentsEl.appendChild(oppEl)
@@ -145,6 +151,20 @@ class ClBoard extends Component
 
     updateOpponentStatus(opponent, status) {
         this.opponentsEl.querySelector(`#opponent-${opponent}`).updateStatus(status)
+    }
+
+    updateOpponentIsOut(opponent, isOut) {
+        let opp = this.opponentsEl.querySelector(`#opponent-${opponent}`)
+
+        if (isOut) opp.classList.add('out')
+        else opp.classList.remove('out')
+    }
+
+    updateOpponentIsProtected(opponent, isProtected) {
+        let opp = this.opponentsEl.querySelector(`#opponent-${opponent}`)
+
+        if (isProtected) opp.classList.add('protected')
+        else opp.classList.remove('protected')
     }
 
     cardClass(cardName) {

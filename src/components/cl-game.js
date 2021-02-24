@@ -149,10 +149,73 @@ class ClGame extends Component
         }
     }
 
+    handleWin(winner) {
+
+    }
+
+    updatePlayers(newPlayers) {
+        newPlayers.forEach((p) => {
+            let playerIndex = this.getPlayerIndex(this.state.players, p.username)
+            if (playerIndex < 0) {
+                console.error(`updatePlayers: Unable to find user ${p.username}`)
+                return
+            }
+
+            let isOpponent = p.username !== this.username
+
+            this.state.players[playerIndex] = this.updateIsOut(p, this.state.players[playerIndex], isOpponent)
+            this.state.players[playerIndex] = this.updateIsProtected(p, this.state.players[playerIndex], isOpponent)
+        })
+    }
+
+    updateIsOut(newPlayer, oldPlayer, isOpponent) {
+        if (newPlayer.isOut === oldPlayer.isOut) return newPlayer
+
+        if (newPlayer.isOut) {
+            if (isOpponent) {
+                this.boardEl.updateOpponentIsOut(newPlayer.username, newPlayer.isOut)
+                this.boardEl.logEl.log(`${newPlayer.username} is out.`)
+            } else {
+                this.boardEl.logEl.log('You are out.')
+            }
+        }
+
+        return newPlayer
+    }
+
+    updateIsProtected(newPlayer, oldPlayer, isOpponent) {
+        if (newPlayer.isProtected === oldPlayer.isProtected) return newPlayer
+
+        this.boardEl.updateOpponentIsProtected(newPlayer.username, newPlayer.isProtected)
+
+        if (newPlayer.isProtected) {
+            if (isOpponent)
+                this.boardEl.logEl.log(`You are protected until round ${newPlayer.isProtected}.`)
+            else
+                this.boardEl.logEl.log(`${newPlayer.username} is protected until round ${newPlayer.isProtected}.`)
+        }
+
+        return newPlayer
+    }
+
     registerComponentEvents() {
         this.lobbyEl.readyCheckboxEl.addEventListener('cl-checkbox:onclick', (e) => {
             socket.emit('ready', { ready: e.detail })
         })
+
+        this.boardEl.addEventListener('cl-board:ondrop', (e) => {
+            socket.emit('playhand', {
+                player: this.username, // We can just assume that the player is this client
+                card: e.detail.cardName,
+                victim: e.detail.victim,
+                guess: e.detail.guess || null,
+                discard: e.detail.discard || false
+            })
+        })
+    }
+
+    discardedCardsMatch(discardedCards) {
+        discardedCards.all((dc, idx) => dc !== this.state.discardedCards[idx])
     }
 
     registerSocketEvents() {
@@ -206,6 +269,16 @@ class ClGame extends Component
                 this.state.gameState = gameState
                 // Handle state change
             }
+        })
+
+        socket.on('handplayed', ({ playerHands, playerTurn, players,
+                                     scores, winner, log, victimHand,
+                                     deckCount, discardedCards, roundTime }) => {
+            if (log) this.boardEl.logEl.log(log)
+
+            if (winner) this.handleWin(winner)
+
+            if (players) this.updatePlayers(players)
         })
     }
 }
