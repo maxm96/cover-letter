@@ -47,6 +47,26 @@ class ClOpponent extends Component
             list-style-type: none;
             overflow-y: scroll;
         }
+
+        .selected {
+            background-color: black;
+            color: white;
+        }
+        
+        .selectable {
+            cursor: pointer;
+        }
+        
+        .out {
+            cursor: not-allowed;
+            border: 3px solid red;
+        }
+        
+        .protected {
+            cursor: not-allowed;
+            background-color: #88e2de;
+            border: 3px solid lightblue;
+        }
         </style>
         
         <span class="opponent-name">${this.name}</span>

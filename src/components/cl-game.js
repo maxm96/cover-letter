@@ -153,6 +153,10 @@ class ClGame extends Component
 
     }
 
+    /**
+     * This is called after a hand is played. Updates the current state with what we got from the server.
+     * @param {array} newPlayers
+     */
     updatePlayers(newPlayers) {
         newPlayers.forEach((p) => {
             let playerIndex = this.getPlayerIndex(this.state.players, p.username)
@@ -168,21 +172,37 @@ class ClGame extends Component
         })
     }
 
+    /**
+     * Tells the boardEl to update the given player's classList and then logs a message. Does nothing if the newPlayer
+     * and oldPlayer isOut properties are the same.
+     * @param {object} newPlayer
+     * @param {object} oldPlayer
+     * @param {boolean} isOpponent
+     * @return {object}
+     */
     updateIsOut(newPlayer, oldPlayer, isOpponent) {
         if (newPlayer.isOut === oldPlayer.isOut) return newPlayer
 
         if (newPlayer.isOut) {
             if (isOpponent) {
                 this.boardEl.updateOpponentIsOut(newPlayer.username, newPlayer.isOut)
-                this.boardEl.logEl.log(`${newPlayer.username} is out.`)
+                this.boardEl.logEl.addLog(`${newPlayer.username} is out.`)
             } else {
-                this.boardEl.logEl.log('You are out.')
+                this.boardEl.logEl.addLog('You are out.')
             }
         }
 
         return newPlayer
     }
 
+    /**
+     * Tells the boardEl to update the given player's classList then logs a message. Does nothing if the newPlayer
+     * and oldPlayer isProtected are the same.
+     * @param {object} newPlayer
+     * @param {object} oldPlayer
+     * @param {boolean} isOpponent
+     * @return {object}
+     */
     updateIsProtected(newPlayer, oldPlayer, isOpponent) {
         if (newPlayer.isProtected === oldPlayer.isProtected) return newPlayer
 
@@ -190,19 +210,21 @@ class ClGame extends Component
 
         if (newPlayer.isProtected) {
             if (isOpponent)
-                this.boardEl.logEl.log(`You are protected until round ${newPlayer.isProtected}.`)
+                this.boardEl.logEl.addLog(`You are protected until round ${newPlayer.isProtected}.`)
             else
-                this.boardEl.logEl.log(`${newPlayer.username} is protected until round ${newPlayer.isProtected}.`)
+                this.boardEl.logEl.addLog(`${newPlayer.username} is protected until round ${newPlayer.isProtected}.`)
         }
 
         return newPlayer
     }
 
     registerComponentEvents() {
+        // Emit the current ready status to the server on ready box click
         this.lobbyEl.readyCheckboxEl.addEventListener('cl-checkbox:onclick', (e) => {
             socket.emit('ready', { ready: e.detail })
         })
 
+        // Emit playhand event to server on a card drop
         this.boardEl.addEventListener('cl-board:ondrop', (e) => {
             socket.emit('playhand', {
                 player: this.username, // We can just assume that the player is this client
@@ -214,14 +236,24 @@ class ClGame extends Component
         })
     }
 
+    /**
+     * Apparently I thought at one time this would be useful so I'll just leave it for that time
+     * @param {array} discardedCards
+     */
     discardedCardsMatch(discardedCards) {
-        discardedCards.all((dc, idx) => dc !== this.state.discardedCards[idx])
+        discardedCards.every((dc, idx) => dc !== this.state.discardedCards[idx])
     }
 
     registerSocketEvents() {
+        // Set the local state and do
         const stateChangeFunc = (curState) => {
+            let stateChange = curState.gameState !== this.state.gameState
+
             this.state = Object.assign(this.state, curState)
-            this.handleStateChange(curState)
+
+            // Only handle a state change if the state has actually changed
+            if (stateChange)
+                this.handleStateChange(curState)
         }
 
         socket.on('curstate', stateChangeFunc)
@@ -233,6 +265,7 @@ class ClGame extends Component
         })
 
         socket.on('playerdisconnect', ({ username, state }) => {
+            // Set player disconnected if in gameplay state
             if (state === 'g') {
                 let playerIndex = this.getPlayerIndex(this.state.players, username)
                 if (playerIndex < 0)
@@ -240,7 +273,9 @@ class ClGame extends Component
 
                 this.boardEl.updateOpponentStatus(username, 'Disconnected')
                 this.boardEl.logEl.addLog(`${username} has disconnected`)
-            } else {
+            }
+            // Otherwise just remove the player
+            else {
                 this.state.players = this.state.players.filter(p => p.username !== username)
                 this.lobbyEl.readyBoardEl.removePlayer(username)
             }
@@ -274,7 +309,7 @@ class ClGame extends Component
         socket.on('handplayed', ({ playerHands, playerTurn, players,
                                      scores, winner, log, victimHand,
                                      deckCount, discardedCards, roundTime }) => {
-            if (log) this.boardEl.logEl.log(log)
+            if (log) this.boardEl.logEl.addLog(log)
 
             if (winner) this.handleWin(winner)
 

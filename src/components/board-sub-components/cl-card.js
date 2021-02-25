@@ -44,6 +44,15 @@ class ClCard extends Component
             margin-bottom: 10px;
         }
         
+        .selected {
+            background-color: black;
+            color: white;
+        }
+        
+        .selectable { 
+            cursor: pointer;
+        }
+        
         @media only screen and (min-width: 360px) and (max-width: 767px) {
             .card {
                 font-size: 14px;
