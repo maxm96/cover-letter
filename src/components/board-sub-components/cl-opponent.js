@@ -83,11 +83,19 @@ class ClOpponent extends Component
         this.statusEl.innerText = status
     }
 
+    /**
+     * Update the playedCards attribute. Make sure to filter out falsey and empty items.
+     * @param playedCards
+     */
     updatePlayedCards(playedCards) {
         this.playedCards = playedCards.filter(pc => pc && pc.length)
         this.playedCardsEl.innerHTML = this.playedCardsListItems()
     }
 
+    /**
+     * Create list items from the current playedCards.
+     * @return {{length}|*|string}
+     */
     playedCardsListItems() {
         let listItems = this.playedCards.map(pc => `<li class="played-card">${pc}</li>`).join('')
         return listItems && listItems.length ? listItems : '<li class="played-card">No cards played yet</li>'

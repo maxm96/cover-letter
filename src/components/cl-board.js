@@ -130,6 +130,7 @@ class ClBoard extends Component
 
         // Make the card draggable
         cardEl.setAttribute('draggable', 'true')
+        // @TODO: figure out why this doesn't work in Firefox
         cardEl.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', name)
             e.dataTransfer.dropEffect = 'link'
