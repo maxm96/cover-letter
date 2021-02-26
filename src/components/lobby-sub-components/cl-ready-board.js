@@ -102,6 +102,8 @@ class ClReadyBoard extends Components
     updateReadyStatus(player, ready) {
         let playerId = this.playerId(player)
 
+        console.log(`#ready-table-ready-${playerId}`)
+
         let readyCell = this.tableEl.querySelector(`#ready-table-ready-${playerId}`)
         if (!readyCell) {
             console.error(`Unable to find ready cell with id #ready-table-ready-${playerId}`)

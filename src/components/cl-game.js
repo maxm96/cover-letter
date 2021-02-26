@@ -104,16 +104,18 @@ class ClGame extends Component
         return this.state.players.findIndex(p => p.username === username)
     }
 
-    handleStateChange(state) {
+    handleStateChange(state, keepReadyBoard) {
         switch (state.gameState) {
             case 'w':
                 // Transition UI
                 this.hideBoard()
                 this.showLobby()
 
-                // Reset ready board and add all players to it with an unready status
-                this.lobbyEl.readyBoardEl.reset()
-                this.state.players.forEach(p => this.lobbyEl.readyBoardEl.addPlayer(p.username, false))
+                if (!keepReadyBoard) {
+                    // Reset ready board and add all players to it with an unready status
+                    this.lobbyEl.readyBoardEl.reset()
+                    this.state.players.forEach(p => this.lobbyEl.readyBoardEl.addPlayer(p.username, false))
+                }
                 break
             case 'c':
                 this.lobbyEl.countdownEl.setTime(5)
@@ -248,12 +250,13 @@ class ClGame extends Component
         // Set the local state and do
         const stateChangeFunc = (curState) => {
             let stateChange = curState.gameState !== this.state.gameState
+            let countdownToWaiting = curState.gameState === 'w' && this.state.gameState === 'c'
 
             this.state = Object.assign(this.state, curState)
 
             // Only handle a state change if the state has actually changed
             if (stateChange)
-                this.handleStateChange(curState)
+                this.handleStateChange(curState, countdownToWaiting)
         }
 
         socket.on('curstate', stateChangeFunc)
