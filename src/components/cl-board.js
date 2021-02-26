@@ -24,6 +24,7 @@ class ClBoard extends Component
         this.addOpponent = this.addOpponent.bind(this)
         this.addCard = this.addCard.bind(this)
         this.removeCard = this.removeCard.bind(this)
+        this.updateOpponentPlayedCards = this.updateOpponentPlayedCards.bind(this)
 
         shadow.appendChild(container)
     }
@@ -90,7 +91,7 @@ class ClBoard extends Component
 
         if (name) oppEl.setAttribute('name', name)
         if (status) oppEl.setAttribute('status', status)
-        if (playedCards) oppEl.setAttribute('played-cards', playedCards.join(','))
+        if (playedCards) oppEl.setAttribute('played-cards', playedCards.map(pc => pc.name).join(','))
 
         oppEl.id = `opponent-${name}`
 
@@ -169,6 +170,17 @@ class ClBoard extends Component
 
     cardClass(cardName) {
         return cardName.toLowerCase().replace(' ', '-')
+    }
+
+    updateOpponentPlayedCards(opponent, playedCards) {
+        let opp = this.opponentsEl.querySelector(`#opponent-${opponent}`)
+        if (!opp) {
+            console.error(`No opponent found with selector #opponent-${opponent}`)
+            return
+        }
+
+        // Child components should only have to deal with the names
+        opp.updatePlayedCards(playedCards.map(pc => pc.name))
     }
 
     connectedCallback() {

@@ -171,6 +171,17 @@ class ClGame extends Component
 
             this.state.players[playerIndex] = this.updateIsOut(p, this.state.players[playerIndex], isOpponent)
             this.state.players[playerIndex] = this.updateIsProtected(p, this.state.players[playerIndex], isOpponent)
+
+            if (!isOpponent) return
+
+            if (p.playedCards) {
+                console.log(p.playedCards)
+                this.state.players[playerIndex].playedCards = p.playedCards
+                this.boardEl.updateOpponentPlayedCards(
+                    this.state.players[playerIndex].username,
+                    this.state.players[playerIndex].playedCards
+                )
+            }
         })
     }
 
@@ -285,6 +296,8 @@ class ClGame extends Component
         })
 
         socket.on('playerreconnect', ({ username }) => {
+            if (username === this.username) return
+
             let playerIndex = this.getPlayerIndex(this.state.players, username)
             if (playerIndex < 0)
                 return console.error(`playerreconnect: No user found with username ${username}`)
@@ -312,7 +325,7 @@ class ClGame extends Component
         socket.on('handplayed', ({ playerHands, playerTurn, players,
                                      scores, winner, log, victimHand,
                                      deckCount, discardedCards, roundTime }) => {
-            if (log) this.boardEl.logEl.addLog(log)
+            if (log) this.boardEl.logEl.addLog(log[log.length - 1])
 
             if (winner) this.handleWin(winner)
 

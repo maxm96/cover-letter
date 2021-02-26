@@ -12,12 +12,14 @@ class ClOpponent extends Component
         this.status = this.getAttr('status')
 
         // Played cards should be given as a comma delimited string (card1,card2,card3,...)
-        this.playedCards = this.getAttr('played-cards').split(',')
+        this.playedCards = this.getAttr('played-cards').split(',').filter(pc => pc && pc.length)
 
         container.classList.add('opponent')
         container.innerHTML = this.template
 
         this.updateStatus = this.updateStatus.bind(this)
+        this.updatePlayedCards = this.updatePlayedCards.bind(this)
+        this.playedCardsListItems = this.playedCardsListItems.bind(this)
 
         shadow.appendChild(container)
     }
@@ -72,13 +74,23 @@ class ClOpponent extends Component
         <span class="opponent-name">${this.name}</span>
         <span class="opponent-status">${this.status}</span>
         <ul class="opponent-card-list no-scrollbar">
-            ${this.playedCards.filter(pc => pc).map(pc => `<li class="played-card">${pc}</li>`).join('')}
+            ${this.playedCardsListItems()}
         </ul>
         `
     }
 
     updateStatus(status) {
         this.statusEl.innerText = status
+    }
+
+    updatePlayedCards(playedCards) {
+        this.playedCards = playedCards.filter(pc => pc && pc.length)
+        this.playedCardsEl.innerHTML = this.playedCardsListItems()
+    }
+
+    playedCardsListItems() {
+        let listItems = this.playedCards.map(pc => `<li class="played-card">${pc}</li>`).join('')
+        return listItems && listItems.length ? listItems : '<li class="played-card">No cards played yet</li>'
     }
 
     connectedCallback() {
@@ -89,14 +101,7 @@ class ClOpponent extends Component
         this.nameEl.innerText = this.getAttr('name')
         this.statusEl.innerText = this.getAttr('status')
 
-        this.getAttr('played-cards').split(',').filter(pc => pc).forEach((pc) => {
-            let liEl = document.createElement('li')
-
-            liEl.classList.add('played-card')
-            liEl.innerText = pc
-
-            this.playedCardsEl.appendChild(liEl)
-        })
+        this.updatePlayedCards(this.playedCards)
     }
 }
 
