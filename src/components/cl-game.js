@@ -175,7 +175,6 @@ class ClGame extends Component
             if (!isOpponent) return
 
             if (p.playedCards) {
-                console.log(p.playedCards)
                 this.state.players[playerIndex].playedCards = p.playedCards
                 this.boardEl.updateOpponentPlayedCards(
                     this.state.players[playerIndex].username,
