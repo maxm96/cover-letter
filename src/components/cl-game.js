@@ -264,6 +264,11 @@ class ClGame extends Component
 
             this.state = Object.assign(this.state, curState)
 
+            // Update the logs
+            // TODO: for future, make all logs on server so we get a more accurate log here
+            if (this.state.log.length)
+                this.state.log.forEach(l => this.boardEl.logEl.addLog(l))
+
             // Only handle a state change if the state has actually changed
             if (stateChange)
                 this.handleStateChange(curState, countdownToWaiting)
