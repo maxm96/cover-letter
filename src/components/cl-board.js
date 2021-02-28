@@ -115,11 +115,12 @@ class ClBoard extends Component
 
     opponentDropListener(e) {
         let cardName = e.dataTransfer.getData('text/plain')
+        let victimName = e.target.id.replace('opponent-', '')
 
         this.dispatchEvent(new CustomEvent('cl-board:ondrop', {
             detail: {
                 cardName: cardName,
-                victim: name
+                victim: victimName
             }
         }))
     }

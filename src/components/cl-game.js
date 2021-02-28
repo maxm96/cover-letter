@@ -285,6 +285,8 @@ class ClGame extends Component
             if (stateChange)
                 this.handleStateChange(curState, countdownToWaiting)
 
+            if (this.state.gameState !== 'g') return
+
             if (this.username === curState.playerTurn) {
                 this.boardEl.setCardDragListeners()
                 this.boardEl.setOpponentDragListeners()
@@ -354,7 +356,7 @@ class ClGame extends Component
 
             if (players) this.updatePlayers(players)
 
-            if (playerTurn) this.updatePlayerTurn
+            if (playerTurn) this.updatePlayerTurn()
 
             if (playerHands && playerHands[this.username]) this.updatePlayerHand(playerHands[this.username])
         })
