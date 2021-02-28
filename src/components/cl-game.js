@@ -126,7 +126,6 @@ class ClGame extends Component
                 this.showBoard()
 
                 if (state.playerHands) {
-                    console.log('setting player hand')
                     // Update user hand
                     this.state.hand = state.playerHands[this.username]
                     this.state.hand.forEach(h => this.boardEl.addCard({
@@ -183,6 +182,20 @@ class ClGame extends Component
                 )
             }
         })
+    }
+
+    updatePlayerTurn(newPlayerTurn) {
+        this.state.playerTurn = newPlayerTurn
+
+        if (this.username === newPlayerTurn) {
+            this.boardEl.removeCurrentTurn()
+            this.boardEl.setOpponentDragListeners()
+            this.boardEl.setCardDragListeners()
+        } else {
+            this.boardEl.setCurrentTurn(newPlayerTurn)
+            this.boardEl.removeOpponentDragListeners()
+            this.boardEl.removeCardDragListeners()
+        }
     }
 
     /**
@@ -255,14 +268,6 @@ class ClGame extends Component
         })
     }
 
-    /**
-     * Apparently I thought at one time this would be useful so I'll just leave it for that time
-     * @param {array} discardedCards
-     */
-    discardedCardsMatch(discardedCards) {
-        discardedCards.every((dc, idx) => dc !== this.state.discardedCards[idx])
-    }
-
     registerSocketEvents() {
         // Set the local state and do
         const stateChangeFunc = (curState) => {
@@ -279,6 +284,13 @@ class ClGame extends Component
             // Only handle a state change if the state has actually changed
             if (stateChange)
                 this.handleStateChange(curState, countdownToWaiting)
+
+            if (this.username === curState.playerTurn) {
+                this.boardEl.setCardDragListeners()
+                this.boardEl.setOpponentDragListeners()
+            } else {
+                this.boardEl.setCurrentTurn(curState.playerTurn)
+            }
         }
 
         socket.on('curstate', stateChangeFunc)
@@ -341,6 +353,8 @@ class ClGame extends Component
             if (winner) this.handleWin(winner)
 
             if (players) this.updatePlayers(players)
+
+            if (playerTurn) this.updatePlayerTurn
 
             if (playerHands && playerHands[this.username]) this.updatePlayerHand(playerHands[this.username])
         })

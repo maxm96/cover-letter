@@ -27,6 +27,14 @@ class ClBoard extends Component
         this.updateOpponentPlayedCards = this.updateOpponentPlayedCards.bind(this)
         this.updatePlayerHand = this.updatePlayerHand.bind(this)
         this.canAddCardToHand = this.canAddCardToHand.bind(this)
+        this.opponentDragoverListener = this.opponentDragoverListener.bind(this)
+        this.opponentDropListener = this.opponentDropListener.bind(this)
+        this.setOpponentDragListeners = this.setOpponentDragListeners.bind(this)
+        this.removeOpponentDragListeners = this.removeOpponentDragListeners.bind(this)
+        this.setCardDragListeners = this.setCardDragListeners.bind(this)
+        this.removeCardDragListeners = this.removeCardDragListeners.bind(this)
+        this.removeCurrentTurn = this.removeCurrentTurn.bind(this)
+        this.setCurrentTurn = this.setCurrentTurn.bind(this)
 
         shadow.appendChild(container)
     }
@@ -97,23 +105,37 @@ class ClBoard extends Component
 
         oppEl.id = `opponent-${name}`
 
-        // Make the opponent a droppable zone
-        oppEl.addEventListener('dragover', (e) => {
-            e.preventDefault()
-            e.dataTransfer.dropEffect = 'link'
-        })
-        oppEl.addEventListener('drop', (e) => {
-            let cardName = e.dataTransfer.getData('text/plain')
-
-            this.dispatchEvent(new CustomEvent('cl-board:ondrop', {
-                detail: {
-                    cardName: cardName,
-                    victim: name
-                }
-            }))
-        })
-
         this.opponentsEl.appendChild(oppEl)
+    }
+
+    opponentDragoverListener(e) {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'link'
+    }
+
+    opponentDropListener(e) {
+        let cardName = e.dataTransfer.getData('text/plain')
+
+        this.dispatchEvent(new CustomEvent('cl-board:ondrop', {
+            detail: {
+                cardName: cardName,
+                victim: name
+            }
+        }))
+    }
+
+    setOpponentDragListeners() {
+        this.opponentsEl.querySelectorAll('cl-opponent').forEach((co) => {
+            co.addEventListener('dragover', this.opponentDragoverListener)
+            co.addEventListener('drop', this.opponentDropListener)
+        })
+    }
+
+    removeOpponentDragListeners() {
+        this.opponentsEl.querySelectorAll('cl-opponent').forEach((co) => {
+            co.removeEventListener('dragover', this.opponentDragoverListener)
+            co.removeEventListener('drop', this.opponentDropListener)
+        })
     }
 
     addCard({ name, number, count, picture, description, requiresVictim, canPlayAgainstSelf }) {
@@ -129,15 +151,47 @@ class ClBoard extends Component
 
         cardEl.classList.add(this.cardClass(name))
 
-        // Make the card draggable
-        cardEl.setAttribute('draggable', 'true')
-        // @TODO: figure out why this doesn't work in Firefox
-        cardEl.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', name)
-            e.dataTransfer.dropEffect = 'link'
-        })
-
         this.userCardsEl.appendChild(cardEl)
+    }
+
+    cardDragStartListener(e) {
+        e.dataTransfer.setData('text/plain', e.target.getAttribute('name'))
+        // @TODO: figure out why this doesn't work in Firefox
+        e.dataTransfer.dropEffect = 'link'
+    }
+
+    setCardDragListeners() {
+        this.userCardsEl.querySelectorAll('cl-card').forEach((cc) => {
+            cc.setAttribute('draggable', true)
+            cc.addEventListener('dragstart', this.cardDragStartListener)
+        })
+    }
+
+    removeCardDragListeners() {
+        this.userCardsEl.querySelectorAll('cl-card').forEach((cc) => {
+            cc.setAttribute('draggable', false)
+            cc.removeEventListener('dragstart', this.cardDragStartListener)
+        })
+    }
+
+    removeCurrentTurn() {
+        this.opponentsEl.querySelectorAll('cl-opponent').forEach((cl) => {
+            cl.classList.remove('current-turn')
+        })
+    }
+
+    setCurrentTurn(oppName) {
+        // First remove any current turn classes
+        this.removeCurrentTurn()
+
+        // Set new turn on the given opponent
+        let oppEl = this.opponentsEl.querySelector(`#opponent-${oppName}`)
+        if (!oppEl) {
+            console.error(`Unable to find opponent with selector #opponent-${oppName}`)
+            return
+        }
+
+        oppEl.classList.add('current-turn')
     }
 
     removeCard(cardName) {
