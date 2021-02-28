@@ -25,6 +25,8 @@ class ClBoard extends Component
         this.addCard = this.addCard.bind(this)
         this.removeCard = this.removeCard.bind(this)
         this.updateOpponentPlayedCards = this.updateOpponentPlayedCards.bind(this)
+        this.updatePlayerHand = this.updatePlayerHand.bind(this)
+        this.canAddCardToHand = this.canAddCardToHand.bind(this)
 
         shadow.appendChild(container)
     }
@@ -102,7 +104,6 @@ class ClBoard extends Component
         })
         oppEl.addEventListener('drop', (e) => {
             let cardName = e.dataTransfer.getData('text/plain')
-            this.removeCard(cardName)
 
             this.dispatchEvent(new CustomEvent('cl-board:ondrop', {
                 detail: {
@@ -182,6 +183,43 @@ class ClBoard extends Component
 
         // Child components should only have to deal with the names
         opp.updatePlayedCards(playedCards.map(pc => pc.name))
+    }
+
+    updatePlayerHand(newHand, oldHand) {
+        let newHandNames = newHand.map(nh => nh.name)
+        let oldHandNames = oldHand.map(nh => nh.name)
+        let handDiff = oldHandNames.filter(ohn => !newHandNames.includes(ohn))
+
+        // There is a case where calculating the difference in this way is incorrect i.e. when
+        // the old hand contains two of some card and the new hand contains one of the same card
+        // (old: Wagie, Wagie ; new: Wagie). This will calculate an empty difference. So, handle
+        // such a case.
+        if (!handDiff.length && oldHandNames.length > newHandNames.length
+            && oldHandNames.every(n => newHandNames.includes(n)))
+            handDiff = [oldHandNames[0]]
+
+        // Remove the diff
+        handDiff.forEach(hd => this.removeCard(hd))
+
+        // I have no idea what this does anymore -- but it just werks
+        newHand.forEach((nh) => {
+            let cardCount = newHand.reduce((acc, cur) => cur.number === nh.number ? acc += 1 : acc, 0)
+            if (this.canAddCardToHand(nh.name, cardCount)) {
+                this.addCard({
+                    name: nh.name,
+                    number: nh.number,
+                    count: nh.count,
+                    picture: nh.picture,
+                    description: nh.description,
+                    requiresVictim: nh.requiresVictim,
+                    canPlayAgainstSelf: nh.canPlayAgainstSelf
+                })
+            }
+        })
+    }
+
+    canAddCardToHand(cardName, cardCount) {
+        return this.userCardsEl.querySelectorAll('.' + this.cardClass(cardName)).length < cardCount
     }
 
     connectedCallback() {

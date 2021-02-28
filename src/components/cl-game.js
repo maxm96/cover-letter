@@ -126,6 +126,7 @@ class ClGame extends Component
                 this.showBoard()
 
                 if (state.playerHands) {
+                    console.log('setting player hand')
                     // Update user hand
                     this.state.hand = state.playerHands[this.username]
                     this.state.hand.forEach(h => this.boardEl.addCard({
@@ -230,6 +231,12 @@ class ClGame extends Component
         return newPlayer
     }
 
+    updatePlayerHand(newHand) {
+        // Let the board update before updating state
+        this.boardEl.updatePlayerHand(newHand, this.state.playerHands[this.username])
+        this.state.playerHands[this.username] = newHand
+    }
+
     registerComponentEvents() {
         // Emit the current ready status to the server on ready box click
         this.lobbyEl.readyCheckboxEl.addEventListener('cl-checkbox:onclick', (e) => {
@@ -266,7 +273,7 @@ class ClGame extends Component
 
             // Update the logs
             // TODO: for future, make all logs on server so we get a more accurate log here
-            if (this.state.log.length)
+            if (this.state.log && this.state.log.length)
                 this.state.log.forEach(l => this.boardEl.logEl.addLog(l))
 
             // Only handle a state change if the state has actually changed
@@ -334,6 +341,8 @@ class ClGame extends Component
             if (winner) this.handleWin(winner)
 
             if (players) this.updatePlayers(players)
+
+            if (playerHands && playerHands[this.username]) this.updatePlayerHand(playerHands[this.username])
         })
     }
 }
