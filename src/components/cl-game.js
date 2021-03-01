@@ -43,6 +43,7 @@ class ClGame extends Component
         this.hideBoard = this.hideBoard.bind(this)
         this.onCountdownFinished = this.onCountdownFinished.bind(this)
         this.getPlayerIndex = this.getPlayerIndex.bind(this)
+        this.updatePlayerHand = this.updatePlayerHand.bind(this)
 
         shadow.appendChild(container)
     }
@@ -172,9 +173,7 @@ class ClGame extends Component
             this.state.players[playerIndex] = this.updateIsOut(p, this.state.players[playerIndex], isOpponent)
             this.state.players[playerIndex] = this.updateIsProtected(p, this.state.players[playerIndex], isOpponent)
 
-            if (!isOpponent) return
-
-            if (p.playedCards) {
+            if (isOpponent && p.playedCards) {
                 this.state.players[playerIndex].playedCards = p.playedCards
                 this.boardEl.updateOpponentPlayedCards(
                     this.state.players[playerIndex].username,
@@ -356,9 +355,9 @@ class ClGame extends Component
 
             if (players) this.updatePlayers(players)
 
-            if (playerTurn) this.updatePlayerTurn()
-
             if (playerHands && playerHands[this.username]) this.updatePlayerHand(playerHands[this.username])
+
+            if (playerTurn) this.updatePlayerTurn(playerTurn)
         })
     }
 }
