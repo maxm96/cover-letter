@@ -31,7 +31,7 @@ class ClGame extends Component
             card: null,
             victim: null,
             availableCard: null,
-            discard: null
+            discard: false
         }
 
         container.classList.add('game')
@@ -255,16 +255,89 @@ class ClGame extends Component
             socket.emit('ready', { ready: e.detail })
         })
 
-        // Emit playhand event to server on a card drop
+        /**
+         * Catch ondrop events from the board element. The drop will give the card details from the dropped card as well
+         * as the information of the opponent that the card was dropped on. Display certain inputs based on the card
+         * and emit if selections have been made (although really the selections shouldn't be made at this point).
+         */
         this.boardEl.addEventListener('cl-board:ondrop', (e) => {
-            socket.emit('playhand', {
-                player: this.username, // We can just assume that the player is this client
-                card: e.detail.cardName,
-                victim: e.detail.victim,
-                guess: e.detail.guess || null,
-                discard: e.detail.discard || false
+            let emit = true
+
+            // If card requires a victim
+            if (e.detail.card === 'Wagie' && !this.selections.availableCard) {
+                this.boardEl.availableCardsEl.show()
+                emit = false
+            } else if (e.detail.card !== 'Wagie') {
+                this.boardEl.availableCardsEl.hide()
+            }
+
+            if (e.detail.againstSelfBtnEl) {
+                this.boardEl.againstSelfBtnEl.show()
+                emit = false
+            } else {
+                this.boardEl.againstSelfBtnEl.hide()
+            }
+
+            // Set selections
+            this.selections.card = e.detail.cardName
+            this.selections.victim = e.detail.victim
+
+            if (emit)
+                this.socketEmit({
+                    card: this.selections.card,
+                    victim: this.selections.victim,
+                    guess: this.selections.guess,
+                    discard: this.selections.discard
+                })
+        })
+
+        /**
+         * Catch events from the discard button. If there is also a selected card then go ahead and emit playhand.
+         */
+        this.boardEl.discardBtnEl.addEventListener('cl-button:onclick', (e) => {
+            if (!this.selections.card) return
+
+            this.socketEmit({
+                card: this.selections.card,
+                discard: true,
             })
         })
+
+        /**
+         * Catch events from the againstSelfBtn. Only do anything if a card has also been selected.
+         */
+        this.boardEl.againstSelfBtnEl.addEventListener('cl-button:onclick', (e) => {
+            if (!this.selections.card) return
+
+            this.selections.victim = null
+
+            this.socketEmit({
+                card: this.selections.card,
+                victim: this.selections.victim,
+            })
+        })
+
+        /**
+         * Catch events from availableCards list. Set selected card based on what the user clicked. Set to null
+         * if the user unselected their option.
+         */
+        this.boardEl.availableCardsEl.addEventListener('cl-available-cards:onclick', (e) => {
+            console.log(e)
+            if (e.detail.selected) {
+                this.selections.availableCard = e.detail.card
+                this.socketEmit({
+                    card: this.selections.card,
+                    victim: this.selections.victim,
+                    guess: this.selections.availableCard
+                })
+            } else {
+                this.selections.availableCard = null
+            }
+        })
+    }
+
+    socketEmit({ card, victim = null, guess = null, discard = false, player = this.username }) {
+        socket.emit('playhand', { player, card, victim, guess, discard })
     }
 
     registerSocketEvents() {

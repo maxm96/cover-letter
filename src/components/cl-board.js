@@ -114,12 +114,15 @@ class ClBoard extends Component
     }
 
     opponentDropListener(e) {
-        let cardName = e.dataTransfer.getData('text/plain')
+        let dataTransfer = JSON.parse(e.dataTransfer.getData('text/plain'))
         let victimName = e.target.id.replace('opponent-', '')
 
         this.dispatchEvent(new CustomEvent('cl-board:ondrop', {
             detail: {
-                cardName: cardName,
+                cardName: dataTransfer.cardName,
+                cardNumber: dataTransfer.cardNumber,
+                requiresVictim: dataTransfer.requiresVictim,
+                canPlayAgainstSelf: dataTransfer.canPlayAgainstSelf,
                 victim: victimName
             }
         }))
@@ -156,7 +159,14 @@ class ClBoard extends Component
     }
 
     cardDragStartListener(e) {
-        e.dataTransfer.setData('text/plain', e.target.getAttribute('name'))
+        let dataTransfer = {
+            cardName: e.target.getAttribute('name'),
+            cardNumber: e.target.getAttribute('number'),
+            requiresVictim: e.target.getAttribute('requires-victim'),
+            canPlayAgainstSelf: e.target.getAttribute('can-play-against-self')
+        }
+
+        e.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer))
         // @TODO: figure out why this doesn't work in Firefox
         e.dataTransfer.dropEffect = 'link'
     }

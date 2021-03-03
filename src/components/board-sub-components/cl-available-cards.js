@@ -62,8 +62,12 @@ class ClAvailableCards extends Component
     onLiClick(e) {
         e.preventDefault()
 
+        // True if the clicked item is selected
+        let selected = true
+
         if (e.target.classList.contains('selected')) {
             e.target.classList.remove('selected')
+            selected = false
         } else {
             // Remove selected class from any other selected list items
             this.availableCardsListItems.forEach((acli) => {
@@ -76,7 +80,9 @@ class ClAvailableCards extends Component
         }
 
         let card = e.target.dataset.card
-        this.dispatchEvent(new CustomEvent('cl-available-cards:onclick', { card }))
+        this.dispatchEvent(new CustomEvent('cl-available-cards:onclick', {
+            detail: { card, selected }
+        }))
     }
 
     connectedCallback() {
