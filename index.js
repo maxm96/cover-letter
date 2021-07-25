@@ -32,6 +32,7 @@ app.use(function (req, res, next) {
 
 // Serve files from public directory
 app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use('/dist', express.static(path.join(__dirname, 'dist')))
 
 // Use pug templating
 app.set('view engine', 'pug')

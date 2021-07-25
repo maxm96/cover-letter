@@ -12,5 +12,8 @@ html
             if error
                 span(class="help-block error") #{error}
             input(type="submit", value="Submit")
+        div(id="app")
+            game-board
+    script(type="text/javascript" src="/dist/app.js")
     script(type="text/javascript").
         document.getElementById('username').focus()
