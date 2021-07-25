@@ -1,7 +1,6 @@
-<template>
-  <div id="game-board">
-    <p>Hello world!</p>
-  </div>
+<template lang="pug">
+  #game-board
+    p Hello World!
 </template>
 
 <script>
