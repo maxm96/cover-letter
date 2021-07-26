@@ -1,12 +1,26 @@
 <template lang="pug">
-  #messages
+  #messages(ref="messages")
     p(v-for="message in messages" class="message") {{ message }}
 </template>
 
 <script>
 export default {
   name: "messages",
-  props: ['messages']
+  props: ['messages'],
+  methods: {
+    scrollToBottom() {
+      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+    },
+  },
+  watch: {
+    messages() {
+      // Must wait for the dom to render the next message before scrolling to it
+      this.$nextTick(() => this.scrollToBottom())
+    },
+  },
+  mounted() {
+    this.scrollToBottom()
+  },
 }
 </script>
 
