@@ -1,5 +1,9 @@
 <template lang="pug">
   #game-board
+    #upper-board
+      #scores
+      #timer
+      #messages
     p Hello world!
 </template>
 
@@ -13,5 +17,10 @@ export default {
 </script>
 
 <style scoped>
-
+#game-board {
+  background-color: blue;
+  width: 100%;
+  height: 100%;
+  border: red 1px solid;
+}
 </style>
