@@ -2,25 +2,59 @@
   #game-board
     #upper-board
       #scores
-      #timer
+      countdown(
+        :max-count="60"
+        :do-start="startCountdown"
+        :do-stop="stopCountdown"
+        :do-reset="resetCountdown"
+        @countdown:finished="onCountdownFinished"
+      )
+      button(@click="onCountdownStart") Start Countdown
+      button(@click="onCountdownStop") Stop Countdown
+      button(@click="onCountdownReset") Reset Countdown
       #messages
-    p Hello world!
 </template>
 
 <script>
+import countdown from "./countdown.vue"
+
 export default {
   name: "game-board",
-  created() {
-    console.log('Hello world!')
-  }
+  components: { countdown },
+  data() {
+    return {
+      startCountdown: false,
+      stopCountdown: false,
+      resetCountdown: false,
+    }
+  },
+  methods: {
+    onCountdownStart() {
+      this.startCountdown = true
+      setTimeout(() => this.startCountdown = false, 500)
+    },
+    onCountdownStop() {
+      this.stopCountdown = true
+      setTimeout(() => this.stopCountdown = false, 500)
+    },
+    onCountdownReset() {
+      this.resetCountdown = true
+      setTimeout(() => this.resetCountdown = false, 500)
+    },
+    onCountdownFinished() {
+      console.log('Countdown finished!')
+    },
+  },
 }
 </script>
 
 <style scoped>
 #game-board {
-  background-color: blue;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  border: red 1px solid;
+  min-height: 250px;
+  border: red 2px solid;
 }
 </style>
