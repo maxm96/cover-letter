@@ -10,7 +10,6 @@
         @countdown:finished="onCountdownFinished"
       )
       messages(:messages="messages")
-    button(@click="addMessage") Add Message
 </template>
 
 <script>
@@ -47,9 +46,6 @@ export default {
     }
   },
   methods: {
-    addMessage() {
-      this.messages.push('Test!')
-    },
     onCountdownStart() {
       this.startCountdown = true
       setTimeout(() => this.startCountdown = false, 500)
