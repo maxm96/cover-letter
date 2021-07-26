@@ -1,7 +1,7 @@
 <template lang="pug">
   #game-board
     #upper-board
-      #scores
+      score-board(:players="players")
       countdown(
         :max-count="60"
         :do-start="startCountdown"
@@ -9,20 +9,24 @@
         :do-reset="resetCountdown"
         @countdown:finished="onCountdownFinished"
       )
-      button(@click="onCountdownStart") Start Countdown
-      button(@click="onCountdownStop") Stop Countdown
-      button(@click="onCountdownReset") Reset Countdown
       #messages
+    button(@click="changePlayerScore") Change Player Score
 </template>
 
 <script>
 import countdown from "./countdown.vue"
+import scoreBoard from "./score-board.vue"
 
 export default {
   name: "game-board",
-  components: { countdown },
+  components: { scoreBoard, countdown },
   data() {
     return {
+      players: [
+        { name: 'Test 1', score: 0 },
+        { name: 'Test 2', score: 2 },
+        { name: 'Test 3', score: 1 },
+      ],
       startCountdown: false,
       stopCountdown: false,
       resetCountdown: false,
@@ -56,5 +60,11 @@ export default {
   height: 100%;
   min-height: 250px;
   border: red 2px solid;
+}
+
+#upper-board {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>
