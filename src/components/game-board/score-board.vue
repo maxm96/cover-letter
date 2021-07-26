@@ -22,6 +22,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+  padding: 2px;
 }
 
 .player:nth-child(odd) {

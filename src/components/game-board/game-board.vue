@@ -9,17 +9,18 @@
         :do-reset="resetCountdown"
         @countdown:finished="onCountdownFinished"
       )
-      #messages
-    button(@click="changePlayerScore") Change Player Score
+      messages(:messages="messages")
+    button(@click="addMessage") Add Message
 </template>
 
 <script>
 import countdown from "./countdown.vue"
 import scoreBoard from "./score-board.vue"
+import messages from "./messages.vue"
 
 export default {
   name: "game-board",
-  components: { scoreBoard, countdown },
+  components: { countdown, scoreBoard, messages },
   data() {
     return {
       players: [
@@ -27,12 +28,28 @@ export default {
         { name: 'Test 2', score: 2 },
         { name: 'Test 3', score: 1 },
       ],
+      messages: [
+          'Hello World!',
+          'Test!',
+          'Test2!',
+          'Lorem Ipsum',
+          'Some Text',
+          'Some more text',
+          'Some other text',
+          'other text',
+          'text!',
+          'why not more text',
+          'even more text',
+      ],
       startCountdown: false,
       stopCountdown: false,
       resetCountdown: false,
     }
   },
   methods: {
+    addMessage() {
+      this.messages.push('Test!')
+    },
     onCountdownStart() {
       this.startCountdown = true
       setTimeout(() => this.startCountdown = false, 500)
@@ -66,5 +83,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  height: 250px;
 }
 </style>

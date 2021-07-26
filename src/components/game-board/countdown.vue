@@ -28,6 +28,7 @@ export default {
           }
 
           clearInterval(this.intervalHandle)
+          this.intervalHandle = null
 
           return
         }
