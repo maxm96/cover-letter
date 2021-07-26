@@ -1,6 +1,6 @@
 <template lang="pug">
   #game-board
-    p Hello World!
+    p Hello world!
 </template>
 
 <script>
