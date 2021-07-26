@@ -1,5 +1,5 @@
 <template lang="pug">
-  #messages(ref="messages")
+  #messages(ref="messages" @mouseover="mouseHovering = true" @mouseleave="mouseHovering = false")
     p(v-for="message in messages" class="message") {{ message }}
 </template>
 
@@ -7,6 +7,11 @@
 export default {
   name: "messages",
   props: ['messages'],
+  data() {
+    return {
+      mouseHovering: false,
+    }
+  },
   methods: {
     scrollToBottom() {
       this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
@@ -14,6 +19,12 @@ export default {
   },
   watch: {
     messages() {
+      // Do not scroll the messages if the user is hovering the mouse over the messages. This means they are likely
+      // reading them.
+      if (this.mouseHovering) {
+        return
+      }
+
       // Must wait for the dom to render the next message before scrolling to it
       this.$nextTick(() => this.scrollToBottom())
     },
