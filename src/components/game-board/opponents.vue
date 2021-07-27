@@ -1,6 +1,6 @@
 <template lang="pug">
   #opponents
-    opponent(v-for="opponent in opponents" :opponent="opponent")
+    opponent(v-for="opponent in opponents" :key="opponent.username" :opponent="opponent")
 </template>
 
 <script>
