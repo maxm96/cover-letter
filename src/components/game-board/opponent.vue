@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(class="opponent")
+  div(class="opponent" @click="onClick")
     span(class="opponent-name") {{ opponent.username }}
     span(class="opponent-status") {{ opponent.disconnected ? 'Disconnected' : 'Connected' }}
     ul(class="played-cards")
@@ -11,6 +11,11 @@
 export default {
   name: "opponent",
   props: ['opponent'],
+  methods: {
+    onClick() {
+      this.$emit('opponent:click', this.opponent.username)
+    }
+  }
 }
 </script>
 
