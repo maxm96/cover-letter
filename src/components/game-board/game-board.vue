@@ -10,35 +10,43 @@
         @countdown:finished="onCountdownFinished"
       )
       messages(:messages="messages")
+    opponents(:opponents="opponents")
 </template>
 
 <script>
 import countdown from "./countdown.vue"
 import scoreBoard from "./score-board.vue"
 import messages from "./messages.vue"
+import opponents from "./opponents.vue"
 
 export default {
   name: "game-board",
-  components: { countdown, scoreBoard, messages },
+  components: { countdown, scoreBoard, messages, opponents },
+  props: ['players', 'messages'],
   data() {
     return {
-      players: [
-        { name: 'Test 1', score: 0 },
-        { name: 'Test 2', score: 2 },
-        { name: 'Test 3', score: 1 },
-      ],
-      messages: [
-          'Hello World!',
-          'Test!',
-          'Test2!',
-          'Lorem Ipsum',
-          'Some Text',
-          'Some more text',
-          'Some other text',
-          'other text',
-          'text!',
-          'why not more text',
-          'even more text',
+      opponents: [
+        {
+          username: 'Test',
+          isOut: false,
+          isProtected: false,
+          playedCards: ['Wagie', 'CEO'],
+          disconnected: false,
+        },
+        {
+          username: 'Test 2',
+          isOut: true,
+          isProtected: false,
+          playedCards: [],
+          disconnected: false,
+        },
+        {
+          username: 'Test 3',
+          isOut: false,
+          isProtected: true,
+          playedCards: ['Wagie', 'Shareholder', 'Wagie', 'Wagie', 'Recommendation Letter'],
+          disconnected: true,
+        }
       ],
       startCountdown: false,
       stopCountdown: false,
