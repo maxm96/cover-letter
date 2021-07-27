@@ -11,6 +11,12 @@
       )
       messages(:messages="messages")
     opponents(:opponents="opponents")
+    #lower-board
+      action-buttons(
+        :show-play-button="showPlayButton"
+        :show-discard-button="showDiscardButton"
+        :show-against-self-button="showAgainstSelfButton"
+      )
 </template>
 
 <script>
@@ -18,13 +24,17 @@ import countdown from "./countdown.vue"
 import scoreBoard from "./score-board.vue"
 import messages from "./messages.vue"
 import opponents from "./opponents.vue"
+import actionButtons from "./action-buttons.vue"
 
 export default {
   name: "game-board",
-  components: { countdown, scoreBoard, messages, opponents },
+  components: { countdown, scoreBoard, messages, opponents, actionButtons },
   props: ['players', 'messages'],
   data() {
     return {
+      showPlayButton: false,
+      showDiscardButton: false,
+      showAgainstSelfButton: false,
       opponents: [
         {
           username: 'Test',
@@ -87,6 +97,10 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  height: 250px;
+}
+
+#lower-board {
   height: 250px;
 }
 </style>
