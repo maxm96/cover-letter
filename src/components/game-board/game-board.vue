@@ -17,6 +17,7 @@
         :show-discard-button="showDiscardButton"
         :show-against-self-button="showAgainstSelfButton"
       )
+      hand(:cards="hand" @hand:card-click="onCardClick")
 </template>
 
 <script>
@@ -25,37 +26,39 @@ import scoreBoard from "./score-board.vue"
 import messages from "./messages.vue"
 import opponents from "./opponents.vue"
 import actionButtons from "./action-buttons.vue"
+import hand from "./hand.vue"
 
 export default {
   name: "game-board",
-  components: { countdown, scoreBoard, messages, opponents, actionButtons },
-  props: ['players', 'messages'],
+  components: { countdown, scoreBoard, messages, opponents, actionButtons, hand },
   data() {
     return {
+      players: [],
+      messages: [],
+      opponents: [],
       showPlayButton: false,
       showDiscardButton: false,
       showAgainstSelfButton: false,
-      opponents: [
+      hand: [
         {
-          username: 'Test',
-          isOut: false,
-          isProtected: false,
-          playedCards: ['Wagie', 'CEO'],
-          disconnected: false,
+          id: 1,
+          name: 'Wagie',
+          description: 'Wagie Wagie',
+          number: 1,
+          count: 5,
+          requiresVictim: true,
+          canPlayAgainstSelf: false,
+          selected: false,
         },
         {
-          username: 'Test 2',
-          isOut: true,
-          isProtected: false,
-          playedCards: [],
-          disconnected: false,
-        },
-        {
-          username: 'Test 3',
-          isOut: false,
-          isProtected: true,
-          playedCards: ['Wagie', 'Shareholder', 'Wagie', 'Wagie', 'Recommendation Letter'],
-          disconnected: true,
+          id: 2,
+          name: 'CEO',
+          description: 'CEO CEO',
+          number: 7,
+          count: 1,
+          requiresVictim: false,
+          canPlayAgainstSelf: false,
+          selected: false,
         }
       ],
       startCountdown: false,
@@ -79,6 +82,27 @@ export default {
     onCountdownFinished() {
       console.log('Countdown finished!')
     },
+    onCardClick(cardId) {
+      // First clear any other selected cards (there should only be one other)
+      let selectedCard = this.hand.find(c => c.selected)
+      if (selectedCard) {
+        selectedCard.selected = false
+        this.hand.splice(
+            this.hand.findIndex(c => c.id === selectedCard.id),
+            1,
+            selectedCard
+        )
+      }
+
+      // Toggle the card that was clicked on. This will keep the user from unselecting a selected card as well.
+      let card = this.hand.find(c => c.id === cardId)
+      card.selected = !card.selected
+      this.hand.splice(
+          this.hand.findIndex(c => c.id === cardId),
+          1,
+          card
+      )
+    },
   },
 }
 </script>
@@ -90,7 +114,6 @@ export default {
   width: 100%;
   height: 100%;
   min-height: 250px;
-  border: red 2px solid;
 }
 
 #upper-board {
