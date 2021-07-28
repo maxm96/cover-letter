@@ -155,7 +155,11 @@ html
             p(class="card-description") Description
             input(hidden="true" class="requires-victim" value="0")
             input(hidden="true" class="against-self" value="0")
+
+        div(id="app")
+            cover-letter
     script(src="/socket.io/socket.io.js")
+    script(type="text/javascript" src="/dist/app.js")
     script(src="/public/utils.js")
     script(src="/public/ui.js")
     script(src="/public/client.js")

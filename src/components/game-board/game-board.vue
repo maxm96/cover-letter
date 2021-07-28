@@ -10,7 +10,9 @@
         @countdown:finished="onCountdownFinished"
       )
       messages(:messages="messages")
+
     opponents(:opponents="opponents")
+
     #lower-board
       action-buttons(
         :show-play-button="showPlayButton"
@@ -21,6 +23,7 @@
 </template>
 
 <script>
+import lobby from "../lobby/lobby.vue"
 import countdown from "./countdown.vue"
 import scoreBoard from "./score-board.vue"
 import messages from "./messages.vue"
@@ -30,40 +33,25 @@ import hand from "./hand.vue"
 
 export default {
   name: "game-board",
-  components: { countdown, scoreBoard, messages, opponents, actionButtons, hand },
+  components: { lobby, countdown, scoreBoard, messages, opponents, actionButtons, hand },
   data() {
     return {
       players: [],
       messages: [],
       opponents: [],
+      hand: [],
       showPlayButton: false,
       showDiscardButton: false,
       showAgainstSelfButton: false,
-      hand: [
-        {
-          id: 1,
-          name: 'Wagie',
-          description: 'Wagie Wagie',
-          number: 1,
-          count: 5,
-          requiresVictim: true,
-          canPlayAgainstSelf: false,
-          selected: false,
-        },
-        {
-          id: 2,
-          name: 'CEO',
-          description: 'CEO CEO',
-          number: 7,
-          count: 1,
-          requiresVictim: false,
-          canPlayAgainstSelf: false,
-          selected: false,
-        }
-      ],
       startCountdown: false,
       stopCountdown: false,
       resetCountdown: false,
+      socket: null,
+    }
+  },
+  computed: {
+    playingGame() {
+      return false
     }
   },
   methods: {

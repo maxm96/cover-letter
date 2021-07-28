@@ -1,8 +1,8 @@
 import Vue from 'vue'
 
-import gameBoard from './game-board/game-board.vue'
+import coverLetter from './cover-letter.vue'
 
-Vue.component('game-board', gameBoard)
+Vue.component('cover-letter', coverLetter)
 
 const app = new Vue({
     el: '#app'
