@@ -11,31 +11,42 @@
           td(class="ready-board-ready") {{ player.ready ? 'Yes' : 'No' }}
 
     label(for="ready-btn") Ready
-    input(type="checkbox" id="ready-btn" :value="ready")
+    input(type="checkbox" id="ready-btn" :value="ready" @click="onReadyClick")
 
     br
     button(id="help-btn" class="q-mark" @click="toggleHelpModal") How to play
+
+    countdown(v-if="showCountdown" :max-count="5")
 
     help-modal(:show="showHelpModal" @help-modal:close="toggleHelpModal")
 </template>
 
 <script>
 import helpModal from "./help-modal.vue"
+import countdown from "../countdown.vue"
 
 export default {
   name: "lobby",
-  components: { helpModal },
-  props: ['players', 'ready'],
+  components: { helpModal, countdown },
+  props: ['players', 'ready', 'showCountdown'],
   data() {
     return {
       showHelpModal: false,
     }
   },
   methods: {
+    onReadyClick(e) {
+      this.$emit('lobby:ready-click', e.target.checked)
+    },
     toggleHelpModal() {
       this.showHelpModal = !this.showHelpModal
     },
   },
+  watch: {
+    showCountdown(v) {
+      console.log(v)
+    }
+  }
 }
 </script>
 

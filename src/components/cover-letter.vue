@@ -1,7 +1,13 @@
 <template lang="pug">
   #cover-letter
-    lobby(:players="players" :ready="isReady")
-    game-board(v-if="gameState === 'g'")
+    lobby(
+      v-if="!isGameplay"
+      :players="players"
+      :ready="isReady"
+      :show-countdown="isCountdown"
+      @lobby:ready-click="onReady"
+    )
+    game-board(v-if="isGameplay")
 </template>
 
 <script>
@@ -26,17 +32,44 @@ export default {
         return me ? me.ready : false
       }
       return false
-    }
+    },
+    isGameplay() {
+      return this.gameState === 'g'
+    },
+    isCountdown() {
+      return this.gameState === 'c'
+    },
+  },
+  methods: {
+    onReady(ready) {
+      this.socket.emit('ready', { ready: ready })
+    },
   },
   mounted() {
-    // TODO: refactor this
     this.username = document.querySelector('#client_username').value
 
     this.socket = io()
 
+    let vm = this
     this.socket.on('curstate', function (curState) {
-      this.gameState = curState.gameState
-      this.players = curState.players
+      vm.gameState = curState.gameState
+      vm.players = curState.players
+    })
+
+    this.socket.on('playerready', function ({ username, ready, gameState }) {
+      vm.gameState = gameState
+
+      console.log('gamestate', vm.gameState)
+      console.log('isCountdown', vm.isCountdown)
+
+      let player = vm.players.find(p => p.username === username)
+      player.ready = ready
+
+      vm.players.splice(
+          vm.players.findIndex(p => p.username === username),
+          1,
+          player
+      )
     })
   },
 }

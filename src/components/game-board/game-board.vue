@@ -24,7 +24,7 @@
 
 <script>
 import lobby from "../lobby/lobby.vue"
-import countdown from "./countdown.vue"
+import countdown from "../countdown.vue"
 import scoreBoard from "./score-board.vue"
 import messages from "./messages.vue"
 import opponents from "./opponents.vue"
