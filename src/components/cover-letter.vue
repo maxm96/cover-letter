@@ -13,16 +13,22 @@
 <script>
 import gameBoard from "./game-board/game-board.vue"
 import lobby from "./lobby/lobby.vue"
+import socketEvents from "./socket-events.js"
 
 export default {
   name: "cover-letter",
   components: { lobby, gameBoard },
+  mixins: [ socketEvents ],
   data() {
     return {
       socket: null,
       gameState: null,
       players: [],
       username: null,
+      deckCount: 0,
+      log: [],
+      hands: [],
+      scores: null,
     }
   },
   computed: {
@@ -48,29 +54,7 @@ export default {
   mounted() {
     this.username = document.querySelector('#client_username').value
 
-    this.socket = io()
 
-    let vm = this
-    this.socket.on('curstate', function (curState) {
-      vm.gameState = curState.gameState
-      vm.players = curState.players
-    })
-
-    this.socket.on('playerready', function ({ username, ready, gameState }) {
-      vm.gameState = gameState
-
-      console.log('gamestate', vm.gameState)
-      console.log('isCountdown', vm.isCountdown)
-
-      let player = vm.players.find(p => p.username === username)
-      player.ready = ready
-
-      vm.players.splice(
-          vm.players.findIndex(p => p.username === username),
-          1,
-          player
-      )
-    })
   },
 }
 </script>

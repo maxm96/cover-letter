@@ -42,11 +42,6 @@ export default {
       this.showHelpModal = !this.showHelpModal
     },
   },
-  watch: {
-    showCountdown(v) {
-      console.log(v)
-    }
-  }
 }
 </script>
 
